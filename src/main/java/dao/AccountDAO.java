@@ -51,7 +51,11 @@ public class AccountDAO implements IDAO<Account> {
             em.getTransaction().begin();
 
             // Check if the role exists
-            Role role = em.find(Role.class, account.getRole().getName());
+            Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                    .setParameter("name", account.getRole().getName())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
 
             // If the role doesn't exist, persist it
             if (role == null) {

@@ -51,7 +51,11 @@ public class FooterDAO implements IDAO<Footer> {
             em.getTransaction().begin();
 
             // Check if the role exists
-            Role role = em.find(Role.class, footer.getRole().getName());
+            Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                    .setParameter("name", footer.getRole().getName())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
 
             // If the role doesn't exist, persist it
             if (role == null) {
@@ -90,6 +94,7 @@ public class FooterDAO implements IDAO<Footer> {
             em.getTransaction().begin();
             Footer footer = em.find(Footer.class, id);
             if (footer != null) {
+                footer.getRole().getFooters().remove(footer);
                 em.remove(footer);
                 em.getTransaction().commit();
             }

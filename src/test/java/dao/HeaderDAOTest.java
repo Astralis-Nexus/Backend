@@ -145,7 +145,7 @@ class HeaderDAOTest {
     }
 
     @Test
-    @DisplayName("Delete an specific account.")
+    @DisplayName("Delete an specific header.")
     public void delete() {
         // Given
         int givenId = 1;

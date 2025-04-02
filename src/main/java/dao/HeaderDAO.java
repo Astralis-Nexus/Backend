@@ -49,8 +49,13 @@ public class HeaderDAO implements IDAO<Header> {
     public Header create(Header header) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
+
             // Check if the role exists
-            Role role = em.find(Role.class, header.getRole().getName());
+            Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                    .setParameter("name", header.getRole().getName())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
 
             // If the role doesn't exist, persist it
             if (role == null) {
@@ -88,6 +93,7 @@ public class HeaderDAO implements IDAO<Header> {
             em.getTransaction().begin();
             Header header = em.find(Header.class, id);
             if (header != null) {
+                header.getRole().getHeaders().remove(header);
                 em.remove(header);
                 em.getTransaction().commit();
             }
