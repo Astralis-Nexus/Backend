@@ -25,29 +25,6 @@ class GameDAOTest {
         accountDAO = AccountDAO.getInstance(emf);
     }
 
-    @AfterAll
-    static void tearDown() {
-        emf.close();
-    }
-
-    /*
-    @BeforeEach
-    public void beforeEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-
-            em.persist(new Role(Role.RoleName.REGULAR));
-            em.persist(new Role(Role.RoleName.ADMIN));
-
-            Role regularRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
-                    .setParameter("name", Role.RoleName.REGULAR)
-                    .getSingleResult();
-
-            em.persist(new Account("username", "password", regularRole));
-            em.getTransaction().commit();
-        }
-    }
-     */
     @BeforeEach
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {
@@ -76,6 +53,7 @@ class GameDAOTest {
             em.createQuery("DELETE FROM Game ").executeUpdate();
             em.createQuery("DELETE FROM Account ").executeUpdate();
             em.createQuery("DELETE FROM Role ").executeUpdate();
+            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
             em.createNativeQuery("TRUNCATE TABLE Game RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
         }

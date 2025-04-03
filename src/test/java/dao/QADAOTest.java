@@ -23,11 +23,6 @@ class QADAOTest {
         dao = QADAO.getInstance(emf);
     }
 
-    @AfterAll
-    static void tearDown() {
-        emf.close();
-    }
-
     @BeforeEach
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {
@@ -57,6 +52,7 @@ class QADAOTest {
             em.createQuery("DELETE FROM QA ").executeUpdate();
             em.createQuery("DELETE FROM Account ").executeUpdate();
             em.createQuery("DELETE FROM Role ").executeUpdate();
+            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
             em.createNativeQuery("TRUNCATE TABLE QA RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
         }

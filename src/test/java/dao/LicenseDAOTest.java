@@ -24,11 +24,6 @@ class LicenseDAOTest {
         dao = LicenseDAO.getInstance(emf);
     }
 
-    @AfterAll
-    static void tearDown() {
-        emf.close();
-    }
-
     @BeforeEach
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {
@@ -61,6 +56,7 @@ class LicenseDAOTest {
             em.createQuery("DELETE FROM Game ").executeUpdate();
             em.createQuery("DELETE FROM Account ").executeUpdate();
             em.createQuery("DELETE FROM Role ").executeUpdate();
+            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
             em.createNativeQuery("TRUNCATE TABLE License RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
         }

@@ -22,13 +22,6 @@ class AccountDAOTest {
         dao = AccountDAO.getInstance(emf);
     }
 
-    @AfterAll
-    static void tearDown() {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
-        }
-    }
-
     @BeforeEach
     public void beforeEach() {
         EntityManager em = emf.createEntityManager();

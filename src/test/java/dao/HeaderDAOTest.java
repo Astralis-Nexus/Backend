@@ -22,11 +22,6 @@ class HeaderDAOTest {
         dao = HeaderDAO.getInstance(emf);
     }
 
-    @AfterAll
-    static void tearDown() {
-        emf.close();
-    }
-
     @BeforeEach
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {

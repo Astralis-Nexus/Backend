@@ -24,11 +24,6 @@ class TodoDAOTest {
         dao = TodoDAO.getInstance(emf);
     }
 
-    @AfterAll
-    static void tearDown() {
-        emf.close();
-    }
-
     @BeforeEach
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {
@@ -56,6 +51,7 @@ class TodoDAOTest {
             em.createQuery("DELETE FROM Todo").executeUpdate();
             em.createQuery("DELETE FROM Account").executeUpdate();
             em.createQuery("DELETE FROM Role").executeUpdate();
+            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
             em.createNativeQuery("TRUNCATE TABLE Todo RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
         }

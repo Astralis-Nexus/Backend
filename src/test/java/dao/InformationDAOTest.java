@@ -23,11 +23,6 @@ class InformationDAOTest {
         dao = InformationDAO.getInstance(emf);
     }
 
-    @AfterAll
-    static void tearDown() {
-        emf.close();
-    }
-
     @BeforeEach
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {
@@ -55,6 +50,7 @@ class InformationDAOTest {
             em.createQuery("DELETE FROM Information ").executeUpdate();
             em.createQuery("DELETE FROM Account ").executeUpdate();
             em.createQuery("DELETE FROM Role ").executeUpdate();
+            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
             em.createNativeQuery("TRUNCATE TABLE Information RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
         }
