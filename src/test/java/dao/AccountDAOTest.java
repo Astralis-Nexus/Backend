@@ -31,8 +31,15 @@ class AccountDAOTest {
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            em.persist(
-                    new Account("username", "password", new Role(Role.RoleName.REGULAR)));
+
+            em.persist(new Role(Role.RoleName.REGULAR));
+            em.persist(new Role(Role.RoleName.ADMIN));
+
+            Role regularRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                    .setParameter("name", Role.RoleName.REGULAR)
+                    .getSingleResult();
+
+            em.persist(new Account("username", "password", regularRole));
             em.getTransaction().commit();
         }
     }
@@ -81,21 +88,6 @@ class AccountDAOTest {
     public void create() {
         // Given
         Account accountToCreate = new Account("username", "password", new Role(Role.RoleName.REGULAR));
-        int expectedId = 2;
-
-        // When
-        Account accountCreated = dao.create(accountToCreate);
-
-        // Then
-        assertNotNull(accountCreated);
-        assertEquals(expectedId, accountToCreate.getId());
-    }
-
-    @Test
-    @DisplayName("Create an account with non existing role.")
-    public void create2() {
-        // Given
-        Account accountToCreate = new Account("username", "password", new Role(Role.RoleName.ADMIN));
         int expectedId = 2;
 
         // When

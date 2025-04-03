@@ -19,9 +19,10 @@ public class Account {
     private Integer id;
 
     private String username;
+
     private String password;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "role_name", nullable = false)
     private Role role;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

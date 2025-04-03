@@ -33,7 +33,16 @@ class TodoDAOTest {
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            account = new Account("username", "password", new Role(Role.RoleName.ADMIN));
+
+            em.persist(new Role(Role.RoleName.REGULAR));
+            em.persist(new Role(Role.RoleName.ADMIN));
+
+            Role regularRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                    .setParameter("name", Role.RoleName.REGULAR)
+                    .getSingleResult();
+
+            account = new Account("username", "password", regularRole);
+
             em.persist(account);
             em.persist(new Todo(LocalDate.now(), "My Task", false, account));
             em.getTransaction().commit();

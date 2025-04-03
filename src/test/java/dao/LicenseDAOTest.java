@@ -33,9 +33,19 @@ class LicenseDAOTest {
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            Account account = new Account("username", "password", new Role(Role.RoleName.REGULAR));
-            game = new Game("Test", account);
+
+            em.persist(new Role(Role.RoleName.REGULAR));
+            em.persist(new Role(Role.RoleName.ADMIN));
+
+            Role regularRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                    .setParameter("name", Role.RoleName.REGULAR)
+                    .getSingleResult();
+
+            Account account = new Account("username", "password", regularRole);
+
             em.persist(account);
+
+            game = new Game("Test", account);
             em.persist(game);
             em.persist(
                     new License("username", "password", "username@email.dk", game));

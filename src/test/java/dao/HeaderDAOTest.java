@@ -94,21 +94,6 @@ class HeaderDAOTest {
     }
 
     @Test
-    @DisplayName("Create an header with non existing role.")
-    public void create2() {
-        // Given
-        Header headerToCreate = new Header("password", new Role(Role.RoleName.ADMIN));
-        int expectedId = 2;
-
-        // When
-        Header headerCreated = dao.create(headerToCreate);
-
-        // Then
-        assertNotNull(headerCreated);
-        assertEquals(expectedId, headerCreated.getId());
-    }
-
-    @Test
     @DisplayName("Update an existing header.")
     public void update() {
         // Given

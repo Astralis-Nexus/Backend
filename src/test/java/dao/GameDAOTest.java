@@ -30,14 +30,41 @@ class GameDAOTest {
         emf.close();
     }
 
+    /*
     @BeforeEach
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {
-            Account account = new Account("username", "password", new Role(Role.RoleName.REGULAR));
             em.getTransaction().begin();
+
+            em.persist(new Role(Role.RoleName.REGULAR));
+            em.persist(new Role(Role.RoleName.ADMIN));
+
+            Role regularRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                    .setParameter("name", Role.RoleName.REGULAR)
+                    .getSingleResult();
+
+            em.persist(new Account("username", "password", regularRole));
+            em.getTransaction().commit();
+        }
+    }
+     */
+    @BeforeEach
+    public void beforeEach() {
+        try (EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+
+            em.persist(new Role(Role.RoleName.REGULAR));
+            em.persist(new Role(Role.RoleName.ADMIN));
+
+            Role regularRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                    .setParameter("name", Role.RoleName.REGULAR)
+                    .getSingleResult();
+
+            Account account = new Account("username", "password", regularRole);
+
             em.persist(account);
-            em.persist(
-                    new Game("username", account));
+
+            em.persist(new Game("username", account));
             em.getTransaction().commit();
         }
     }
