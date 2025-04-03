@@ -20,7 +20,7 @@ class TodoDAOTest extends BaseTest {
         int expectedSize = 1;
 
         // When
-        List<Todo> todos = todoDAO.getAll();
+        List<Todo> todos = getDAO(TodoDAO.class).getAll();
 
         // Then
         assertFalse(todos.isEmpty());
@@ -41,7 +41,7 @@ class TodoDAOTest extends BaseTest {
         Todo todoToCreate = new Todo(LocalDate.now(), "My Task2", false, account);
 
         // When
-        Todo todoCreated = todoDAO.create(todoToCreate);
+        Todo todoCreated = getDAO(TodoDAO.class).create(todoToCreate);
 
         // Then
         assertNotNull(todoCreated);
@@ -62,7 +62,7 @@ class TodoDAOTest extends BaseTest {
         }
 
         // When
-        Todo todoUpdated = todoDAO.update(todoToUpdate);
+        Todo todoUpdated = getDAO(TodoDAO.class).update(todoToUpdate);
 
         // Then
         assertNotNull(todoUpdated);
@@ -76,7 +76,7 @@ class TodoDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Todo todoFound = todoDAO.getById(givenId);
+        Todo todoFound = getDAO(TodoDAO.class).getById(givenId);
 
         // Then
         assertNotNull(todoFound);
@@ -90,7 +90,7 @@ class TodoDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Todo deletedTodo = todoDAO.delete(givenId);
+        Todo deletedTodo = getDAO(TodoDAO.class).delete(givenId);
 
         // Then
         assertNotNull(deletedTodo);

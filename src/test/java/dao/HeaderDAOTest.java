@@ -19,7 +19,7 @@ class HeaderDAOTest extends BaseTest {
         int expectedSize = 1;
 
         // When
-        List<Header> headers = headerDAO.getAll();
+        List<Header> headers = getDAO(HeaderDAO.class).getAll();
 
         // Then
         assertFalse(headers.isEmpty());
@@ -34,7 +34,7 @@ class HeaderDAOTest extends BaseTest {
         int expectedId = 2;
 
         // When
-        Header headerCreated = headerDAO.create(headerToCreate);
+        Header headerCreated = getDAO(HeaderDAO.class).create(headerToCreate);
 
         // Then
         assertNotNull(headerCreated);
@@ -56,7 +56,7 @@ class HeaderDAOTest extends BaseTest {
 
         // When
         headerToUpdate.setName("test1)");
-        Header headerUpdated = headerDAO.update(headerToUpdate);
+        Header headerUpdated = getDAO(HeaderDAO.class).update(headerToUpdate);
 
         // Then
         assertNotNull(headerUpdated);
@@ -70,7 +70,7 @@ class HeaderDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Header headerFound = headerDAO.getById(givenId);
+        Header headerFound = getDAO(HeaderDAO.class).getById(givenId);
 
         // Then
         assertNotNull(headerFound);
@@ -84,7 +84,7 @@ class HeaderDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Header headerAccount = headerDAO.delete(givenId);
+        Header headerAccount = getDAO(HeaderDAO.class).delete(givenId);
 
         // Then
         assertNotNull(headerAccount);

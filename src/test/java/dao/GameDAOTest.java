@@ -20,7 +20,7 @@ class GameDAOTest extends BaseTest {
         int expectedSize = 1;
 
         // When
-        List<Game> games = gameDAO.getAll();
+        List<Game> games = getDAO(GameDAO.class).getAll();
 
         // Then
         assertFalse(games.isEmpty());
@@ -32,12 +32,12 @@ class GameDAOTest extends BaseTest {
     public void create() {
         // Given
         Account account2 = new Account("username", "password", new Role(Role.RoleName.REGULAR));
-        accountDAO.create(account2);
+        getDAO(AccountDAO.class).create(account2);
         Game gameToCreate = new Game("username1", account2);
         int expectedId = 2;
 
         // When
-        Game gameCreated = gameDAO.create(gameToCreate);
+        Game gameCreated = getDAO(GameDAO.class).create(gameToCreate);
 
         // Then
         assertNotNull(gameCreated);
@@ -59,7 +59,7 @@ class GameDAOTest extends BaseTest {
 
         // When
         gameToUpdate.setName("test1)");
-        Game gameUpdated = gameDAO.update(gameToUpdate);
+        Game gameUpdated = getDAO(GameDAO.class).update(gameToUpdate);
 
         // Then
         assertNotNull(gameUpdated);
@@ -73,7 +73,7 @@ class GameDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Game gameFound = gameDAO.getById(givenId);
+        Game gameFound = getDAO(GameDAO.class).getById(givenId);
 
         // Then
         assertNotNull(gameFound);
@@ -87,7 +87,7 @@ class GameDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Game deletedGame = gameDAO.delete(givenId);
+        Game deletedGame = getDAO(GameDAO.class).delete(givenId);
 
         // Then
         assertNotNull(deletedGame);

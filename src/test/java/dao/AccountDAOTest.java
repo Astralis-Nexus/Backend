@@ -19,7 +19,7 @@ class AccountDAOTest extends BaseTest {
         int expectedSize = 1;
 
         // When
-        List<Account> accounts = accountDAO.getAll();
+        List<Account> accounts = getDAO(AccountDAO.class).getAll();
 
         // Then
         assertFalse(accounts.isEmpty());
@@ -34,7 +34,7 @@ class AccountDAOTest extends BaseTest {
         int expectedId = 2;
 
         // When
-        Account accountCreated = accountDAO.create(accountToCreate);
+        Account accountCreated = getDAO(AccountDAO.class).create(accountToCreate);
 
         // Then
         assertNotNull(accountCreated);
@@ -57,7 +57,7 @@ class AccountDAOTest extends BaseTest {
         // When
         accountToUpdate.setUsername("test1)");
         accountToUpdate.setPassword("test2)");
-        Account accountUpdated = accountDAO.update(accountToUpdate);
+        Account accountUpdated = getDAO(AccountDAO.class).update(accountToUpdate);
 
         // Then
         assertNotNull(accountUpdated);
@@ -71,7 +71,7 @@ class AccountDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Account accountFound = accountDAO.getById(givenId);
+        Account accountFound = getDAO(AccountDAO.class).getById(givenId);
 
         // Then
         assertNotNull(accountFound);
@@ -85,7 +85,7 @@ class AccountDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Account deletedAccount = accountDAO.delete(givenId);
+        Account deletedAccount = getDAO(AccountDAO.class).delete(givenId);
 
         // Then
         assertNotNull(deletedAccount);

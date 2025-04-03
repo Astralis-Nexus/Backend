@@ -19,7 +19,7 @@ class FooterDAOTest extends BaseTest {
         int expectedSize = 1;
 
         // When
-        List<Footer> footers = footerDAO.getAll();
+        List<Footer> footers = getDAO(FooterDAO.class).getAll();
 
         // Then
         assertFalse(footers.isEmpty());
@@ -34,7 +34,7 @@ class FooterDAOTest extends BaseTest {
         int expectedId = 2;
 
         // When
-        Footer footerCreated = footerDAO.create(footerToCreate);
+        Footer footerCreated = getDAO(FooterDAO.class).create(footerToCreate);
 
         // Then
         assertNotNull(footerCreated);
@@ -49,7 +49,7 @@ class FooterDAOTest extends BaseTest {
         int expectedId = 2;
 
         // When
-        Footer footerCreated = footerDAO.create(footerToCreate);
+        Footer footerCreated = getDAO(FooterDAO.class).create(footerToCreate);
 
         // Then
         assertNotNull(footerCreated);
@@ -72,7 +72,7 @@ class FooterDAOTest extends BaseTest {
         // When
         footerToUpdate.setHeader("test1)");
         footerToUpdate.setDescription("test2)");
-        Footer footerUpdated = footerDAO.update(footerToUpdate);
+        Footer footerUpdated = getDAO(FooterDAO.class).update(footerToUpdate);
 
         // Then
         assertNotNull(footerUpdated);
@@ -86,7 +86,7 @@ class FooterDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Footer footerFound = footerDAO.getById(givenId);
+        Footer footerFound = getDAO(FooterDAO.class).getById(givenId);
 
         // Then
         assertNotNull(footerFound);
@@ -100,7 +100,7 @@ class FooterDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Footer deletedFooter = footerDAO.delete(givenId);
+        Footer deletedFooter = getDAO(FooterDAO.class).delete(givenId);
 
         // Then
         assertNotNull(deletedFooter);

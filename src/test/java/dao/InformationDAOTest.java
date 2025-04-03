@@ -19,7 +19,7 @@ class InformationDAOTest extends BaseTest {
         int expectedSize = 1;
 
         // When
-        List<Information> informations = informationDAO.getAll();
+        List<Information> informations = getDAO(InformationDAO.class).getAll();
 
         // Then
         assertFalse(informations.isEmpty());
@@ -40,7 +40,7 @@ class InformationDAOTest extends BaseTest {
         int expectedId = 2;
 
         // When
-        Information informationCreated = informationDAO.create(informationToCreate);
+        Information informationCreated = getDAO(InformationDAO.class).create(informationToCreate);
 
         // Then
         assertNotNull(informationCreated);
@@ -62,7 +62,7 @@ class InformationDAOTest extends BaseTest {
 
         // When
         informationToUpdate.setDescription("test1)");
-        Information informationUpdated = informationDAO.update(informationToUpdate);
+        Information informationUpdated = getDAO(InformationDAO.class).update(informationToUpdate);
 
         // Then
         assertNotNull(informationUpdated);
@@ -76,7 +76,7 @@ class InformationDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Information informationFound = informationDAO.getById(givenId);
+        Information informationFound = getDAO(InformationDAO.class).getById(givenId);
 
         // Then
         assertNotNull(informationFound);
@@ -90,7 +90,7 @@ class InformationDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Information deletedInformation = informationDAO.delete(givenId);
+        Information deletedInformation = getDAO(InformationDAO.class).delete(givenId);
 
         // Then
         assertNotNull(deletedInformation);

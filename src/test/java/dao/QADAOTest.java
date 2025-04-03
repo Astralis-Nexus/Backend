@@ -19,7 +19,7 @@ class QADAOTest extends BaseTest {
         int expectedSize = 1;
 
         // When
-        List<QA> qas = qaDAO.getAll();
+        List<QA> qas = getDAO(QADAO.class).getAll();
 
         // Then
         assertFalse(qas.isEmpty());
@@ -40,7 +40,7 @@ class QADAOTest extends BaseTest {
         int expectedId = 2;
 
         // When
-        QA qaCreated = qaDAO.create(qaToCreate);
+        QA qaCreated = getDAO(QADAO.class).create(qaToCreate);
 
         // Then
         assertNotNull(qaCreated);
@@ -63,7 +63,7 @@ class QADAOTest extends BaseTest {
         // When
         qaToUpdate.setQuestion("test1)");
         qaToUpdate.setAnswer("test2)");
-        QA qaUpdated = qaDAO.update(qaToUpdate);
+        QA qaUpdated = getDAO(QADAO.class).update(qaToUpdate);
 
         // Then
         assertNotNull(qaUpdated);
@@ -77,7 +77,7 @@ class QADAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        QA qaFound = qaDAO.getById(givenId);
+        QA qaFound = getDAO(QADAO.class).getById(givenId);
 
         // Then
         assertNotNull(qaFound);
@@ -91,7 +91,7 @@ class QADAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        QA qaLicense = qaDAO.delete(givenId);
+        QA qaLicense = getDAO(QADAO.class).delete(givenId);
 
         // Then
         assertNotNull(qaLicense);

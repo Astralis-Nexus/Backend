@@ -18,7 +18,7 @@ class RoleDAOTest extends BaseTest {
         int expectedSize = 2;
 
         // When
-        List<Role> roles = roleDAO.getAll();
+        List<Role> roles = getDAO(RoleDAO.class).getAll();
 
         // Then
         assertFalse(roles.isEmpty());
@@ -32,7 +32,7 @@ class RoleDAOTest extends BaseTest {
         Role roleToCreate = new Role(Role.RoleName.ADMIN);
 
         // When
-        Role roleCreated = roleDAO.create(roleToCreate);
+        Role roleCreated = getDAO(RoleDAO.class).create(roleToCreate);
 
         // Then
         assertNotNull(roleCreated);
@@ -53,7 +53,7 @@ class RoleDAOTest extends BaseTest {
         }
 
         // When
-        Role roleUpdated = roleDAO.update(roleToUpdate);
+        Role roleUpdated = getDAO(RoleDAO.class).update(roleToUpdate);
 
         // Then
         assertNotNull(roleUpdated);
@@ -67,7 +67,7 @@ class RoleDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Role roleFound = roleDAO.getById(givenId);
+        Role roleFound = getDAO(RoleDAO.class).getById(givenId);
 
         // Then
         assertNotNull(roleFound);
@@ -81,7 +81,7 @@ class RoleDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        Role deletedRole = roleDAO.delete(givenId);
+        Role deletedRole = getDAO(RoleDAO.class).delete(givenId);
 
         // Then
         assertNotNull(deletedRole);

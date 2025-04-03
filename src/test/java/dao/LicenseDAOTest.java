@@ -19,7 +19,7 @@ class LicenseDAOTest extends BaseTest {
         int expectedSize = 1;
 
         // When
-        List<License> licenses = licenseDAO.getAll();
+        List<License> licenses = getDAO(LicenseDAO.class).getAll();
 
         // Then
         assertFalse(licenses.isEmpty());
@@ -40,7 +40,7 @@ class LicenseDAOTest extends BaseTest {
         int expectedId = 2;
 
         // When
-        License licenseCreated = licenseDAO.create(licenseToCreate);
+        License licenseCreated = getDAO(LicenseDAO.class).create(licenseToCreate);
 
         // Then
         assertNotNull(licenseCreated);
@@ -65,7 +65,7 @@ class LicenseDAOTest extends BaseTest {
         licenseToUpdate.setUsername("test2)");
         licenseToUpdate.setPassword("test3)");
         licenseToUpdate.setPcNumber(1);
-        License licenseUpdated = licenseDAO.update(licenseToUpdate);
+        License licenseUpdated = getDAO(LicenseDAO.class).update(licenseToUpdate);
 
         // Then
         assertNotNull(licenseUpdated);
@@ -79,7 +79,7 @@ class LicenseDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        License licenseFound = licenseDAO.getById(givenId);
+        License licenseFound = getDAO(LicenseDAO.class).getById(givenId);
 
         // Then
         assertNotNull(licenseFound);
@@ -93,7 +93,7 @@ class LicenseDAOTest extends BaseTest {
         int givenId = 1;
 
         // When
-        License deletedLicense = licenseDAO.delete(givenId);
+        License deletedLicense = getDAO(LicenseDAO.class).delete(givenId);
 
         // Then
         assertNotNull(deletedLicense);
