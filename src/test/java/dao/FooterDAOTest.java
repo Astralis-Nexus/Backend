@@ -1,7 +1,6 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import persistence.model.Footer;
@@ -12,30 +11,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FooterDAOTest extends BaseTest {
-
-    @BeforeEach
-    public void beforeEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.persist(
-                    new Footer("Header", "Description", new Role(Role.RoleName.REGULAR)));
-            em.getTransaction().commit();
-        }
-    }
-
-    @Test
-    @DisplayName("Testing that the dao is not null.")
-    void getDAO() {
-        // Then
-        assertNotNull(footerDAO);
-    }
-
-    @Test
-    @DisplayName("Testing that entity manager factory is not null.")
-    void getEmf() {
-        // Then
-        assertNotNull(emf);
-    }
 
     @Test
     @DisplayName("Get all the footers.")

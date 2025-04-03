@@ -15,7 +15,10 @@ public class QA {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private String question;
+
+    @Column(nullable = false)
     private String answer;
 
     @ManyToOne

@@ -96,29 +96,44 @@ public abstract class DAO<T> implements IDAO<T> {
             em.getTransaction().begin();
 
             T entity = em.find(entityClass, id);
+
             if (entity != null) {
                 if (entity instanceof Footer footer) {
                     footer.getRole().getFooters().remove(footer);
                 } else if (entity instanceof Game game) {
                     Account account = em.find(Account.class, game.getAccount().getId());
-                    account.removeGame(game);
+                    account.getGames().remove(game);
+                } else if (entity instanceof Role role) {
+
+                    Role noneRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                            .setParameter("name", Role.RoleName.NONE)
+                            .getSingleResult();
+
+                    List<Account> accounts = em.createQuery("SELECT a FROM Account a WHERE a.role = :role", Account.class)
+                            .setParameter("role", role)
+                            .getResultList();
+
+                    for (Account account : accounts) {
+                        account.setRole(noneRole);
+                        em.merge(account);
+                    }
                 } else if (entity instanceof Header header) {
                     header.getRole().getHeaders().remove(header);
                 } else if (entity instanceof Information information) {
-                    information.getAccount().removeInformation(information);
+                    information.getAccount().getInformations().remove(information);
                 } else if (entity instanceof QA qa) {
                     qa.getAccount().getQas().remove(qa);
-                    qa.setAccount(null);
+                    //qa.setAccount(null);
                 } else if (entity instanceof Todo todo) {
                     todo.getAccount().getTodos().remove(todo);
                 }
                 em.remove(entity);
                 em.getTransaction().commit();
             }
-
             return entity;
         } catch (PersistenceException e) {
             throw new PersistenceException(timestamp + ": Error deleting " + entityClass.getSimpleName() + " with id: " + id);
         }
     }
 }
+

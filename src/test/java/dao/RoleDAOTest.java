@@ -1,7 +1,6 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import persistence.model.Role;
@@ -12,34 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RoleDAOTest extends BaseTest {
 
-    @BeforeEach
-    public void beforeEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.persist(new Role(Role.RoleName.ADMIN));
-            em.getTransaction().commit();
-        }
-    }
-
-    @Test
-    @DisplayName("Testing that the dao is not null.")
-    void getDAO() {
-        // Then
-        assertNotNull(roleDAO);
-    }
-
-    @Test
-    @DisplayName("Testing that entity manager factory is not null.")
-    void getEmf() {
-        // Then
-        assertNotNull(emf);
-    }
-
     @Test
     @DisplayName("Get all the roles.")
     public void getAll() {
         // Given
-        int expectedSize = 1;
+        int expectedSize = 2;
 
         // When
         List<Role> roles = roleDAO.getAll();
@@ -47,22 +23,20 @@ class RoleDAOTest extends BaseTest {
         // Then
         assertFalse(roles.isEmpty());
         assertEquals(expectedSize, roles.size());
-        assertEquals(expectedSize, roles.get(0).getId());
     }
 
     @Test
     @DisplayName("Create an role.")
     public void create() {
         // Given
-        Role roleToCreate = new Role(Role.RoleName.REGULAR);
-        String expectedId = Role.RoleName.REGULAR.toString();
+        Role roleToCreate = new Role(Role.RoleName.ADMIN);
 
         // When
         Role roleCreated = roleDAO.create(roleToCreate);
 
         // Then
         assertNotNull(roleCreated);
-        assertEquals(expectedId, roleCreated.getName().toString());
+        assertEquals(roleToCreate.getName(), roleCreated.getName());
     }
 
     @Test

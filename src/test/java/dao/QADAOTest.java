@@ -1,54 +1,16 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import persistence.model.Account;
 import persistence.model.QA;
-import persistence.model.Role;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class QADAOTest extends BaseTest {
-
-    @BeforeEach
-    public void beforeEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-
-            em.persist(new Role(Role.RoleName.REGULAR));
-            em.persist(new Role(Role.RoleName.ADMIN));
-
-            Role regularRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
-                    .setParameter("name", Role.RoleName.REGULAR)
-                    .getSingleResult();
-
-            Account account = new Account("username", "password", regularRole);
-
-            em.persist(account);
-
-            em.persist(
-                    new QA("username", "password", account));
-            em.getTransaction().commit();
-        }
-    }
-
-    @Test
-    @DisplayName("Testing that the dao is not null.")
-    void getDAO() {
-        // Then
-        assertNotNull(qaDAO);
-    }
-
-    @Test
-    @DisplayName("Testing that entity manager factory is not null.")
-    void getEmf() {
-        // Then
-        assertNotNull(emf);
-    }
 
     @Test
     @DisplayName("Get all the qas.")

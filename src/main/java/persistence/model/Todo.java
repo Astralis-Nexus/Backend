@@ -19,11 +19,16 @@ public class Todo {
 
     @Column(nullable = false, updatable = false)
     private LocalDate date;
+
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
     private boolean status;
 
     @Column(nullable = false, updatable = false)
     private String done_by = "";
+
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;

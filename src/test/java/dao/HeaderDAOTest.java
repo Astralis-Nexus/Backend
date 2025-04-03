@@ -1,7 +1,6 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import persistence.model.Header;
@@ -12,32 +11,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HeaderDAOTest extends BaseTest {
-
-    @BeforeEach
-    public void beforeEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            Role role = new Role(Role.RoleName.REGULAR);
-            em.persist(role);
-            em.persist(
-                    new Header("username", role));
-            em.getTransaction().commit();
-        }
-    }
-
-    @Test
-    @DisplayName("Testing that the dao is not null.")
-    void getDAO() {
-        // Then
-        assertNotNull(headerDAO);
-    }
-
-    @Test
-    @DisplayName("Testing that entity manager factory is not null.")
-    void getEmf() {
-        // Then
-        assertNotNull(emf);
-    }
 
     @Test
     @DisplayName("Get all the headers.")

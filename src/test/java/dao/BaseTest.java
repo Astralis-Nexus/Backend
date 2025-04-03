@@ -2,13 +2,14 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import persistence.config.HibernateConfig;
+import persistence.model.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class BaseTest {
 
     protected static EntityManagerFactory emf;
@@ -40,6 +41,36 @@ public class BaseTest {
     public static void globalTearDown() {
     }
 
+    @BeforeEach
+    public void beforeEach() {
+        try (EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+
+            em.persist(new Role(Role.RoleName.REGULAR));
+            em.persist(new Role(Role.RoleName.NONE));
+
+            Role regularRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                    .setParameter("name", Role.RoleName.REGULAR)
+                    .getSingleResult();
+
+            Account account = new Account("username", "password", regularRole);
+            em.persist(account);
+
+            em.persist(new Footer("Header", "Description", regularRole));
+            Game game = new Game("username", account);
+            em.persist(game);
+
+            em.persist(new Header("username", regularRole));
+            em.persist(new Information("username", account));
+            em.persist(new License("username", "password", "username@email.dk", game));
+            em.persist(new QA("username", "password", account));
+
+            em.persist(new Todo(LocalDate.now(), "My Task", false, account));
+
+            em.getTransaction().commit();
+        }
+    }
+
     @AfterEach
     public void afterEach() {
         try (EntityManager em = emf.createEntityManager()) {
@@ -66,5 +97,19 @@ public class BaseTest {
             em.createNativeQuery("TRUNCATE TABLE Todo RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
         }
+    }
+
+    @Test
+    @DisplayName("Testing that the dao is not null.")
+    void getDAO() {
+        // Then
+        assertNotNull(accountDAO);
+    }
+
+    @Test
+    @DisplayName("Testing that entity manager factory is not null.")
+    void getEmf() {
+        // Then
+        assertNotNull(emf);
     }
 }

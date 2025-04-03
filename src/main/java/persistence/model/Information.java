@@ -14,6 +14,8 @@ public class Information {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(nullable = false)
     private String description;
 
     @ManyToOne

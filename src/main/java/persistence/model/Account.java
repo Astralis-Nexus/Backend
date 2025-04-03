@@ -22,7 +22,7 @@ public class Account {
 
     private String password;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_name", nullable = false)
     private Role role;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -38,19 +38,5 @@ public class Account {
         this.username = username;
         this.password = password;
         this.role = role;
-    }
-
-    public void removeInformation(Information information) {
-        if (information != null) {
-            informations.remove(information);
-            information.setAccount(null);
-        }
-    }
-
-    public void removeGame(Game game) {
-        if (game != null) {
-            games.remove(game);
-            game.setAccount(null);
-        }
     }
 }

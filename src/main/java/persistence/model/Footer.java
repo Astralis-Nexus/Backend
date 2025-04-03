@@ -15,7 +15,10 @@ public class Footer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private String header;
+
+    @Column(nullable = false)
     private String description;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
