@@ -1,9 +1,9 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.*;
-import persistence.config.HibernateConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import persistence.model.Account;
 import persistence.model.Role;
 import persistence.model.Todo;
@@ -13,16 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TodoDAOTest {
-    private static EntityManagerFactory emf;
-    private static TodoDAO dao;
-    private static Account account;
-
-    @BeforeAll
-    static void setUp() {
-        emf = HibernateConfig.getEntityManagerFactoryConfig(true);
-        dao = TodoDAO.getInstance(emf);
-    }
+class TodoDAOTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
@@ -36,23 +27,10 @@ class TodoDAOTest {
                     .setParameter("name", Role.RoleName.REGULAR)
                     .getSingleResult();
 
-            account = new Account("username", "password", regularRole);
+            Account account = new Account("username", "password", regularRole);
 
             em.persist(account);
             em.persist(new Todo(LocalDate.now(), "My Task", false, account));
-            em.getTransaction().commit();
-        }
-    }
-
-    @AfterEach
-    public void afterEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.createQuery("DELETE FROM Todo").executeUpdate();
-            em.createQuery("DELETE FROM Account").executeUpdate();
-            em.createQuery("DELETE FROM Role").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Todo RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
         }
     }
@@ -61,7 +39,7 @@ class TodoDAOTest {
     @DisplayName("Testing that the dao is not null.")
     void getDAO() {
         // Then
-        assertNotNull(dao);
+        assertNotNull(todoDAO);
     }
 
     @Test
@@ -79,7 +57,7 @@ class TodoDAOTest {
         int expectedSize = 1;
 
         // When
-        List<Todo> todos = dao.getAll();
+        List<Todo> todos = todoDAO.getAll();
 
         // Then
         assertFalse(todos.isEmpty());
@@ -90,11 +68,17 @@ class TodoDAOTest {
     @DisplayName("Create an todo.")
     public void create() {
         // Given
+        Account account;
+        try (EntityManager em = emf.createEntityManager()) {
+            account = em.createQuery("SELECT a FROM Account a WHERE a.username = :name", Account.class)
+                    .setParameter("name", "username")
+                    .getSingleResult();
+        }
         int expectedId = 2;
         Todo todoToCreate = new Todo(LocalDate.now(), "My Task2", false, account);
 
         // When
-        Todo todoCreated = dao.create(todoToCreate);
+        Todo todoCreated = todoDAO.create(todoToCreate);
 
         // Then
         assertNotNull(todoCreated);
@@ -115,7 +99,7 @@ class TodoDAOTest {
         }
 
         // When
-        Todo todoUpdated = dao.update(todoToUpdate);
+        Todo todoUpdated = todoDAO.update(todoToUpdate);
 
         // Then
         assertNotNull(todoUpdated);
@@ -129,7 +113,7 @@ class TodoDAOTest {
         int givenId = 1;
 
         // When
-        Todo todoFound = dao.getById(givenId);
+        Todo todoFound = todoDAO.getById(givenId);
 
         // Then
         assertNotNull(todoFound);
@@ -143,7 +127,7 @@ class TodoDAOTest {
         int givenId = 1;
 
         // When
-        Todo deletedTodo = dao.delete(givenId);
+        Todo deletedTodo = todoDAO.delete(givenId);
 
         // Then
         assertNotNull(deletedTodo);

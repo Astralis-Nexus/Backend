@@ -1,9 +1,9 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.*;
-import persistence.config.HibernateConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import persistence.model.Footer;
 import persistence.model.Role;
 
@@ -11,16 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FooterDAOTest {
-
-    private static EntityManagerFactory emf;
-    private static FooterDAO dao;
-
-    @BeforeAll
-    static void setUp() {
-        emf = HibernateConfig.getEntityManagerFactoryConfig(true);
-        dao = FooterDAO.getInstance(emf);
-    }
+class FooterDAOTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
@@ -32,22 +23,11 @@ class FooterDAOTest {
         }
     }
 
-    @AfterEach
-    public void afterEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.createQuery("DELETE FROM Footer ").executeUpdate();
-            em.createQuery("DELETE FROM Role ").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Footer RESTART IDENTITY CASCADE").executeUpdate();
-            em.getTransaction().commit();
-        }
-    }
-
     @Test
     @DisplayName("Testing that the dao is not null.")
     void getDAO() {
         // Then
-        assertNotNull(dao);
+        assertNotNull(footerDAO);
     }
 
     @Test
@@ -64,7 +44,7 @@ class FooterDAOTest {
         int expectedSize = 1;
 
         // When
-        List<Footer> footers = dao.getAll();
+        List<Footer> footers = footerDAO.getAll();
 
         // Then
         assertFalse(footers.isEmpty());
@@ -79,7 +59,7 @@ class FooterDAOTest {
         int expectedId = 2;
 
         // When
-        Footer footerCreated = dao.create(footerToCreate);
+        Footer footerCreated = footerDAO.create(footerToCreate);
 
         // Then
         assertNotNull(footerCreated);
@@ -94,7 +74,7 @@ class FooterDAOTest {
         int expectedId = 2;
 
         // When
-        Footer footerCreated = dao.create(footerToCreate);
+        Footer footerCreated = footerDAO.create(footerToCreate);
 
         // Then
         assertNotNull(footerCreated);
@@ -117,7 +97,7 @@ class FooterDAOTest {
         // When
         footerToUpdate.setHeader("test1)");
         footerToUpdate.setDescription("test2)");
-        Footer footerUpdated = dao.update(footerToUpdate);
+        Footer footerUpdated = footerDAO.update(footerToUpdate);
 
         // Then
         assertNotNull(footerUpdated);
@@ -131,7 +111,7 @@ class FooterDAOTest {
         int givenId = 1;
 
         // When
-        Footer footerFound = dao.getById(givenId);
+        Footer footerFound = footerDAO.getById(givenId);
 
         // Then
         assertNotNull(footerFound);
@@ -145,7 +125,7 @@ class FooterDAOTest {
         int givenId = 1;
 
         // When
-        Footer deletedFooter = dao.delete(givenId);
+        Footer deletedFooter = footerDAO.delete(givenId);
 
         // Then
         assertNotNull(deletedFooter);

@@ -1,9 +1,9 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.*;
-import persistence.config.HibernateConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import persistence.model.Account;
 import persistence.model.QA;
 import persistence.model.Role;
@@ -12,16 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class QADAOTest {
-    private static EntityManagerFactory emf;
-    private static QADAO dao;
-    private static Account account;
-
-    @BeforeAll
-    static void setUp() {
-        emf = HibernateConfig.getEntityManagerFactoryConfig(true);
-        dao = QADAO.getInstance(emf);
-    }
+class QADAOTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
@@ -35,7 +26,7 @@ class QADAOTest {
                     .setParameter("name", Role.RoleName.REGULAR)
                     .getSingleResult();
 
-            account = new Account("username", "password", regularRole);
+            Account account = new Account("username", "password", regularRole);
 
             em.persist(account);
 
@@ -45,24 +36,11 @@ class QADAOTest {
         }
     }
 
-    @AfterEach
-    public void afterEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.createQuery("DELETE FROM QA ").executeUpdate();
-            em.createQuery("DELETE FROM Account ").executeUpdate();
-            em.createQuery("DELETE FROM Role ").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE QA RESTART IDENTITY CASCADE").executeUpdate();
-            em.getTransaction().commit();
-        }
-    }
-
     @Test
     @DisplayName("Testing that the dao is not null.")
     void getDAO() {
         // Then
-        assertNotNull(dao);
+        assertNotNull(qaDAO);
     }
 
     @Test
@@ -79,7 +57,7 @@ class QADAOTest {
         int expectedSize = 1;
 
         // When
-        List<QA> qas = dao.getAll();
+        List<QA> qas = qaDAO.getAll();
 
         // Then
         assertFalse(qas.isEmpty());
@@ -90,11 +68,17 @@ class QADAOTest {
     @DisplayName("Create an qa with existing account.")
     public void create() {
         // Given
+        Account account;
+        try (EntityManager em = emf.createEntityManager()) {
+            account = em.createQuery("SELECT a FROM Account a WHERE a.username = :name", Account.class)
+                    .setParameter("name", "username")
+                    .getSingleResult();
+        }
         QA qaToCreate = new QA("user", "password", account);
         int expectedId = 2;
 
         // When
-        QA qaCreated = dao.create(qaToCreate);
+        QA qaCreated = qaDAO.create(qaToCreate);
 
         // Then
         assertNotNull(qaCreated);
@@ -117,7 +101,7 @@ class QADAOTest {
         // When
         qaToUpdate.setQuestion("test1)");
         qaToUpdate.setAnswer("test2)");
-        QA qaUpdated = dao.update(qaToUpdate);
+        QA qaUpdated = qaDAO.update(qaToUpdate);
 
         // Then
         assertNotNull(qaUpdated);
@@ -131,7 +115,7 @@ class QADAOTest {
         int givenId = 1;
 
         // When
-        QA qaFound = dao.getById(givenId);
+        QA qaFound = qaDAO.getById(givenId);
 
         // Then
         assertNotNull(qaFound);
@@ -145,7 +129,7 @@ class QADAOTest {
         int givenId = 1;
 
         // When
-        QA qaLicense = dao.delete(givenId);
+        QA qaLicense = qaDAO.delete(givenId);
 
         // Then
         assertNotNull(qaLicense);

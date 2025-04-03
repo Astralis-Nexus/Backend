@@ -1,9 +1,9 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.*;
-import persistence.config.HibernateConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import persistence.model.Account;
 import persistence.model.Game;
 import persistence.model.License;
@@ -13,16 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LicenseDAOTest {
-    private static EntityManagerFactory emf;
-    private static LicenseDAO dao;
-    private static Game game;
-
-    @BeforeAll
-    static void setUp() {
-        emf = HibernateConfig.getEntityManagerFactoryConfig(true);
-        dao = LicenseDAO.getInstance(emf);
-    }
+class LicenseDAOTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
@@ -40,24 +31,10 @@ class LicenseDAOTest {
 
             em.persist(account);
 
-            game = new Game("Test", account);
+            Game game = new Game("Test", account);
             em.persist(game);
             em.persist(
                     new License("username", "password", "username@email.dk", game));
-            em.getTransaction().commit();
-        }
-    }
-
-    @AfterEach
-    public void afterEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.createQuery("DELETE FROM License ").executeUpdate();
-            em.createQuery("DELETE FROM Game ").executeUpdate();
-            em.createQuery("DELETE FROM Account ").executeUpdate();
-            em.createQuery("DELETE FROM Role ").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE License RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
         }
     }
@@ -66,7 +43,7 @@ class LicenseDAOTest {
     @DisplayName("Testing that the dao is not null.")
     void getDAO() {
         // Then
-        assertNotNull(dao);
+        assertNotNull(licenseDAO);
     }
 
     @Test
@@ -83,7 +60,7 @@ class LicenseDAOTest {
         int expectedSize = 1;
 
         // When
-        List<License> licenses = dao.getAll();
+        List<License> licenses = licenseDAO.getAll();
 
         // Then
         assertFalse(licenses.isEmpty());
@@ -94,11 +71,17 @@ class LicenseDAOTest {
     @DisplayName("Create an license with existing game.")
     public void create() {
         // Given
+        Game game;
+        try (EntityManager em = emf.createEntityManager()) {
+            game = em.createQuery("SELECT g FROM Game g WHERE g.name = :name", Game.class)
+                    .setParameter("name", "Test")
+                    .getSingleResult();
+        }
         License licenseToCreate = new License("user", "password", "username@mail.dk", game);
         int expectedId = 2;
 
         // When
-        License licenseCreated = dao.create(licenseToCreate);
+        License licenseCreated = licenseDAO.create(licenseToCreate);
 
         // Then
         assertNotNull(licenseCreated);
@@ -123,7 +106,7 @@ class LicenseDAOTest {
         licenseToUpdate.setUsername("test2)");
         licenseToUpdate.setPassword("test3)");
         licenseToUpdate.setPcNumber(1);
-        License licenseUpdated = dao.update(licenseToUpdate);
+        License licenseUpdated = licenseDAO.update(licenseToUpdate);
 
         // Then
         assertNotNull(licenseUpdated);
@@ -137,7 +120,7 @@ class LicenseDAOTest {
         int givenId = 1;
 
         // When
-        License licenseFound = dao.getById(givenId);
+        License licenseFound = licenseDAO.getById(givenId);
 
         // Then
         assertNotNull(licenseFound);
@@ -151,7 +134,7 @@ class LicenseDAOTest {
         int givenId = 1;
 
         // When
-        License deletedLicense = dao.delete(givenId);
+        License deletedLicense = licenseDAO.delete(givenId);
 
         // Then
         assertNotNull(deletedLicense);

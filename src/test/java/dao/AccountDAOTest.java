@@ -1,9 +1,9 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.*;
-import persistence.config.HibernateConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import persistence.model.Account;
 import persistence.model.Role;
 
@@ -11,16 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AccountDAOTest {
-
-    private static EntityManagerFactory emf;
-    private static AccountDAO dao;
-
-    @BeforeAll
-    static void setUp() {
-        emf = HibernateConfig.getEntityManagerFactoryConfig(true);
-        dao = AccountDAO.getInstance(emf);
-    }
+class AccountDAOTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
@@ -46,30 +37,11 @@ class AccountDAOTest {
         }
     }
 
-    @AfterEach
-    public void afterEach() {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.createQuery("DELETE FROM Account ").executeUpdate();
-            em.createQuery("DELETE FROM Role ").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
-        }
-    }
-
     @Test
     @DisplayName("Testing that the dao is not null.")
     void getDAO() {
         // Then
-        assertNotNull(dao);
+        assertNotNull(accountDAO);
     }
 
     @Test
@@ -86,7 +58,7 @@ class AccountDAOTest {
         int expectedSize = 1;
 
         // When
-        List<Account> accounts = dao.getAll();
+        List<Account> accounts = accountDAO.getAll();
 
         // Then
         assertFalse(accounts.isEmpty());
@@ -101,7 +73,7 @@ class AccountDAOTest {
         int expectedId = 2;
 
         // When
-        Account accountCreated = dao.create(accountToCreate);
+        Account accountCreated = accountDAO.create(accountToCreate);
 
         // Then
         assertNotNull(accountCreated);
@@ -124,7 +96,7 @@ class AccountDAOTest {
         // When
         accountToUpdate.setUsername("test1)");
         accountToUpdate.setPassword("test2)");
-        Account accountUpdated = dao.update(accountToUpdate);
+        Account accountUpdated = accountDAO.update(accountToUpdate);
 
         // Then
         assertNotNull(accountUpdated);
@@ -138,7 +110,7 @@ class AccountDAOTest {
         int givenId = 1;
 
         // When
-        Account accountFound = dao.getById(givenId);
+        Account accountFound = accountDAO.getById(givenId);
 
         // Then
         assertNotNull(accountFound);
@@ -152,7 +124,7 @@ class AccountDAOTest {
         int givenId = 1;
 
         // When
-        Account deletedAccount = dao.delete(givenId);
+        Account deletedAccount = accountDAO.delete(givenId);
 
         // Then
         assertNotNull(deletedAccount);

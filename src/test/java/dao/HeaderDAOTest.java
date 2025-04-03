@@ -1,9 +1,9 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.*;
-import persistence.config.HibernateConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import persistence.model.Header;
 import persistence.model.Role;
 
@@ -11,16 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HeaderDAOTest {
-
-    private static EntityManagerFactory emf;
-    private static HeaderDAO dao;
-
-    @BeforeAll
-    static void setUp() {
-        emf = HibernateConfig.getEntityManagerFactoryConfig(true);
-        dao = HeaderDAO.getInstance(emf);
-    }
+class HeaderDAOTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
@@ -34,22 +25,11 @@ class HeaderDAOTest {
         }
     }
 
-    @AfterEach
-    public void afterEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.createQuery("DELETE FROM Header ").executeUpdate();
-            em.createQuery("DELETE FROM Role ").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Header RESTART IDENTITY CASCADE").executeUpdate();
-            em.getTransaction().commit();
-        }
-    }
-
     @Test
     @DisplayName("Testing that the dao is not null.")
     void getDAO() {
         // Then
-        assertNotNull(dao);
+        assertNotNull(headerDAO);
     }
 
     @Test
@@ -66,7 +46,7 @@ class HeaderDAOTest {
         int expectedSize = 1;
 
         // When
-        List<Header> headers = dao.getAll();
+        List<Header> headers = headerDAO.getAll();
 
         // Then
         assertFalse(headers.isEmpty());
@@ -81,7 +61,7 @@ class HeaderDAOTest {
         int expectedId = 2;
 
         // When
-        Header headerCreated = dao.create(headerToCreate);
+        Header headerCreated = headerDAO.create(headerToCreate);
 
         // Then
         assertNotNull(headerCreated);
@@ -103,7 +83,7 @@ class HeaderDAOTest {
 
         // When
         headerToUpdate.setName("test1)");
-        Header headerUpdated = dao.update(headerToUpdate);
+        Header headerUpdated = headerDAO.update(headerToUpdate);
 
         // Then
         assertNotNull(headerUpdated);
@@ -117,7 +97,7 @@ class HeaderDAOTest {
         int givenId = 1;
 
         // When
-        Header headerFound = dao.getById(givenId);
+        Header headerFound = headerDAO.getById(givenId);
 
         // Then
         assertNotNull(headerFound);
@@ -131,7 +111,7 @@ class HeaderDAOTest {
         int givenId = 1;
 
         // When
-        Header headerAccount = dao.delete(givenId);
+        Header headerAccount = headerDAO.delete(givenId);
 
         // Then
         assertNotNull(headerAccount);

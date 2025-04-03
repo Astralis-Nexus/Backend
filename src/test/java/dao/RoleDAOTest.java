@@ -1,24 +1,16 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.*;
-import persistence.config.HibernateConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import persistence.model.Role;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RoleDAOTest {
-    private static EntityManagerFactory emf;
-    private static RoleDAO dao;
-
-    @BeforeAll
-    static void setUp() {
-        emf = HibernateConfig.getEntityManagerFactoryConfig(true);
-        dao = RoleDAO.getInstance(emf);
-    }
+class RoleDAOTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
@@ -29,21 +21,11 @@ class RoleDAOTest {
         }
     }
 
-    @AfterEach
-    public void afterEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.createQuery("DELETE FROM Role ").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Role RESTART IDENTITY CASCADE").executeUpdate();
-            em.getTransaction().commit();
-        }
-    }
-
     @Test
     @DisplayName("Testing that the dao is not null.")
     void getDAO() {
         // Then
-        assertNotNull(dao);
+        assertNotNull(roleDAO);
     }
 
     @Test
@@ -60,7 +42,7 @@ class RoleDAOTest {
         int expectedSize = 1;
 
         // When
-        List<Role> roles = dao.getAll();
+        List<Role> roles = roleDAO.getAll();
 
         // Then
         assertFalse(roles.isEmpty());
@@ -76,7 +58,7 @@ class RoleDAOTest {
         String expectedId = Role.RoleName.REGULAR.toString();
 
         // When
-        Role roleCreated = dao.create(roleToCreate);
+        Role roleCreated = roleDAO.create(roleToCreate);
 
         // Then
         assertNotNull(roleCreated);
@@ -97,7 +79,7 @@ class RoleDAOTest {
         }
 
         // When
-        Role roleUpdated = dao.update(roleToUpdate);
+        Role roleUpdated = roleDAO.update(roleToUpdate);
 
         // Then
         assertNotNull(roleUpdated);
@@ -111,7 +93,7 @@ class RoleDAOTest {
         int givenId = 1;
 
         // When
-        Role roleFound = dao.getById(givenId);
+        Role roleFound = roleDAO.getById(givenId);
 
         // Then
         assertNotNull(roleFound);
@@ -125,7 +107,7 @@ class RoleDAOTest {
         int givenId = 1;
 
         // When
-        Role deletedRole = dao.delete(givenId);
+        Role deletedRole = roleDAO.delete(givenId);
 
         // Then
         assertNotNull(deletedRole);

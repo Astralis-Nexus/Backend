@@ -1,9 +1,9 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.*;
-import persistence.config.HibernateConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import persistence.model.Account;
 import persistence.model.Game;
 import persistence.model.Role;
@@ -12,18 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GameDAOTest {
-
-    private static EntityManagerFactory emf;
-    private static GameDAO gameDAO;
-    private static AccountDAO accountDAO;
-
-    @BeforeAll
-    static void setUp() {
-        emf = HibernateConfig.getEntityManagerFactoryConfig(true);
-        gameDAO = GameDAO.getInstance(emf);
-        accountDAO = AccountDAO.getInstance(emf);
-    }
+class GameDAOTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
@@ -42,19 +31,6 @@ class GameDAOTest {
             em.persist(account);
 
             em.persist(new Game("username", account));
-            em.getTransaction().commit();
-        }
-    }
-
-    @AfterEach
-    public void afterEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.createQuery("DELETE FROM Game ").executeUpdate();
-            em.createQuery("DELETE FROM Account ").executeUpdate();
-            em.createQuery("DELETE FROM Role ").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Game RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
         }
     }

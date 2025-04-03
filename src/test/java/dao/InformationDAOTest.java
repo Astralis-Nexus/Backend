@@ -1,9 +1,9 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.*;
-import persistence.config.HibernateConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import persistence.model.Account;
 import persistence.model.Information;
 import persistence.model.Role;
@@ -12,16 +12,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class InformationDAOTest {
-    private static EntityManagerFactory emf;
-    private static InformationDAO dao;
-    private static Account account;
+class InformationDAOTest extends BaseTest {
 
-    @BeforeAll
-    static void setUp() {
-        emf = HibernateConfig.getEntityManagerFactoryConfig(true);
-        dao = InformationDAO.getInstance(emf);
-    }
 
     @BeforeEach
     public void beforeEach() {
@@ -35,23 +27,10 @@ class InformationDAOTest {
                     .setParameter("name", Role.RoleName.REGULAR)
                     .getSingleResult();
 
-            account = new Account("username", "password", regularRole);
+            Account account = new Account("username", "password", regularRole);
 
             em.persist(account);
             em.persist(new Information("username", account));
-            em.getTransaction().commit();
-        }
-    }
-
-    @AfterEach
-    public void afterEach() {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.createQuery("DELETE FROM Information ").executeUpdate();
-            em.createQuery("DELETE FROM Account ").executeUpdate();
-            em.createQuery("DELETE FROM Role ").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
-            em.createNativeQuery("TRUNCATE TABLE Information RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
         }
     }
@@ -60,7 +39,7 @@ class InformationDAOTest {
     @DisplayName("Testing that the dao is not null.")
     void getDAO() {
         // Then
-        assertNotNull(dao);
+        assertNotNull(informationDAO);
     }
 
     @Test
@@ -77,7 +56,7 @@ class InformationDAOTest {
         int expectedSize = 1;
 
         // When
-        List<Information> informations = dao.getAll();
+        List<Information> informations = informationDAO.getAll();
 
         // Then
         assertFalse(informations.isEmpty());
@@ -88,11 +67,17 @@ class InformationDAOTest {
     @DisplayName("Create an information with existing account.")
     public void create() {
         // Given
+        Account account;
+        try (EntityManager em = emf.createEntityManager()) {
+            account = em.createQuery("SELECT a FROM Account a WHERE a.username = :name", Account.class)
+                    .setParameter("name", "username")
+                    .getSingleResult();
+        }
         Information informationToCreate = new Information("username", account);
         int expectedId = 2;
 
         // When
-        Information informationCreated = dao.create(informationToCreate);
+        Information informationCreated = informationDAO.create(informationToCreate);
 
         // Then
         assertNotNull(informationCreated);
@@ -114,7 +99,7 @@ class InformationDAOTest {
 
         // When
         informationToUpdate.setDescription("test1)");
-        Information informationUpdated = dao.update(informationToUpdate);
+        Information informationUpdated = informationDAO.update(informationToUpdate);
 
         // Then
         assertNotNull(informationUpdated);
@@ -128,7 +113,7 @@ class InformationDAOTest {
         int givenId = 1;
 
         // When
-        Information informationFound = dao.getById(givenId);
+        Information informationFound = informationDAO.getById(givenId);
 
         // Then
         assertNotNull(informationFound);
@@ -142,7 +127,7 @@ class InformationDAOTest {
         int givenId = 1;
 
         // When
-        Information deletedInformation = dao.delete(givenId);
+        Information deletedInformation = informationDAO.delete(givenId);
 
         // Then
         assertNotNull(deletedInformation);
