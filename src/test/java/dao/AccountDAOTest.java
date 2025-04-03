@@ -24,14 +24,16 @@ class AccountDAOTest {
 
     @AfterAll
     static void tearDown() {
-        emf.close();
+        if (emf != null && emf.isOpen()) {
+            emf.close();
+        }
     }
 
     @BeforeEach
     public void beforeEach() {
-        try (EntityManager em = emf.createEntityManager()) {
+        EntityManager em = emf.createEntityManager();
+        try {
             em.getTransaction().begin();
-
             em.persist(new Role(Role.RoleName.REGULAR));
             em.persist(new Role(Role.RoleName.ADMIN));
 
@@ -41,17 +43,32 @@ class AccountDAOTest {
 
             em.persist(new Account("username", "password", regularRole));
             em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
         }
     }
 
     @AfterEach
     public void afterEach() {
-        try (EntityManager em = emf.createEntityManager()) {
+        EntityManager em = emf.createEntityManager();
+        try {
             em.getTransaction().begin();
             em.createQuery("DELETE FROM Account ").executeUpdate();
             em.createQuery("DELETE FROM Role ").executeUpdate();
             em.createNativeQuery("TRUNCATE TABLE Account RESTART IDENTITY CASCADE").executeUpdate();
             em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
         }
     }
 
