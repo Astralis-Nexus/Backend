@@ -21,8 +21,8 @@ public class FooterRoute {
                 get("/", controller.getAll());
                 get("/{id}", controller.getById());
                 post("/", controller.create());
-                put("/{footer_id}", controller.update());
-                delete("/{footer_id}", controller.delete());
+                put("/{id}", controller.update());
+                delete("/{id}", controller.delete());
             });
         };
     }

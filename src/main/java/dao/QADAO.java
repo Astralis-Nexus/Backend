@@ -9,7 +9,7 @@ public class QADAO extends DAO<QA> {
     private static QADAO instance;
 
     private QADAO() {
-        super(QA.class, DateUtil.getDateFormat());
+        super(QA.class);
     }
 
     public static QADAO getInstance(EntityManagerFactory _emf) {

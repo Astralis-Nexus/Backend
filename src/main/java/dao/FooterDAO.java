@@ -9,7 +9,7 @@ public class FooterDAO extends DAO<Footer> {
     private static FooterDAO instance;
 
     private FooterDAO() {
-        super(Footer.class, DateUtil.getDateFormat());
+        super(Footer.class);
     }
 
     public static FooterDAO getInstance(EntityManagerFactory _emf) {

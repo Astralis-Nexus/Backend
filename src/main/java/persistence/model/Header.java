@@ -16,14 +16,14 @@ public class Header {
     private Integer id;
 
     @Column(nullable = false)
-    private String name;
+    private String text;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    public Header(String name, Role role) {
-        this.name = name;
+    public Header(String text, Role role) {
+        this.text = text;
         this.role = role;
     }
 }

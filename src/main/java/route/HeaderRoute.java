@@ -21,8 +21,8 @@ public class HeaderRoute {
                 get("/", controller.getAll());
                 get("/{id}", controller.getById());
                 post("/", controller.create());
-                put("/{header_id}", controller.update());
-                delete("/{header_id}", controller.delete());
+                put("/{id}", controller.update());
+                delete("/{id}", controller.delete());
             });
         };
     }

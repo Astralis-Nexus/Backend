@@ -6,6 +6,7 @@ import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Game;
+import utility.DateUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,8 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 public class GameController implements IController {
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static String timestamp = dateFormat.format(new Date());
+    private static String timestamp = DateUtil.getTimestamp();
     private final GameDAO dao;
 
     public GameController(EntityManagerFactory emf) {
@@ -40,7 +40,7 @@ public class GameController implements IController {
                     GameDTO gameDTO = converter(g);
                     gameDTOS.add(gameDTO);
                 }
-                ctx.json(dao.getAll());
+                ctx.json(gameDTOS);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }

@@ -9,7 +9,7 @@ public class LicenseDAO extends DAO<License> {
     private static LicenseDAO instance;
 
     private LicenseDAO() {
-        super(License.class, DateUtil.getDateFormat());
+        super(License.class);
     }
 
     public static LicenseDAO getInstance(EntityManagerFactory _emf) {

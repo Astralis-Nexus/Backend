@@ -31,7 +31,7 @@ class GameDAOTest extends BaseTest {
     @DisplayName("Create an game with existing account.")
     public void create() {
         // Given
-        Account account2 = new Account("username", "password", new Role(Role.RoleName.REGULAR));
+        Account account2 = new Account("i-username", "password", new Role(Role.RoleName.REGULAR));
         getDAO(AccountDAO.class).create(account2);
         Game gameToCreate = new Game("username1", account2);
         int expectedId = 2;

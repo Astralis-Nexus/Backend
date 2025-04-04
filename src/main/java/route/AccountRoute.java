@@ -21,8 +21,8 @@ public class AccountRoute {
                 get("/", controller.getAll());
                 get("/{id}", controller.getById());
                 post("/", controller.create());
-                put("/{account_id}", controller.update());
-                delete("/{account_id}", controller.delete());
+                put("/{id}", controller.update());
+                delete("/{id}", controller.delete());
             });
         };
     }

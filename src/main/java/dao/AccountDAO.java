@@ -9,7 +9,7 @@ public class AccountDAO extends DAO<Account> {
     private static AccountDAO instance;
 
     private AccountDAO() {
-        super(Account.class, DateUtil.getDateFormat());
+        super(Account.class);
     }
 
     public static AccountDAO getInstance(EntityManagerFactory _emf) {

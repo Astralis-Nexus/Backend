@@ -2,6 +2,7 @@ package dao;
 
 import jakarta.persistence.*;
 import persistence.model.*;
+import utility.DateUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,13 +11,13 @@ import java.util.List;
 public abstract class DAO<T> implements IDAO<T> {
 
     protected static EntityManagerFactory emf;
-    protected static String timestamp;// = dateFormat.format(new Date());
-    private static SimpleDateFormat dateFormat;// = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    protected static String timestamp = DateUtil.getTimestamp();// = dateFormat.format(new Date());
+    //private static SimpleDateFormat dateFormat = DateUtil.getDateFormat();// = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     private final Class<T> entityClass;
 
-    protected DAO(Class<T> entityClass, SimpleDateFormat dateFormat) {
-        this.dateFormat = dateFormat;
-        timestamp = dateFormat.format(new Date());
+    protected DAO(Class<T> entityClass) {
+       // this.dateFormat = dateFormat;
+      //  timestamp = dateFormat.format(new Date());
         this.entityClass = entityClass;
     }
 
@@ -43,20 +44,35 @@ public abstract class DAO<T> implements IDAO<T> {
     public T create(T entity) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-
-            // Dynamically handle role if present
-            try {
-                var getRoleMethod = entity.getClass().getMethod("getRole");
+            if (entity instanceof Account account) {
                 Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
-                        .setParameter("name", (Role.RoleName) getRoleMethod.invoke(entity).getClass().getMethod("getName").invoke(getRoleMethod.invoke(entity)))
+                        .setParameter("name", account.getRole().getName())
+                        .getSingleResult();
+                account.setRole(role);
+
+            } if (entity instanceof Footer footer) {
+                Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                        .setParameter("name", footer.getRole().getName())
+                        .getSingleResult();
+                footer.setRole(role);
+            } else if (entity instanceof Game game) {
+                Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                        .setParameter("name", game.getAccount().getRole().getName())
                         .getSingleResult();
 
-                var setRoleMethod = entity.getClass().getMethod("setRole", Role.class);
-                setRoleMethod.invoke(entity, role);
-            } catch (NoSuchMethodException ignored) {
-                // Entity does not have getRole/setRole methods, skip role handling
-            }
+                Account account = em.createQuery("SELECT r FROM Account r WHERE r.username = :name", Account.class)
+                        .setParameter("name", game.getAccount().getUsername())
+                        .getSingleResult();
 
+                account.setRole(role);
+                game.setAccount(account);
+            } else if (entity instanceof Header header){
+                Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                        .setParameter("name", header.getRole().getName())
+                        .getSingleResult();
+
+                header.setRole(role);
+            }
             em.persist(entity);
             em.getTransaction().commit();
             return entity;
@@ -82,6 +98,75 @@ public abstract class DAO<T> implements IDAO<T> {
     public T update(T entity) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
+            if (entity != null) {
+                if (entity instanceof Account account) {
+                    Role role = em.createQuery(
+                                    "SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                            .setParameter("name", account.getRole().getName())
+                            .getSingleResult();
+
+                    Account existingAccount = em.find(Account.class, account.getId());
+
+                    if (account.getUsername() == null) {
+                        account.setUsername(existingAccount.getUsername());
+                    }
+                    if (account.getPassword() == null) {
+                        account.setPassword(existingAccount.getPassword());
+                    }
+
+                    account.setQas(existingAccount.getQas());
+                    account.setGames(existingAccount.getGames());
+                    account.setInformations(existingAccount.getInformations());
+                    account.setTodos(existingAccount.getTodos());
+
+                    account.setRole(role);
+                } else if (entity instanceof Footer footer){
+                    Role role = em.createQuery(
+                                    "SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                            .setParameter("name", footer.getRole().getName())
+                            .getSingleResult();
+
+                    Footer existingFooter = em.find(Footer.class, footer.getId());
+
+                    if (footer.getHeader() == null) {
+                        footer.setHeader(existingFooter.getHeader());
+                    }
+                    if (footer.getDescription() == null) {
+                        footer.setDescription(existingFooter.getDescription());
+                    }
+                    footer.setRole(role);
+                } else if (entity instanceof Game game) {
+                    Role role = em.createQuery(
+                                    "SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                            .setParameter("name", game.getAccount().getRole().getName())
+                            .getSingleResult();
+
+                    Account account = em.createQuery("SELECT r FROM Account r WHERE r.username = :name", Account.class)
+                            .setParameter("name", game.getAccount().getUsername())
+                            .getSingleResult();
+
+                    Game existingGame = em.find(Game.class, game.getId());
+
+                    if (game.getName() == null){
+                        game.setName(existingGame.getName());
+                    }
+
+                    account.setRole(role);
+                    game.setAccount(account);
+                } else if (entity instanceof Header header) {
+                    Role role = em.createQuery(
+                                    "SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                            .setParameter("name", header.getRole().getName())
+                            .getSingleResult();
+
+                    Header existingHeader = em.find(Header.class, header.getId());
+
+                    if (header.getText() == null){
+                        header.setText(existingHeader.getText());
+                    }
+                    header.setRole(role);
+                }
+            }
             T updatedEntity = em.merge(entity);
             em.getTransaction().commit();
             return updatedEntity;
@@ -126,6 +211,8 @@ public abstract class DAO<T> implements IDAO<T> {
                     //qa.setAccount(null);
                 } else if (entity instanceof Todo todo) {
                     todo.getAccount().getTodos().remove(todo);
+                } else if (entity instanceof License license) {
+                    license.getGame().getLicenses().remove(license);
                 }
                 em.remove(entity);
                 em.getTransaction().commit();

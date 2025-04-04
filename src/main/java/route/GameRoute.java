@@ -21,8 +21,8 @@ public class GameRoute {
                 get("/", controller.getAll());
                 get("/{id}", controller.getById());
                 post("/", controller.create());
-                put("/{game_id}", controller.update());
-                delete("/{game_id}", controller.delete());
+                put("/{id}", controller.update());
+                delete("/{id}", controller.delete());
             });
         };
     }

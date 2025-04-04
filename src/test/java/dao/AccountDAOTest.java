@@ -30,7 +30,7 @@ class AccountDAOTest extends BaseTest {
     @DisplayName("Create an account with existing role.")
     public void create() {
         // Given
-        Account accountToCreate = new Account("username", "password", new Role(Role.RoleName.REGULAR));
+        Account accountToCreate = new Account("i-username", "password", new Role(Role.RoleName.REGULAR));
         int expectedId = 2;
 
         // When

@@ -9,7 +9,7 @@ public class InformationDAO extends DAO<Information> {
     private static InformationDAO instance;
 
     private InformationDAO() {
-        super(Information.class, DateUtil.getDateFormat());
+        super(Information.class);
     }
 
     public static InformationDAO getInstance(EntityManagerFactory _emf) {

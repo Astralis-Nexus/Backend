@@ -3,6 +3,8 @@ package route;
 import io.javalin.apibuilder.EndpointGroup;
 import jakarta.persistence.EntityManagerFactory;
 
+import static io.javalin.apibuilder.ApiBuilder.path;
+
 public class Route {
     AccountRoute accountRoute;
     FooterRoute footerRoute;
@@ -26,17 +28,17 @@ public class Route {
         todoRoute = new TodoRoute(emf);
     }
 
-    private EndpointGroup combineRoutes(EndpointGroup... endpointGroups) {
-        return () -> {
-            for (EndpointGroup group : endpointGroups) {
-                group.addEndpoints();
-            }
-        };
-    }
-
     public EndpointGroup addRoutes() {
-        return combineRoutes(accountRoute.itemRoutes(), footerRoute.itemRoutes(), gameRoute.itemRoutes(),
-                headerRoute.itemRoutes(), informationRoute.itemRoutes(),
-                licenseRoute.itemRoutes(), qaRoute.itemRoutes(), roleRoute.itemRoutes(), todoRoute.itemRoutes());
+        return () -> {
+            path("", accountRoute.itemRoutes());
+            path("", footerRoute.itemRoutes());
+            path("", gameRoute.itemRoutes());
+            path("", headerRoute.itemRoutes());
+            path("", informationRoute.itemRoutes());
+            path("", licenseRoute.itemRoutes());
+            path("", qaRoute.itemRoutes());
+            path("", roleRoute.itemRoutes());
+            path("", todoRoute.itemRoutes());
+        };
     }
 }

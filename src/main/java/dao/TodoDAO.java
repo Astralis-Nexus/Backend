@@ -9,7 +9,7 @@ public class TodoDAO extends DAO<Todo> {
     private static TodoDAO instance;
 
     private TodoDAO() {
-        super(Todo.class, DateUtil.getDateFormat());
+        super(Todo.class);
     }
 
     public static TodoDAO getInstance(EntityManagerFactory _emf) {

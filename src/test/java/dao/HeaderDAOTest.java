@@ -55,7 +55,7 @@ class HeaderDAOTest extends BaseTest {
         }
 
         // When
-        headerToUpdate.setName("test1)");
+        headerToUpdate.setText("test1)");
         Header headerUpdated = getDAO(HeaderDAO.class).update(headerToUpdate);
 
         // Then

@@ -6,15 +6,14 @@ import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Header;
+import utility.DateUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class HeaderController implements IController {
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static String timestamp = dateFormat.format(new Date());
+   // private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static String timestamp = DateUtil.getTimestamp();
     private final HeaderDAO dao;
 
     public HeaderController(EntityManagerFactory emf) {
@@ -24,7 +23,7 @@ public class HeaderController implements IController {
     public HeaderDTO converter(Header header) {
         return HeaderDTO.builder()
                 .id(header.getId())
-                .name(header.getName())
+                .text(header.getText())
                 .role(header.getRole())
                 .build();
     }
@@ -39,7 +38,7 @@ public class HeaderController implements IController {
                     HeaderDTO headerDTO = converter(h);
                     headerDTOS.add(headerDTO);
                 }
-                ctx.json(dao.getAll());
+                ctx.json(headerDTOS);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -63,9 +62,10 @@ public class HeaderController implements IController {
     @Override
     public Handler create() {
         return ctx -> {
-            Header headerCreated = ctx.bodyAsClass(Header.class);
-            if (headerCreated != null) {
-                HeaderDTO headerDTO = converter(headerCreated);
+            Header inputHeader = ctx.bodyAsClass(Header.class);
+            if (inputHeader != null) {
+                Header createdHeader = dao.create(inputHeader);
+                HeaderDTO headerDTO = converter(createdHeader);
                 ctx.json(headerDTO);
             } else {
                 throw new ApiException(500, "No data found. ", timestamp);

@@ -9,7 +9,7 @@ public class RoleDAO extends DAO<Role> {
     private static RoleDAO instance;
 
     private RoleDAO() {
-        super(Role.class, DateUtil.getDateFormat());
+        super(Role.class);
     }
 
     public static RoleDAO getInstance(EntityManagerFactory _emf) {

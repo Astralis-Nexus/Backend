@@ -10,6 +10,6 @@ import persistence.model.Role;
 @AllArgsConstructor
 public class HeaderDTO {
     private Integer id;
-    private String name;
+    private String text;
     private Role role;
 }

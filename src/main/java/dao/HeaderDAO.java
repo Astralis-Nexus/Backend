@@ -9,7 +9,7 @@ public class HeaderDAO extends DAO<Header> {
     private static HeaderDAO instance;
 
     private HeaderDAO() {
-        super(Header.class, DateUtil.getDateFormat());
+        super(Header.class);
     }
 
     public static HeaderDAO getInstance(EntityManagerFactory _emf) {

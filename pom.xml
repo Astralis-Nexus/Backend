@@ -102,8 +102,8 @@
         <!--  Hamcrest  -->
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>java-hamcrest</artifactId>
-            <version>2.0.0.0</version>
+            <artifactId>hamcrest</artifactId>
+            <version>3.0-rc1</version>
             <scope>test</scope>
         </dependency>
 
