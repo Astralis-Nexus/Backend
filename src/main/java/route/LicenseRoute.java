@@ -21,8 +21,8 @@ public class LicenseRoute {
                 get("/", controller.getAll());
                 get("/{id}", controller.getById());
                 post("/", controller.create());
-                put("/{license_id}", controller.update());
-                delete("/{license_id}", controller.delete());
+                put("/{id}", controller.update());
+                delete("/{id}", controller.delete());
             });
         };
     }

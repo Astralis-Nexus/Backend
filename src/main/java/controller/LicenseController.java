@@ -6,6 +6,7 @@ import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.License;
+import utility.DateUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ import java.util.Date;
 import java.util.List;
 
 public class LicenseController implements IController {
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static String timestamp = dateFormat.format(new Date());
+    //private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static String timestamp = DateUtil.getTimestamp();
     private final LicenseDAO dao;
 
     public LicenseController(EntityManagerFactory emf) {
@@ -42,7 +43,7 @@ public class LicenseController implements IController {
                     LicenseDTO licenseDTO = converter(l);
                     licenseDTOS.add(licenseDTO);
                 }
-                ctx.json(dao.getAll());
+                ctx.json(licenseDTOS);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -68,7 +69,8 @@ public class LicenseController implements IController {
         return ctx -> {
             License licenseCreated = ctx.bodyAsClass(License.class);
             if (licenseCreated != null) {
-                LicenseDTO licenseDTO = converter(licenseCreated);
+                License license = dao.create(licenseCreated);
+                LicenseDTO licenseDTO = converter(license);
                 ctx.json(licenseDTO);
             } else {
                 throw new ApiException(500, "No data found. ", timestamp);

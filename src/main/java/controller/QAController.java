@@ -6,6 +6,7 @@ import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.QA;
+import utility.DateUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,8 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 public class QAController implements IController {
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static String timestamp = dateFormat.format(new Date());
+    private static String timestamp = DateUtil.getTimestamp();
     private final QADAO dao;
 
     public QAController(EntityManagerFactory emf) {
@@ -40,7 +40,7 @@ public class QAController implements IController {
                     QADTO qadto = converter(q);
                     qadtos.add(qadto);
                 }
-                ctx.json(dao.getAll());
+                ctx.json(qadtos);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -66,7 +66,8 @@ public class QAController implements IController {
         return ctx -> {
             QA qaCreated = ctx.bodyAsClass(QA.class);
             if (qaCreated != null) {
-                QADTO qadto = converter(qaCreated);
+                QA qa = dao.create(qaCreated);
+                QADTO qadto = converter(qa);
                 ctx.json(qadto);
             } else {
                 throw new ApiException(500, "No data found. ", timestamp);

@@ -6,6 +6,7 @@ import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Information;
+import utility.DateUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ import java.util.Date;
 import java.util.List;
 
 public class InformationController implements IController {
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static String timestamp = dateFormat.format(new Date());
+    //private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static String timestamp = DateUtil.getTimestamp();
     private final InformationDAO dao;
 
     public InformationController(EntityManagerFactory emf) {
@@ -39,7 +40,7 @@ public class InformationController implements IController {
                     InformationDTO informationDTO = converter(i);
                     informationDTOS.add(informationDTO);
                 }
-                ctx.json(dao.getAll());
+                ctx.json(informationDTOS);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -65,7 +66,8 @@ public class InformationController implements IController {
         return ctx -> {
             Information informationCreated = ctx.bodyAsClass(Information.class);
             if (informationCreated != null) {
-                InformationDTO informationDTO = converter(informationCreated);
+                Information information = dao.create(informationCreated);
+                InformationDTO informationDTO = converter(information);
                 ctx.json(informationDTO);
             } else {
                 throw new ApiException(500, "No data found. ", timestamp);

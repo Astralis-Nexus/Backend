@@ -37,4 +37,12 @@ public class License {
         this.email = email;
         this.game = game;
     }
+
+    public License(String username, String password, String email, Integer pcNumber, Game game) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.pcNumber = pcNumber;
+        this.game = game;
+    }
 }

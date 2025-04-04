@@ -6,6 +6,7 @@ import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Todo;
+import utility.DateUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ import java.util.Date;
 import java.util.List;
 
 public class TodoController implements IController {
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static String timestamp = dateFormat.format(new Date());
+    //private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static String timestamp = DateUtil.getTimestamp();
     private final TodoDAO dao;
 
     public TodoController(EntityManagerFactory emf) {
@@ -42,7 +43,7 @@ public class TodoController implements IController {
                     TodoDTO todoDTO = converter(t);
                     todoDTOS.add(todoDTO);
                 }
-                ctx.json(dao.getAll());
+                ctx.json(todoDTOS);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -68,7 +69,8 @@ public class TodoController implements IController {
         return ctx -> {
             Todo todoCreated = ctx.bodyAsClass(Todo.class);
             if (todoCreated != null) {
-                TodoDTO todoDTO = converter(todoCreated);
+                Todo todo = dao.create(todoCreated);
+                TodoDTO todoDTO = converter(todo);
                 ctx.json(todoDTO);
             } else {
                 throw new ApiException(500, "No data found. ", timestamp);

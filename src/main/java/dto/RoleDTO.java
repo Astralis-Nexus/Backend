@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoleDTO {
+    private int id;
     private String name;
     private List<Header> headers;
     private List<Footer> footers;

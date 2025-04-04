@@ -72,6 +72,56 @@ public abstract class DAO<T> implements IDAO<T> {
                         .getSingleResult();
 
                 header.setRole(role);
+            } else if (entity instanceof Information information){
+                Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                        .setParameter("name", information.getAccount().getRole().getName())
+                        .getSingleResult();
+
+                Account account = em.createQuery("SELECT r FROM Account r WHERE r.username = :name", Account.class)
+                        .setParameter("name", information.getAccount().getUsername())
+                        .getSingleResult();
+
+                account.setRole(role);
+                information.setAccount(account);
+
+            } else if (entity instanceof License license){
+                Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                        .setParameter("name", license.getGame().getAccount().getRole().getName())
+                        .getSingleResult();
+
+                Account account = em.createQuery("SELECT r FROM Account r WHERE r.username = :name", Account.class)
+                        .setParameter("name", license.getGame().getAccount().getUsername())
+                        .getSingleResult();
+
+                Game game = em.createQuery("SELECT r FROM Game r WHERE r.name = :name", Game.class)
+                        .setParameter("name", license.getGame().getName())
+                        .getSingleResult();
+
+                account.setRole(role);
+                game.setAccount(account);
+                license.setGame(game);
+            } else if (entity instanceof QA qa) {
+                Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                        .setParameter("name", qa.getAccount().getRole().getName())
+                        .getSingleResult();
+
+                Account account = em.createQuery("SELECT r FROM Account r WHERE r.username = :name", Account.class)
+                        .setParameter("name", qa.getAccount().getUsername())
+                        .getSingleResult();
+
+                account.setRole(role);
+                qa.setAccount(account);
+            } else if (entity instanceof Todo todo) {
+                Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                        .setParameter("name", todo.getAccount().getRole().getName())
+                        .getSingleResult();
+
+                Account account = em.createQuery("SELECT r FROM Account r WHERE r.username = :name", Account.class)
+                        .setParameter("name", todo.getAccount().getUsername())
+                        .getSingleResult();
+
+                account.setRole(role);
+                todo.setAccount(account);
             }
             em.persist(entity);
             em.getTransaction().commit();
@@ -165,6 +215,105 @@ public abstract class DAO<T> implements IDAO<T> {
                         header.setText(existingHeader.getText());
                     }
                     header.setRole(role);
+                } else if (entity instanceof Information information) {
+
+                    Role role = em.createQuery(
+                                    "SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                            .setParameter("name", information.getAccount().getRole().getName())
+                            .getSingleResult();
+
+                    Account account = em.createQuery("SELECT r FROM Account r WHERE r.username = :name", Account.class)
+                            .setParameter("name", information.getAccount().getUsername())
+                            .getSingleResult();
+
+                    Information existingInformation = em.find(Information.class, information.getId());
+
+                    if (information.getDescription() == null){
+                        information.setDescription(existingInformation.getDescription());
+                    }
+                    account.setRole(role);
+                    information.setAccount(account);
+                } else if (entity instanceof QA qa) {
+
+                    Role role = em.createQuery(
+                                    "SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                            .setParameter("name", qa.getAccount().getRole().getName())
+                            .getSingleResult();
+
+                    Account account = em.createQuery("SELECT r FROM Account r WHERE r.username = :name", Account.class)
+                            .setParameter("name", qa.getAccount().getUsername())
+                            .getSingleResult();
+
+                    QA existingQa = em.find(QA.class, qa.getId());
+
+                    if (qa.getQuestion() == null){
+                        qa.setQuestion(existingQa.getQuestion());
+                    }
+
+                    if (qa.getAnswer() == null){
+                        qa.setAnswer(existingQa.getAnswer());
+                    }
+
+                    account.setRole(role);
+                    qa.setAccount(account);
+                } else if (entity instanceof  License license){
+                    Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                            .setParameter("name", license.getGame().getAccount().getRole().getName())
+                            .getSingleResult();
+
+                    Account account = em.createQuery("SELECT r FROM Account r WHERE r.username = :name", Account.class)
+                            .setParameter("name", license.getGame().getAccount().getUsername())
+                            .getSingleResult();
+
+                    Game game = em.createQuery("SELECT r FROM Game r WHERE r.name = :name", Game.class)
+                            .setParameter("name", license.getGame().getName())
+                            .getSingleResult();
+
+                    account.setRole(role);
+                    game.setAccount(account);
+                    license.setGame(game);
+
+                    License existingLicense = em.find(License.class, license.getId());
+
+                    if (license.getUsername() == null){
+                        license.setUsername(existingLicense.getUsername());
+                    }
+                    if (license.getPassword() == null){
+                        license.setPassword(existingLicense.getPassword());
+
+                    }
+                    if (license.getEmail() == null){
+                        license.setEmail(existingLicense.getEmail());
+                    }
+                    if (license.getPcNumber() != existingLicense.getPcNumber()){
+                        license.setPcNumber(existingLicense.getPcNumber());
+                    }
+                } else if (entity instanceof Role role ){
+                    Role existingRole = em.find(Role.class, role.getId());
+
+                    if (role.getHeaders() == null){
+                        role.setHeaders(existingRole.getHeaders());
+                    }
+                    if (role.getFooters() == null){
+                        role.setFooters(existingRole.getFooters());
+                    }
+                } else if (entity instanceof Todo todo ){
+                    Todo existingTodo = em.find(Todo.class, todo.getId());
+
+                    Role role = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                            .setParameter("name", todo.getAccount().getRole().getName())
+                            .getSingleResult();
+
+                    Account account = em.createQuery("SELECT r FROM Account r WHERE r.username = :name", Account.class)
+                            .setParameter("name", todo.getAccount().getUsername())
+                            .getSingleResult();
+
+                    account.setRole(role);
+                    todo.setAccount(account);
+
+                    if (todo.getDescription() == null){
+                        todo.setDescription(existingTodo.getDescription());
+                    }
                 }
             }
             T updatedEntity = em.merge(entity);
@@ -213,6 +362,8 @@ public abstract class DAO<T> implements IDAO<T> {
                     todo.getAccount().getTodos().remove(todo);
                 } else if (entity instanceof License license) {
                     license.getGame().getLicenses().remove(license);
+                } else if (entity instanceof Todo todo) {
+                    todo.setAccount(null);
                 }
                 em.remove(entity);
                 em.getTransaction().commit();
