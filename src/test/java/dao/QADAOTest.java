@@ -33,10 +33,10 @@ class QADAOTest extends BaseTest {
         Account account;
         try (EntityManager em = emf.createEntityManager()) {
             account = em.createQuery("SELECT a FROM Account a WHERE a.username = :name", Account.class)
-                    .setParameter("name", "username")
+                    .setParameter("name", "jack123")
                     .getSingleResult();
         }
-        QA qaToCreate = new QA("user", "password", account);
+        QA qaToCreate = new QA("Where is the speakers?", "In the basement.", account);
         int expectedId = 2;
 
         // When

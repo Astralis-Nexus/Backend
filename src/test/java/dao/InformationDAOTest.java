@@ -33,10 +33,10 @@ class InformationDAOTest extends BaseTest {
         Account account;
         try (EntityManager em = emf.createEntityManager()) {
             account = em.createQuery("SELECT a FROM Account a WHERE a.username = :name", Account.class)
-                    .setParameter("name", "username")
+                    .setParameter("name", "jack123")
                     .getSingleResult();
         }
-        Information informationToCreate = new Information("username", account);
+        Information informationToCreate = new Information("New computers coming soon.", account);
         int expectedId = 2;
 
         // When

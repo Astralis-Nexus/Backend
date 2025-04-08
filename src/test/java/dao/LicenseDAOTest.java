@@ -33,7 +33,7 @@ class LicenseDAOTest extends BaseTest {
         Game game;
         try (EntityManager em = emf.createEntityManager()) {
             game = em.createQuery("SELECT g FROM Game g WHERE g.name = :name", Game.class)
-                    .setParameter("name", "username")
+                    .setParameter("name", "Counter-strike 2")
                     .getSingleResult();
         }
         License licenseToCreate = new License("user", "password", "username@mail.dk", game);
