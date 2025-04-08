@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameController implements IController {
-    private static String timestamp = DateUtil.getTimestamp();
+    private static final String timestamp = DateUtil.getTimestamp();
     private final GameDAO dao;
 
     public GameController(EntityManagerFactory emf) {

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QAController implements IController {
-    private static String timestamp = DateUtil.getTimestamp();
+    private static final String timestamp = DateUtil.getTimestamp();
     private final QADAO dao;
 
     public QAController(EntityManagerFactory emf) {
@@ -33,12 +33,12 @@ public class QAController implements IController {
         return ctx -> {
             if (!dao.getAll().isEmpty()) {
                 List<QA> qas = dao.getAll();
-                List<QADTO> qadtos = new ArrayList<>();
+                List<QADTO> qaDTOS = new ArrayList<>();
                 for (QA q : qas) {
                     QADTO qadto = converter(q);
-                    qadtos.add(qadto);
+                    qaDTOS.add(qadto);
                 }
-                ctx.json(qadtos);
+                ctx.json(qaDTOS);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }

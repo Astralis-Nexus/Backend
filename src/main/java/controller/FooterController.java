@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FooterController implements IController {
-    private static String timestamp = DateUtil.getTimestamp();
+    private static final String timestamp = DateUtil.getTimestamp();
     private final FooterDAO dao;
 
     public FooterController(EntityManagerFactory emf) {

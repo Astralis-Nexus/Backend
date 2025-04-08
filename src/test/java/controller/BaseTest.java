@@ -27,7 +27,6 @@ public class BaseTest {
             app = ApplicationConfig.getInstance();
             app.initiateServer()
                     .startServer(7007)
-                    .setExceptionHandlers()
                     .setRoute(route.addRoutes());
         }
     }

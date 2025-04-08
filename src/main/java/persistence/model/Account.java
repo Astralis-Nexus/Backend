@@ -46,4 +46,8 @@ public class Account {
         this.password = password;
         this.role = role;
     }
+
+    public Account(String username) {
+        this.username = username;
+    }
 }
