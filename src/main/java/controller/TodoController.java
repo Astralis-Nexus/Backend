@@ -8,14 +8,11 @@ import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Todo;
 import utility.DateUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class TodoController implements IController {
-    //private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static String timestamp = DateUtil.getTimestamp();
+    private static final String timestamp = DateUtil.getTimestamp();
     private final TodoDAO dao;
 
     public TodoController(EntityManagerFactory emf) {

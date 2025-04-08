@@ -2,7 +2,6 @@ package dao;
 
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Footer;
-import utility.DateUtil;
 
 public class FooterDAO extends DAO<Footer> {
 

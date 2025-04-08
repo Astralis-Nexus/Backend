@@ -9,10 +9,8 @@ import persistence.model.Information;
 import persistence.model.Role;
 
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.*;
 
-class InformationControllerTest extends BaseTest{
+class InformationControllerTest extends BaseTest {
 
     @Test
     @DisplayName("Get all informations")
@@ -30,7 +28,7 @@ class InformationControllerTest extends BaseTest{
     @Test
     @DisplayName("Creating an information")
     void create() {
-      RestAssured
+        RestAssured
                 .given()
                 .contentType(ContentType.JSON)
                 .body(new Information("username", new Account("username", "password", new Role(Role.RoleName.REGULAR))))

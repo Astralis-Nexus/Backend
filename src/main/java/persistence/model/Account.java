@@ -55,13 +55,6 @@ public class Account {
         //String salt = BCrypt.gensalt();
         //this.password = BCrypt.hashpw(password, salt);
     }
-       public Set<String> getRolesAsStrings() {
-       Set<String> rolesAsStrings = new HashSet<>();
-        if (role != null) {
-        rolesAsStrings.add(role.getName().toString());
-    }
-    return rolesAsStrings;
-}
-
+  
     
 }

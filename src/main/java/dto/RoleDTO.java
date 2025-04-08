@@ -16,8 +16,4 @@ public class RoleDTO {
     private String name;
     private List<Header> headers;
     private List<Footer> footers;
-
-    public RoleDTO(String name) {
-        this.name = name;
-    }
 }

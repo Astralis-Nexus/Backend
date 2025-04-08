@@ -2,19 +2,14 @@ package controller;
 
 import io.javalin.http.ContentType;
 import io.restassured.RestAssured;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import persistence.model.Account;
 import persistence.model.Footer;
-import persistence.model.Header;
 import persistence.model.Role;
 
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.*;
 
-class FooterControllerTest extends BaseTest{
+class FooterControllerTest extends BaseTest {
 
     @Test
     @DisplayName("Get all footers")

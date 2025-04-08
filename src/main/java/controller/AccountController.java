@@ -9,15 +9,13 @@ import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Account;
 import utility.DateUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
 
 public class AccountController implements IController {
-    private static String timestamp = DateUtil.getTimestamp();
+    private static final String timestamp = DateUtil.getTimestamp();
     private final AccountDAO dao;
 
     public AccountController(EntityManagerFactory emf) {
