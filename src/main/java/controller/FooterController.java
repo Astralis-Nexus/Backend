@@ -8,9 +8,7 @@ import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Footer;
 import utility.DateUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class FooterController implements IController {

@@ -2,7 +2,6 @@ package dao;
 
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Role;
-import utility.DateUtil;
 
 public class RoleDAO extends DAO<Role> {
 

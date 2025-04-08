@@ -1,8 +1,6 @@
 package controller;
 
 import application.config.ApplicationConfig;
-import dao.AccountDAO;
-import io.javalin.Javalin;
 import io.restassured.RestAssured;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

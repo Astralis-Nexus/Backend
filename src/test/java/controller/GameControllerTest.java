@@ -5,15 +5,12 @@ import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import persistence.model.Account;
-import persistence.model.Footer;
 import persistence.model.Game;
 import persistence.model.Role;
 
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
 
-class GameControllerTest extends BaseTest{
+class GameControllerTest extends BaseTest {
 
     @Test
     @DisplayName("Get all games")

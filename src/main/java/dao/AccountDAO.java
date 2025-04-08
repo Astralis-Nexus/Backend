@@ -2,7 +2,6 @@ package dao;
 
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Account;
-import utility.DateUtil;
 
 public class AccountDAO extends DAO<Account> {
 

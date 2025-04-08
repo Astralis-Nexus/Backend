@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import persistence.model.*;
 import utility.DateUtil;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,15 +16,6 @@ public abstract class DAO<T> implements IDAO<T> {
 
     protected DAO(Class<T> entityClass) {
         this.entityClass = entityClass;
-    }
-
-    private static <D extends DAO<?>> D getInstance(EntityManagerFactory _emf, Class<D> daoClass) {
-        try {
-            emf = _emf;
-            return daoClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create DAO instance", e);
-        }
     }
 
     @Override
@@ -101,7 +93,6 @@ public abstract class DAO<T> implements IDAO<T> {
         account.setRole(role);
         return account;
     }
-
 
     @Override
     public T getById(int id) {
@@ -223,47 +214,49 @@ public abstract class DAO<T> implements IDAO<T> {
     public T delete(int id) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-
             T entity = em.find(entityClass, id);
-
             if (entity != null) {
                 if (entity instanceof Footer footer) {
-                    footer.getRole().getFooters().remove(footer);
+                    removeFromCollection(footer.getRole().getFooters(), footer);
                 } else if (entity instanceof Game game) {
                     Account account = em.find(Account.class, game.getAccount().getId());
-                    account.getGames().remove(game);
+                    removeFromCollection(account.getGames(), game);
                 } else if (entity instanceof Role role) {
-
-                    Role noneRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
-                            .setParameter("name", Role.RoleName.NONE)
-                            .getSingleResult();
-
+                    Role noneRole = getRoleByName(em, Role.RoleName.NONE);
                     List<Account> accounts = em.createQuery("SELECT a FROM Account a WHERE a.role = :role", Account.class)
                             .setParameter("role", role)
                             .getResultList();
-
                     for (Account account : accounts) {
                         account.setRole(noneRole);
                         em.merge(account);
                     }
                 } else if (entity instanceof Header header) {
-                    header.getRole().getHeaders().remove(header);
+                    removeFromCollection(header.getRole().getHeaders(), header);
                 } else if (entity instanceof Information information) {
-                    information.getAccount().getInformations().remove(information);
+                    removeFromCollection(information.getAccount().getInformations(), information);
                 } else if (entity instanceof QA qa) {
-                    qa.getAccount().getQas().remove(qa);
+                    removeFromCollection(qa.getAccount().getQas(), qa);
                 } else if (entity instanceof Todo todo) {
-                    todo.getAccount().getTodos().remove(todo);
+                    removeFromCollection(todo.getAccount().getTodos(), todo);
                 } else if (entity instanceof License license) {
-                    license.getGame().getLicenses().remove(license);
+                    removeFromCollection(license.getGame().getLicenses(), license);
                 }
                 em.remove(entity);
                 em.getTransaction().commit();
             }
             return entity;
         } catch (PersistenceException e) {
-            throw new PersistenceException(timestamp + ": Error deleting " + entityClass.getSimpleName() + " with id: " + id);
+            throw new PersistenceException(
+                    timestamp + ": Error deleting " + entityClass.getSimpleName() + " with id: " + id
+            );
         }
     }
+
+    private <E> void removeFromCollection(Collection<E> collection, E entity) {
+        if (collection != null) {
+            collection.remove(entity);
+        }
+    }
+
 }
 

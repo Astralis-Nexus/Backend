@@ -2,9 +2,7 @@ package data;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import persistence.config.HibernateConfig;
 import persistence.model.*;
-import route.Route;
 
 import java.time.LocalDate;
 

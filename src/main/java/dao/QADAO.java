@@ -2,7 +2,6 @@ package dao;
 
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.QA;
-import utility.DateUtil;
 
 public class QADAO extends DAO<QA> {
 

@@ -2,7 +2,6 @@ package dao;
 
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Todo;
-import utility.DateUtil;
 
 public class TodoDAO extends DAO<Todo> {
 
