@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManagerFactory;
 import static io.javalin.apibuilder.ApiBuilder.path;
 
 public class Route {
+    SecurityRoute securityRoute;
     AccountRoute accountRoute;
     FooterRoute footerRoute;
     GameRoute gameRoute;
@@ -26,10 +27,12 @@ public class Route {
         qaRoute = new QARoute(emf);
         roleRoute = new RoleRoute(emf);
         todoRoute = new TodoRoute(emf);
+        securityRoute = new SecurityRoute(emf); 
     }
 
     public EndpointGroup addRoutes() {
         return () -> {
+            path("", securityRoute.authRoutes());
             path("", accountRoute.itemRoutes());
             path("", footerRoute.itemRoutes());
             path("", gameRoute.itemRoutes());
