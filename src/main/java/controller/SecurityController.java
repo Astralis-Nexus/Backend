@@ -13,16 +13,15 @@ import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
 import persistence.model.Account;
+import persistence.model.Role;
 import utility.DateUtil;
 import java.text.ParseException;
 import java.util.*;
 import exception.ApiException;
 public class SecurityController {
-    
-    
-    
+
     private static final String SECRET_KEY = "YOUR_SECRET_KEY_HERE_MAKE_IT_LONG_AND_SECURE_32_BYTES";
-    private static String timestamp = DateUtil.getTimestamp();
+    private static final String timestamp = DateUtil.getTimestamp();
     private final AccountDAO accountDAO;
     private final AccountController accountController;
 
@@ -38,19 +37,18 @@ public class SecurityController {
             if (verified == null) {
                 throw new ApiException(401, "Wrong login info.", timestamp);
             } else {
-                String token = createToken(verified.getUsername(), verified.getRolesAsStrings());
-
+                String token = createToken(verified.getUsername(), verified.getRole());
                 ctx.status(200).json(new TokenDTO(token, verified));
             }
         };
     }
     
 
-    private String createToken(String username, Set<String> roles) throws JOSEException {
+    private String createToken(String username, Role role) throws JOSEException {
         // Prepare JWT with claims
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(username)
-                .claim("roles", roles)
+                .claim("role", role)
                 .claim("username", username)
                 .issueTime(new Date())
                 .expirationTime(new Date(System.currentTimeMillis() + 7200000)) // 2 hours
