@@ -3,8 +3,11 @@ package persistence.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -46,8 +49,12 @@ public class Account {
         this.password = password;
         this.role = role;
     }
-
-    public Account(String username) {
+    public Account(String username, String password) {
         this.username = username;
+        this.password = password;
+        //String salt = BCrypt.gensalt();
+        //this.password = BCrypt.hashpw(password, salt);
     }
+  
+    
 }
