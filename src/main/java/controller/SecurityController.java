@@ -112,7 +112,7 @@ public class SecurityController {
             handler.handle(ctx);
         };
     }
-    
+
 
     public JWTClaimsSet decodeToken(String token) {
         try {
