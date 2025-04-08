@@ -11,23 +11,19 @@ import dto.TokenDTO;
 import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.NoResultException;
 import persistence.model.Account;
 import persistence.model.Role;
 import utility.DateUtil;
 import java.text.ParseException;
 import java.util.*;
-import exception.ApiException;
 public class SecurityController {
 
     private static final String SECRET_KEY = "YOUR_SECRET_KEY_HERE_MAKE_IT_LONG_AND_SECURE_32_BYTES";
     private static final String timestamp = DateUtil.getTimestamp();
     private final AccountDAO accountDAO;
-    private final AccountController accountController;
 
     public SecurityController(EntityManagerFactory emf) {
         this.accountDAO = AccountDAO.getInstance(emf);
-        this.accountController = new AccountController(emf);
     }
 
     public Handler login() {
@@ -116,6 +112,7 @@ public class SecurityController {
             handler.handle(ctx);
         };
     }
+    
 
     public JWTClaimsSet decodeToken(String token) {
         try {
