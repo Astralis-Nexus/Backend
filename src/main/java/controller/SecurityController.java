@@ -34,7 +34,7 @@ public class SecurityController {
                 throw new ApiException(401, "Wrong login info.", timestamp);
             } else {
                 String token = createToken(verified.getUsername(), verified.getRole());
-                ctx.status(200).json(new TokenDTO(token, verified));
+                ctx.status(200).json(new TokenDTO(token, verified.getUsername(),verified.getRole().getName().toString()));
             }
         };
     }
@@ -44,7 +44,7 @@ public class SecurityController {
         // Prepare JWT with claims
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(username)
-                .claim("role", role)
+                .claim("role", role.getName().toString())
                 .claim("username", username)
                 .issueTime(new Date())
                 .expirationTime(new Date(System.currentTimeMillis() + 7200000)) // 2 hours

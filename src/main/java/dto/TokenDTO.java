@@ -14,9 +14,12 @@ public class TokenDTO {
     private String username;
     private String role;
 
-    public TokenDTO(String token, Account account) {
-        this.token = token;
-        this.username = account.getUsername();
-        this.role=account.getRole().toString();
+    @Override
+    public String toString() {
+        return "TokenDTO{" +
+                "token='" + token + '\'' +
+                ", username='" + username + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }

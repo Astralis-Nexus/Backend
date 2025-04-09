@@ -14,10 +14,9 @@ public class SecurityRoute {
     }
 
     public EndpointGroup authRoutes() {
-        return () -> {
-            path("/security", () -> {
-                post("/login", securityController.login());
-            });
-        };
+        return () -> path("/security", () -> {
+            post("/login", securityController.login());
+            post("/register", securityController.login());
+        });
     }
 }

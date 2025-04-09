@@ -13,8 +13,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
+@AllArgsConstructor
 @Table(name = "account")
 
 public class Account {
@@ -55,6 +55,8 @@ public class Account {
         //String salt = BCrypt.gensalt();
         //this.password = BCrypt.hashpw(password, salt);
     }
+
+
   
     
 }
