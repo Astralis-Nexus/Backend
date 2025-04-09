@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Entity
@@ -34,6 +35,7 @@ public class Role {
     public Role(RoleName name) {
         this.name = name;
     }
+  
 
     public enum RoleName {
         NONE,

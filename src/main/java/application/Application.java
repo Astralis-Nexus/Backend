@@ -1,7 +1,7 @@
 package application;
 
 import application.config.ApplicationConfig;
-import data.PopulateData;
+//import data.PopulateData;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.config.HibernateConfig;
 import route.Route;
@@ -12,7 +12,7 @@ public class Application {
 
         Route route = new Route(emf);
         // Uncomment if data needed for the database
-        //PopulateData.populateData(emf);
+       // PopulateData.populateData(emf);
 
         ApplicationConfig app = ApplicationConfig.getInstance();
         app.initiateServer()
