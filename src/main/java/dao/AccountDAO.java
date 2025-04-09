@@ -3,12 +3,7 @@ package dao;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
-import org.mindrot.jbcrypt.BCrypt;
 import persistence.model.Account;
-import java.util.List;
-
-
 
 public class AccountDAO extends DAO<Account> {
 
@@ -34,7 +29,10 @@ public class AccountDAO extends DAO<Account> {
                     .setParameter("username", username)
                     .getSingleResult();
 
-            return password.equals(account.getPassword()) ? account : null;
+            if (account.verifyPassword(password)) {
+                return account;
+            }
+            return null;
         } catch (NoResultException e) {
             return null;
         }

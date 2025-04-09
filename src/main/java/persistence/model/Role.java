@@ -2,7 +2,10 @@ package persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -33,18 +36,17 @@ public class Role {
     public Role(RoleName name) {
         this.name = name;
     }
-  
-
-    public enum RoleName {
-        NONE,
-        REGULAR,
-        ADMIN
-    }
 
     @Override
     public String toString() {
         return "Role{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    public enum RoleName {
+        NONE,
+        REGULAR,
+        ADMIN
     }
 }

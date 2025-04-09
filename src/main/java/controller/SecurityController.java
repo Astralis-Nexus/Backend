@@ -1,6 +1,8 @@
 package controller;
 
-import com.nimbusds.jose.*;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -14,8 +16,11 @@ import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Account;
 import persistence.model.Role;
 import utility.DateUtil;
+
 import java.text.ParseException;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+
 public class SecurityController {
 
     private static final String SECRET_KEY = "YOUR_SECRET_KEY_HERE_MAKE_IT_LONG_AND_SECURE_32_BYTES";
@@ -34,11 +39,11 @@ public class SecurityController {
                 throw new ApiException(401, "Wrong login info.", timestamp);
             } else {
                 String token = createToken(verified.getUsername(), verified.getRole());
-                ctx.status(200).json(new TokenDTO(token, verified.getUsername(),verified.getRole().getName().toString()));
+                ctx.status(200).json(new TokenDTO(token, verified.getUsername(), verified.getRole().getName().toString()));
             }
         };
     }
-    
+
 
     private String createToken(String username, Role role) throws JOSEException {
         // Prepare JWT with claims
@@ -52,7 +57,7 @@ public class SecurityController {
 
         // Create a signed JWT
         SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
-        
+
         // Sign the JWT
         signedJWT.sign(new MACSigner(SECRET_KEY));
 
@@ -62,18 +67,18 @@ public class SecurityController {
     public boolean tokenIsValid(String token) {
         try {
             SignedJWT jwt = SignedJWT.parse(token);
-            
+
             // Verify the signature
             if (!jwt.verify(new MACVerifier(SECRET_KEY))) {
                 throw new ApiException(403, "Invalid token signature", timestamp);
             }
-            
+
             // Check expiration
             Date expirationTime = jwt.getJWTClaimsSet().getExpirationTime();
             if (expirationTime != null && expirationTime.before(new Date())) {
                 throw new ApiException(403, "Token has expired", timestamp);
             }
-            
+
             return true;
         } catch (ParseException e) {
             throw new ApiException(403, "Invalid token format", timestamp);
@@ -88,7 +93,7 @@ public class SecurityController {
             if (!tokenIsValid(token)) {
                 return false;
             }
-            
+
             // Get roles from token
             List<String> roles = jwt.getJWTClaimsSet().getStringListClaim("roles");
             return roles != null && roles.contains(requiredRole);
