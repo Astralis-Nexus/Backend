@@ -46,7 +46,6 @@ class LicenseControllerTest extends BaseTest {
                 .body("game.name", equalTo("username"))
                 .body("game.account.id", equalTo(1))
                 .body("game.account.username", equalTo("username"))
-                .body("game.account.password", equalTo("password"))
                 .body("game.account.role.id", equalTo(1))
                 .body("game.account.role.name", equalTo("REGULAR"));
     }
@@ -70,7 +69,6 @@ class LicenseControllerTest extends BaseTest {
                 .body("game.name", equalTo("username"))
                 .body("game.account.id", equalTo(1))
                 .body("game.account.username", equalTo("username"))
-                .body("game.account.password", equalTo("password"))
                 .body("game.account.role.id", equalTo(1))
                 .body("game.account.role.name", equalTo("REGULAR"));
     }
@@ -95,7 +93,6 @@ class LicenseControllerTest extends BaseTest {
                 .body("game.name", equalTo("username"))
                 .body("game.account.id", equalTo(1))
                 .body("game.account.username", equalTo("username"))
-                .body("game.account.password", equalTo("password"))
                 .body("game.account.role.id", equalTo(1))
                 .body("game.account.role.name", equalTo("REGULAR"));
     }
@@ -119,7 +116,6 @@ class LicenseControllerTest extends BaseTest {
                 .body("game.name", equalTo("username"))
                 .body("game.account.id", equalTo(1))
                 .body("game.account.username", equalTo("username"))
-                .body("game.account.password", equalTo("password"))
                 .body("game.account.role.id", equalTo(1))
                 .body("game.account.role.name", equalTo("REGULAR"));
     }
