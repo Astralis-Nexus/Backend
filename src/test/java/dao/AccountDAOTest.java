@@ -55,8 +55,8 @@ class AccountDAOTest extends BaseTest {
         }
 
         // When
-        accountToUpdate.setUsername("test1)");
-        accountToUpdate.setPassword("test2)");
+        accountToUpdate.setUsername("jack38");
+        accountToUpdate.setPassword("123456AABB");
         Account accountUpdated = getDAO(AccountDAO.class).update(accountToUpdate);
 
         // Then

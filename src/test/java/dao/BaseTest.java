@@ -40,27 +40,21 @@ public class BaseTest {
     public void beforeEach() {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-
             em.persist(new Role(Role.RoleName.REGULAR));
             em.persist(new Role(Role.RoleName.NONE));
             Role regularRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
                     .setParameter("name", Role.RoleName.REGULAR)
                     .getSingleResult();
-
-            em.persist(new Footer("Header", "Description", regularRole));
-            em.persist(new Header("username", regularRole));
-
-            Account account = new Account("username", "password", regularRole);
+            em.persist(new Footer("Contact information", "Boss: 1234", regularRole));
+            em.persist(new Header("Home", regularRole));
+            Account account = new Account("jack123", "123456Abc", regularRole);
             em.persist(account);
-
-            em.persist(new Information("username", account));
-            em.persist(new QA("username", "password", account));
-            em.persist(new Todo(LocalDate.now(), "My Task", false, account));
-
-            Game game = new Game("username", account);
+            em.persist(new Information("Remember to throw out the trash!", account));
+            em.persist(new QA("Where is the trash bags?", "In the basement.", account));
+            em.persist(new Todo(LocalDate.now(), "Clean the basement.", false, account));
+            Game game = new Game("Counter-strike 2", account);
             em.persist(game);
-
-            em.persist(new License("username", "password", "username@email.dk", game));
+            em.persist(new License("jack99", "123456Abc", "jack99@email.dk", game));
             em.getTransaction().commit();
         }
     }

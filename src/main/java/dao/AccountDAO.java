@@ -2,12 +2,8 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.TypedQuery;
-import org.mindrot.jbcrypt.BCrypt;
+import jakarta.persistence.NoResultException;
 import persistence.model.Account;
-import java.util.List;
-
-
 
 public class AccountDAO extends DAO<Account> {
 
@@ -28,24 +24,17 @@ public class AccountDAO extends DAO<Account> {
 
     public Account verifyLogin(String username, String password) {
         try (EntityManager em = emf.createEntityManager()) {
-            TypedQuery<Account> query = em.createQuery(
-                "SELECT a FROM Account a WHERE a.username = :username", Account.class
-            );
-            query.setParameter("username", username);
+            Account account = em.createQuery(
+                            "SELECT a FROM Account a WHERE a.username = :username", Account.class)
+                    .setParameter("username", username)
+                    .getSingleResult();
 
-            List<Account> accounts = query.getResultList();
-            if (accounts.isEmpty()) {
-                return null;
+            if (account.verifyPassword(password)) {
+                return account;
             }
-
-            Account account = accounts.get(0);
-            if (!password.equals(account.getPassword())) {
-
-                return null;
-            }
-
-            return account;
+            return null;
+        } catch (NoResultException e) {
+            return null;
         }
-        
     }
 }

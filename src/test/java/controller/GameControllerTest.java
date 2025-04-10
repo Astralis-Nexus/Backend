@@ -42,7 +42,6 @@ class GameControllerTest extends BaseTest {
                 .body("account.role.name", anyOf(equalTo("REGULAR"), equalTo("ADMIN"), equalTo("NONE")))
                 .body("account.id", equalTo(1))
                 .body("account.username", equalTo("username"))
-                .body("account.password", equalTo("password"))
                 .body("account.role.name", equalTo("REGULAR"))
                 .body("account.role.id", equalTo(1));
     }
@@ -78,7 +77,6 @@ class GameControllerTest extends BaseTest {
                 .body("account.role.name", anyOf(equalTo("REGULAR"), equalTo("ADMIN"), equalTo("NONE")))
                 .body("account.id", equalTo(1))
                 .body("account.username", equalTo("username"))
-                .body("account.password", equalTo("password"))
                 .body("account.role.name", equalTo("REGULAR"))
                 .body("account.role.id", equalTo(1));
     }
@@ -99,7 +97,6 @@ class GameControllerTest extends BaseTest {
                 .body("account.role.name", anyOf(equalTo("REGULAR"), equalTo("ADMIN"), equalTo("NONE")))
                 .body("account.id", equalTo(1))
                 .body("account.username", equalTo("username"))
-                .body("account.password", equalTo("password"))
                 .body("account.role.name", equalTo("REGULAR"))
                 .body("account.role.id", equalTo(1));
     }

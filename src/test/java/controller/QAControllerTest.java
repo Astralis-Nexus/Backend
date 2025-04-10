@@ -41,7 +41,6 @@ class QAControllerTest extends BaseTest {
                 .body("answer", equalTo("password"))
                 .body("account.id", equalTo(1))
                 .body("account.username", equalTo("username"))
-                .body("account.password", equalTo("password"))
                 .body("account.role.id", equalTo(1))
                 .body("account.role.name", equalTo("REGULAR"));
     }
@@ -61,7 +60,6 @@ class QAControllerTest extends BaseTest {
                 .body("answer", equalTo("password"))
                 .body("account.id", equalTo(1))
                 .body("account.username", equalTo("username"))
-                .body("account.password", equalTo("password"))
                 .body("account.role.id", equalTo(1))
                 .body("account.role.name", equalTo("REGULAR"));
     }
@@ -82,7 +80,6 @@ class QAControllerTest extends BaseTest {
                 .body("answer", equalTo("password2"))
                 .body("account.id", equalTo(1))
                 .body("account.username", equalTo("username"))
-                .body("account.password", equalTo("password"))
                 .body("account.role.id", equalTo(1))
                 .body("account.role.name", equalTo("REGULAR"));
     }
@@ -102,7 +99,6 @@ class QAControllerTest extends BaseTest {
                 .body("answer", equalTo("password"))
                 .body("account.id", equalTo(1))
                 .body("account.username", equalTo("username"))
-                .body("account.password", equalTo("password"))
                 .body("account.role.id", equalTo(1))
                 .body("account.role.name", equalTo("REGULAR"));
     }

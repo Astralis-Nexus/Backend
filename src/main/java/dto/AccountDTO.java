@@ -1,11 +1,11 @@
-
 package dto;
+
 import lombok.*;
 import persistence.model.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 @Builder
 @Getter
@@ -35,7 +35,7 @@ public class AccountDTO {
     public Set<String> getRoles() {
         Set<String> roles = new HashSet<>();
         if (role != null) {
-            roles.add(role.getName().toString()); 
+            roles.add(role.getName().toString());
         }
         return roles;
     }

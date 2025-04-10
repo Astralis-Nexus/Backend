@@ -27,7 +27,7 @@ public class Route {
         qaRoute = new QARoute(emf);
         roleRoute = new RoleRoute(emf);
         todoRoute = new TodoRoute(emf);
-        securityRoute = new SecurityRoute(emf); 
+        securityRoute = new SecurityRoute(emf);
     }
 
     public EndpointGroup addRoutes() {

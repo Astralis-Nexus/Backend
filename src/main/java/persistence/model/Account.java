@@ -5,29 +5,26 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
+@AllArgsConstructor
 @Table(name = "account")
 
 public class Account {
+    @Transient
+    String salt = BCrypt.gensalt();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     @Column(unique = true, nullable = false)
     private String username;
-
     @Column(nullable = false)
     private String password;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_name", nullable = false)
     private Role role;
@@ -46,15 +43,17 @@ public class Account {
 
     public Account(String username, String password, Role role) {
         this.username = username;
-        this.password = password;
+        this.password = BCrypt.hashpw(password, salt);
         this.role = role;
     }
+
     public Account(String username, String password) {
         this.username = username;
-        this.password = password;
-        //String salt = BCrypt.gensalt();
-        //this.password = BCrypt.hashpw(password, salt);
+        this.password = BCrypt.hashpw(password, salt);
     }
-  
-    
+
+    public boolean verifyPassword(String password) {
+        return BCrypt.checkpw(password, this.password);
+    }
+
 }

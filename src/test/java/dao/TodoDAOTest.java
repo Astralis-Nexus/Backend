@@ -34,11 +34,11 @@ class TodoDAOTest extends BaseTest {
         Account account;
         try (EntityManager em = emf.createEntityManager()) {
             account = em.createQuery("SELECT a FROM Account a WHERE a.username = :name", Account.class)
-                    .setParameter("name", "username")
+                    .setParameter("name", "jack123")
                     .getSingleResult();
         }
         int expectedId = 2;
-        Todo todoToCreate = new Todo(LocalDate.now(), "My Task2", false, account);
+        Todo todoToCreate = new Todo(LocalDate.now(), "Change the screens.", false, account);
 
         // When
         Todo todoCreated = getDAO(TodoDAO.class).create(todoToCreate);
