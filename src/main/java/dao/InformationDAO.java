@@ -2,7 +2,6 @@ package dao;
 
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Information;
-import utility.DateUtil;
 
 public class InformationDAO extends DAO<Information> {
 

@@ -2,7 +2,6 @@ package dao;
 
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.License;
-import utility.DateUtil;
 
 public class LicenseDAO extends DAO<License> {
 

@@ -7,23 +7,19 @@ import jakarta.persistence.EntityManagerFactory;
 import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class InformationRoute {
-    private static EntityManagerFactory emf;
     private static InformationController controller;
 
     public InformationRoute(EntityManagerFactory emf) {
-        this.emf = emf;
         controller = new InformationController(emf);
     }
 
     public EndpointGroup itemRoutes() {
-        return () -> {
-            path("/informations", () -> {
-                get("/", controller.getAll());
-                get("/{id}", controller.getById());
-                post("/", controller.create());
-                put("/{id}", controller.update());
-                delete("/{id}", controller.delete());
-            });
-        };
+        return () -> path("/informations", () -> {
+            get("/", controller.getAll());
+            get("/{id}", controller.getById());
+            post("/", controller.create());
+            put("/{id}", controller.update());
+            delete("/{id}", controller.delete());
+        });
     }
 }

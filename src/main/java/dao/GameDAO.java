@@ -2,7 +2,6 @@ package dao;
 
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Game;
-import utility.DateUtil;
 
 public class GameDAO extends DAO<Game> {
 

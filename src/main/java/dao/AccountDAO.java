@@ -5,8 +5,9 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 import org.mindrot.jbcrypt.BCrypt;
 import persistence.model.Account;
-
 import java.util.List;
+
+
 
 public class AccountDAO extends DAO<Account> {
 

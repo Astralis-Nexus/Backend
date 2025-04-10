@@ -10,9 +10,7 @@ import persistence.model.Todo;
 
 import java.time.LocalDate;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.equalTo;
 
 class TodoControllerTest extends BaseTest {
 

@@ -4,12 +4,13 @@ import io.javalin.http.ContentType;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import persistence.model.*;
+import persistence.model.Account;
+import persistence.model.QA;
+import persistence.model.Role;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
 
-class QAControllerTest extends BaseTest{
+class QAControllerTest extends BaseTest {
 
     @Test
     @DisplayName("Get all licences")
