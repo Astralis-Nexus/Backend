@@ -2,12 +2,7 @@
 'https://plantuml.com/class-diagram
 
 'Entities
-class Medarbejder {
-Name
-Role
-}
-
-class Admin {
+class Worker {
 Name
 Role
 }
@@ -28,9 +23,8 @@ Password
 }
 
 'Relations
-Medarbejder "0..*" -- "1" Todo
-Admin "0..*" -- "1" Todo
-Admin "0..*" -- "1" Game
+Worker "0..*" -- "0..*" Todo
+Worker "0..*" -- "1" Game
 Game "0..*" -- "1" License
 
 hide methods
