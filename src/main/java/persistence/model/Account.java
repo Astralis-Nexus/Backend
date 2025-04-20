@@ -43,17 +43,20 @@ public class Account {
 
     public Account(String username, String password, Role role) {
         this.username = username;
-        this.password = BCrypt.hashpw(password, salt);
+        this.password = password;
+       // this.password = BCrypt.hashpw(password, salt);
         this.role = role;
     }
 
     public Account(String username, String password) {
         this.username = username;
-        this.password = BCrypt.hashpw(password, salt);
+       // this.password = BCrypt.hashpw(password, salt);
     }
 
     public boolean verifyPassword(String password) {
-        return BCrypt.checkpw(password, this.password);
+        return this.password.equals(password);
+
+        //return BCrypt.checkpw(password, this.password);
     }
 
 }
