@@ -1,5 +1,7 @@
 package controller;
 
+import dto.AccountDTO;
+import io.javalin.http.ContentType;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,10 +13,12 @@ class SecurityControllerTest extends BaseTest {
     @Test
     @DisplayName("Login with an existing account.")
     void login() {
-        RestAssured.
-                given()
-                .contentType("application/json")
-                .body("{\"username\": \"username\", \"password\": \"password\"}")
+        AccountDTO loginDTO = new AccountDTO("username", "password");
+
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(loginDTO)  // <-- passing the object
                 .when()
                 .post("/security/login")
                 .then()

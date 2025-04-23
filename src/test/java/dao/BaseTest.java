@@ -54,7 +54,7 @@ public class BaseTest {
             em.persist(new Todo(LocalDate.now(), "Clean the basement.", false, account));
             Game game = new Game("Counter-strike 2", account);
             em.persist(game);
-            em.persist(new License("jack99", "123456Abc", "jack99@email.dk", game));
+            em.persist(new License("jack99", "123456Abc", "jack99@email.dk", License.LicenseStatus.ACTIVE,game));
             em.getTransaction().commit();
         }
     }

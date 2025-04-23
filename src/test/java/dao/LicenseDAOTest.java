@@ -36,7 +36,7 @@ class LicenseDAOTest extends BaseTest {
                     .setParameter("name", "Counter-strike 2")
                     .getSingleResult();
         }
-        License licenseToCreate = new License("user", "password", "username@mail.dk", game);
+        License licenseToCreate = new License("user", "password", "username@mail.dk", License.LicenseStatus.INACTIVE,game);
         int expectedId = 2;
 
         // When

@@ -5,7 +5,9 @@ import dto.GameDTO;
 import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
+import persistence.model.Account;
 import persistence.model.Game;
+import persistence.model.Role;
 import utility.DateUtil;
 
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ public class GameController implements IController {
                 .id(game.getId())
                 .name(game.getName())
                 .licenses(game.getLicenses())
-                .accountId(game.getAccount().getId()) 
+                .account(game.getAccount())
                 .build();
     }
 
@@ -63,27 +65,35 @@ public class GameController implements IController {
     public Handler create() {
         return ctx -> {
             Game incoming = ctx.bodyAsClass(Game.class);
-    
-            if (incoming == null || incoming.getName() == null || incoming.getAccount() == null || incoming.getAccount().getId() == null) {
-                throw new ApiException(400, "Game name and accountId are required.", timestamp);
+
+            if (incoming == null) {
+                throw new ApiException(400, "Missing game data.", timestamp);
             }
-    
-            int accountId = incoming.getAccount().getId();
-    
-            var account = dao.getAccountById(accountId);
-            if (account == null) {
-                throw new ApiException(404, "Account not found with ID: " + accountId, timestamp);
+            if (incoming.getName() == null) {
+                throw new ApiException(400, "Missing game name.", timestamp);
             }
-    
+            if (incoming.getAccount() == null) {
+                throw new ApiException(400, "Missing account ID.", timestamp);
+            }
+
+            Account account = dao.getAccountByUsername(incoming.getAccount().getUsername());
+            Role role = dao.getRoleByName(account.getRole().getName());
+            account.setRole(role);
+
+            /*if (account == null) {
+                throw new ApiException(404, "Account not found with ID: " + incoming.getAccount().getId(), timestamp);
+            }*/
+
             Game game = new Game(incoming.getName(), account);
-    
+            game.setAccount(account);
             Game createdGame = dao.create(game);
             GameDTO gameDTO = converter(createdGame);
-    
-            ctx.json(gameDTO);
+
+            ctx.status(200).json(gameDTO);
         };
     }
-    
+
+
 
     @Override
     public Handler update() {

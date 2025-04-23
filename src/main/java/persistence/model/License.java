@@ -30,8 +30,8 @@ public class License {
     private Integer pcNumber = 0;
 
     @ManyToOne
-    @JoinColumn(name = "game_id", nullable = false)
-     @JsonIgnore
+    @JoinColumn(name = "game_id")
+     //@JsonIgnore
     private Game game;
 
     @Enumerated(EnumType.STRING)
@@ -39,11 +39,12 @@ public class License {
     private LicenseStatus status;
 
 
-    public License(String username, String password, String email, Game game) {
+    public License(String username, String password, String email, LicenseStatus status, Game game) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.game = game;
+        this.status = status;
     }
 
     public License(String username, String password, String email, Integer pcNumber,  Game game ) {

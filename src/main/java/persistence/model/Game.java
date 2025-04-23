@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "licenses")
+@ToString(exclude = {"licenses"})
 @Table(name = "game")
 public class Game {
     @Id
@@ -32,5 +32,15 @@ public class Game {
     public Game(String name, Account account) {
         this.name = name;
         this.account = account;
+    }
+
+    public Game(Integer id, String name, Account account) {
+        this.id = id;
+        this.name = name;
+        this.account = account;
+    }
+
+    public Game(Integer id) {
+        this.id = id;
     }
 }

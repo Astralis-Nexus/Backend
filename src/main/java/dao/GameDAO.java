@@ -20,6 +20,7 @@ public class GameDAO extends DAO<Game> {
         }
         return instance;
     }
+
       public Account getAccountById(int id) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -28,4 +29,5 @@ public class GameDAO extends DAO<Game> {
             em.close();
         }
     }
+
 }
