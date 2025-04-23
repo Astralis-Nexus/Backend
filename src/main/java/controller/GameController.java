@@ -24,7 +24,7 @@ public class GameController implements IController {
                 .id(game.getId())
                 .name(game.getName())
                 .licenses(game.getLicenses())
-                .account(game.getAccount())
+                .accountId(game.getAccount().getId()) 
                 .build();
     }
 
@@ -62,16 +62,28 @@ public class GameController implements IController {
     @Override
     public Handler create() {
         return ctx -> {
-            Game gameCreated = ctx.bodyAsClass(Game.class);
-            if (gameCreated != null) {
-                Game createdGame = dao.create(gameCreated);
-                GameDTO gameDTO = converter(createdGame);
-                ctx.json(gameDTO);
-            } else {
-                throw new ApiException(500, "No data found. ", timestamp);
+            Game incoming = ctx.bodyAsClass(Game.class);
+    
+            if (incoming == null || incoming.getName() == null || incoming.getAccount() == null || incoming.getAccount().getId() == null) {
+                throw new ApiException(400, "Game name and accountId are required.", timestamp);
             }
+    
+            int accountId = incoming.getAccount().getId();
+    
+            var account = dao.getAccountById(accountId);
+            if (account == null) {
+                throw new ApiException(404, "Account not found with ID: " + accountId, timestamp);
+            }
+    
+            Game game = new Game(incoming.getName(), account);
+    
+            Game createdGame = dao.create(game);
+            GameDTO gameDTO = converter(createdGame);
+    
+            ctx.json(gameDTO);
         };
     }
+    
 
     @Override
     public Handler update() {

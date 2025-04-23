@@ -2,6 +2,7 @@ package dto;
 
 import lombok.*;
 import persistence.model.Game;
+import persistence.model.License;
 
 @Builder
 @Getter
@@ -14,5 +15,8 @@ public class LicenseDTO {
     private String password;
     private String email;
     private Integer pcNumber;
-    private Game game;
+    private Integer gameId;
+    private License.LicenseStatus status;
+
+
 }

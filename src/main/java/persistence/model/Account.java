@@ -11,7 +11,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"todos", "informations", "games", "qas"})
+
 @AllArgsConstructor
 @Table(name = "account")
 
@@ -24,6 +25,7 @@ public class Account {
     @Column(unique = true, nullable = false)
     private String username;
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_name", nullable = false)

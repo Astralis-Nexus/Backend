@@ -13,6 +13,7 @@ public class TokenDTO {
     private String token;
     private String username;
     private String role;
+    private Integer id;
 
     @Override
     public String toString() {
@@ -20,6 +21,7 @@ public class TokenDTO {
                 "token='" + token + '\'' +
                 ", username='" + username + '\'' +
                 ", role='" + role + '\'' +
+                ", id=" + id +
                 '}';
     }
 }
