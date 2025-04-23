@@ -22,6 +22,11 @@ public class AccountDTO {
     private List<Game> games;
     private List<QA> qas;
 
+    public AccountDTO(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public AccountDTO(Account account) {
         this.id = account.getId();
         this.username = account.getUsername();
@@ -38,5 +43,19 @@ public class AccountDTO {
             roles.add(role.getName().toString());
         }
         return roles;
+    }
+
+    @Override
+    public String toString() {
+        return "AccountDTO{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", todos=" + todos +
+                ", information=" + information +
+                ", games=" + games +
+                ", qas=" + qas +
+                '}';
     }
 }

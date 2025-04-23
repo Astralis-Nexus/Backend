@@ -28,7 +28,6 @@ public class AccountDAO extends DAO<Account> {
                             "SELECT a FROM Account a WHERE a.username = :username", Account.class)
                     .setParameter("username", username)
                     .getSingleResult();
-
             if (account.verifyPassword(password)) {
                 return account;
             }

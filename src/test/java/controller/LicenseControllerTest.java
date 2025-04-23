@@ -32,7 +32,7 @@ class LicenseControllerTest extends BaseTest {
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new License("username2", "password", "name@email.dk", new Game("username", new Account("username", "password", new Role(Role.RoleName.REGULAR)))))
+                .body(new License("username2", "password", "name@email.dk", License.LicenseStatus.ACTIVE,new Game(1)))//"username", new Account("username", "password", new Role(Role.RoleName.REGULAR)))))
                 .when()
                 .post("/licences")
                 .then()
@@ -79,7 +79,8 @@ class LicenseControllerTest extends BaseTest {
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new License("username2", "password", "name@email.dk", 2, new Game("username", new Account("username", "password", new Role(Role.RoleName.REGULAR)))))
+                .body(new License("username2", "password", "name@email.dk", License.LicenseStatus.ACTIVE,new Game(1)))//"username", new Account("username", "password", new Role(Role.RoleName.REGULAR)))))
+                // .body(new License("username2", "password", "name@email.dk", 2, License.LicenseStatus.INACTIVE, Game("username", new Account("username", "password", new Role(Role.RoleName.REGULAR)))))
                 .pathParam("id", 1)
                 .when()
                 .put("/licences/{id}")

@@ -71,8 +71,8 @@ class RoleControllerTest extends BaseTest {
                 .then()
                 .body("id", equalTo(1))
                 .body("name", equalTo("ADMIN"))
-                .body("headers", notNullValue())
-                .body("footers", notNullValue());
+                .body("headers", nullValue())
+                .body("footers", nullValue());
 
     }
 

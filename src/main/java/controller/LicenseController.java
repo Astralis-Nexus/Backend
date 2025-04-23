@@ -30,7 +30,7 @@ public class LicenseController implements IController {
                 .password(license.getPassword())
                 .email(license.getEmail())
                 .pcNumber(license.getPcNumber())
-                .gameId(license.getGame().getId())
+                .game(license.getGame())
                 .status(license.getStatus()) 
                 .build();
     }
@@ -69,13 +69,13 @@ public class LicenseController implements IController {
     @Override
     public Handler create() {
         return ctx -> {
-            LicenseDTO incoming = ctx.bodyAsClass(LicenseDTO.class);
+            License incoming = ctx.bodyAsClass(License.class);
     
-            if (incoming == null || incoming.getGameId() == null) {
+            if (incoming == null || incoming.getGame().getId() == null) {
                 throw new ApiException(400, "Game ID is required.", timestamp);
             }
     
-            int gameId = incoming.getGameId();
+            int gameId = incoming.getGame().getId();
             Game game = dao.getGameById(gameId);
     
             if (game == null) {
@@ -99,7 +99,7 @@ public class LicenseController implements IController {
                 .password(createdLicense.getPassword())
                 .email(createdLicense.getEmail())
                 .pcNumber(createdLicense.getPcNumber())
-                .gameId(createdLicense.getGame().getId())
+                .game(createdLicense.getGame())
                 .status(createdLicense.getStatus())
                 .build();
     
@@ -118,6 +118,11 @@ public class LicenseController implements IController {
             int id = Integer.parseInt(ctx.pathParam("id"));
             License licenseToUpdate = ctx.bodyAsClass(License.class);
             licenseToUpdate.setId(id);
+
+            int gameId = licenseToUpdate.getGame().getId();
+            Game game = dao.getGameById(gameId);
+            licenseToUpdate.setGame(game);
+
             License licenseUpdated = dao.update(licenseToUpdate);
             if (licenseUpdated != null) {
                 LicenseDTO licenseDTO = converter(licenseUpdated);

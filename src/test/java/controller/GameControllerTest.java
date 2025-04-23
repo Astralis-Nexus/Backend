@@ -31,7 +31,7 @@ class GameControllerTest extends BaseTest {
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new Game("new-game", new Account("username", "password", new Role(Role.RoleName.REGULAR))))
+                .body(new Game(1,"new-game", new Account("username", "password", new Role(Role.RoleName.REGULAR))))
                 .when()
                 .post("/games")
                 .then()

@@ -34,6 +34,7 @@ public class SecurityController {
     public Handler login() {
         return ctx -> {
             AccountDTO input = ctx.bodyAsClass(AccountDTO.class);
+            System.out.println(input);
             Account verified = accountDAO.verifyLogin(input.getUsername(), input.getPassword());
             if (verified == null) {
                 throw new ApiException(401, "Wrong login info.", timestamp);

@@ -33,7 +33,7 @@ public class Todo {
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
-    @JsonIgnore
+    //@JsonIgnore
 
     private Account account;
 
