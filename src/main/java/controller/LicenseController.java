@@ -69,67 +69,69 @@ public class LicenseController implements IController {
     @Override
     public Handler create() {
         return ctx -> {
-            License incoming = ctx.bodyAsClass(License.class);
-    
+            LicenseDTO incoming = ctx.bodyAsClass(LicenseDTO.class);
+
             if (incoming == null || incoming.getGame().getId() == null) {
                 throw new ApiException(400, "Game ID is required.", timestamp);
             }
-    
+
             int gameId = incoming.getGame().getId();
             Game game = dao.getGameById(gameId);
-    
+
             if (game == null) {
                 throw new ApiException(404, "Game not found with ID: " + gameId, timestamp);
             }
-    
+
             License license = new License(
-                incoming.getUsername(),
-                incoming.getPassword(),
-                incoming.getEmail(),
-                incoming.getPcNumber(),
-                game,
-                incoming.getStatus()
+                    incoming.getUsername(),
+                    incoming.getPassword(),
+                    incoming.getEmail(),
+                    incoming.getPcNumber(),
+                    game,
+                    incoming.getStatus()
             );
-    
+
             License createdLicense = dao.create(license);
-    
+
             LicenseDTO responseDTO = LicenseDTO.builder()
-                .id(createdLicense.getId())
-                .username(createdLicense.getUsername())
-                .password(createdLicense.getPassword())
-                .email(createdLicense.getEmail())
-                .pcNumber(createdLicense.getPcNumber())
-                .game(createdLicense.getGame())
-                .status(createdLicense.getStatus())
-                .build();
-    
+                    .id(createdLicense.getId())
+                    .username(createdLicense.getUsername())
+                    .password(createdLicense.getPassword())
+                    .email(createdLicense.getEmail())
+                    .pcNumber(createdLicense.getPcNumber())
+                    .game(createdLicense.getGame())
+                    .status(createdLicense.getStatus())
+                    .build();
+
             ctx.json(responseDTO);
         };
     }
-    
-    
-
- 
-        
 
     @Override
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
-            License licenseToUpdate = ctx.bodyAsClass(License.class);
-            licenseToUpdate.setId(id);
+            LicenseDTO incoming = ctx.bodyAsClass(LicenseDTO.class);
 
-            int gameId = licenseToUpdate.getGame().getId();
-            Game game = dao.getGameById(gameId);
+            Game game = dao.getGameById(incoming.getGame().getId());
+            if (game == null) {
+                throw new ApiException(404, "Game not found with ID: " + incoming.getGame().getId(), timestamp);
+            }
+
+            License licenseToUpdate = dao.getById(id);
+            if (licenseToUpdate == null) {
+                throw new ApiException(404, "License not found with ID: " + id, timestamp);
+            }
+
+            licenseToUpdate.setUsername(incoming.getUsername());
+            licenseToUpdate.setPassword(incoming.getPassword());
+            licenseToUpdate.setEmail(incoming.getEmail());
+            licenseToUpdate.setPcNumber(incoming.getPcNumber());
             licenseToUpdate.setGame(game);
+            licenseToUpdate.setStatus(incoming.getStatus());
 
             License licenseUpdated = dao.update(licenseToUpdate);
-            if (licenseUpdated != null) {
-                LicenseDTO licenseDTO = converter(licenseUpdated);
-                ctx.json(licenseDTO);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
-            }
+            ctx.json(converter(licenseUpdated));
         };
     }
 
