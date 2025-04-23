@@ -5,12 +5,14 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+
 @Table(name = "todo")
 public class Todo {
     @Id
@@ -31,6 +33,8 @@ public class Todo {
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
+    @JsonIgnore
+
     private Account account;
 
     public Todo(LocalDate date, String description, boolean status, Account account) {

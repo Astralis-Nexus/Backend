@@ -1,10 +1,12 @@
 package controller;
 
+import dao.GameDAO;
 import dao.LicenseDAO;
 import dto.LicenseDTO;
 import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
+import persistence.model.Game;
 import persistence.model.License;
 import utility.DateUtil;
 
@@ -20,6 +22,7 @@ public class LicenseController implements IController {
         this.dao = LicenseDAO.getInstance(emf);
     }
 
+   
     public LicenseDTO converter(License license) {
         return LicenseDTO.builder()
                 .id(license.getId())
@@ -27,10 +30,11 @@ public class LicenseController implements IController {
                 .password(license.getPassword())
                 .email(license.getEmail())
                 .pcNumber(license.getPcNumber())
-                .game(license.getGame())
+                .gameId(license.getGame().getId())
+                .status(license.getStatus()) 
                 .build();
     }
-
+    
     @Override
     public Handler getAll() {
         return ctx -> {
@@ -65,16 +69,48 @@ public class LicenseController implements IController {
     @Override
     public Handler create() {
         return ctx -> {
-            License licenseCreated = ctx.bodyAsClass(License.class);
-            if (licenseCreated != null) {
-                License license = dao.create(licenseCreated);
-                LicenseDTO licenseDTO = converter(license);
-                ctx.json(licenseDTO);
-            } else {
-                throw new ApiException(500, "No data found. ", timestamp);
+            LicenseDTO incoming = ctx.bodyAsClass(LicenseDTO.class);
+    
+            if (incoming == null || incoming.getGameId() == null) {
+                throw new ApiException(400, "Game ID is required.", timestamp);
             }
+    
+            int gameId = incoming.getGameId();
+            Game game = dao.getGameById(gameId);
+    
+            if (game == null) {
+                throw new ApiException(404, "Game not found with ID: " + gameId, timestamp);
+            }
+    
+            License license = new License(
+                incoming.getUsername(),
+                incoming.getPassword(),
+                incoming.getEmail(),
+                incoming.getPcNumber(),
+                game,
+                incoming.getStatus()
+            );
+    
+            License createdLicense = dao.create(license);
+    
+            LicenseDTO responseDTO = LicenseDTO.builder()
+                .id(createdLicense.getId())
+                .username(createdLicense.getUsername())
+                .password(createdLicense.getPassword())
+                .email(createdLicense.getEmail())
+                .pcNumber(createdLicense.getPcNumber())
+                .gameId(createdLicense.getGame().getId())
+                .status(createdLicense.getStatus())
+                .build();
+    
+            ctx.json(responseDTO);
         };
     }
+    
+    
+
+ 
+        
 
     @Override
     public Handler update() {

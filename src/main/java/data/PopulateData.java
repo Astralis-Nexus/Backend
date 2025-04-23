@@ -46,7 +46,7 @@ public class PopulateData {
             Game game = new Game("Code Breaker", john);
             em.persist(game);
 
-            em.persist(new License("Code Breaker Pro", "XYZ-9876", "john.doe@example.com", game));
+            em.persist(new License("Code Breaker Pro", "XYZ-9876", "john.doe@example.com",0, game, License.LicenseStatus.ACTIVE));
 
             em.getTransaction().commit();
         }

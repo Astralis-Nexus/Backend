@@ -3,6 +3,40 @@ POST http://localhost:7007/api/security/login
 Content-Type: application/json
 
 {
-  "username": "john_doe",
-  "password": "securePassword123"
+  "username": "admin",
+  "password": "admin"
 }
+
+
+
+### Create game manually
+POST http://localhost:7007/api/games
+Content-Type: application/json
+
+{
+  "name": "mudnsadfh,fni",
+  "account": {
+    "id": 1
+  }
+}
+
+
+###
+POST http://localhost:7007/api/licences
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "123456",
+  "email": "user1@example.com",
+  "pcNumber": 3,
+  "gameId": 1,
+  "status": "ACTIVE"
+}
+
+
+
+### Get all licenses
+GET http://localhost:7007/api/licences
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImV4cCI6MTc0NTQ0MzI2MCwiaWF0IjoxNzQ1NDM2MDYwLCJ1c2VybmFtZSI6ImFkbWluIn0.RW7lGCNSE170II2nV26epdUhcJQYCce5RmfhylaZ67I
+Accept: application/json

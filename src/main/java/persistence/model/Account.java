@@ -11,7 +11,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"todos", "informations", "games", "qas"})
+
 @AllArgsConstructor
 @Table(name = "account")
 
@@ -24,6 +25,7 @@ public class Account {
     @Column(unique = true, nullable = false)
     private String username;
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_name", nullable = false)
@@ -51,17 +53,20 @@ public class Account {
 
     public Account(String username, String password, Role role) {
         this.username = username;
-        this.password = BCrypt.hashpw(password, salt);
+        this.password = password;
+       // this.password = BCrypt.hashpw(password, salt);
         this.role = role;
     }
 
     public Account(String username, String password) {
         this.username = username;
-        this.password = BCrypt.hashpw(password, salt);
+       // this.password = BCrypt.hashpw(password, salt);
     }
 
     public boolean verifyPassword(String password) {
-        return BCrypt.checkpw(password, this.password);
+        return this.password.equals(password);
+
+        //return BCrypt.checkpw(password, this.password);
     }
 
 }

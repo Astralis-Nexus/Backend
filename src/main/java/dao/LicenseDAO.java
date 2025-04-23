@@ -1,7 +1,11 @@
 package dao;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import persistence.model.Account;
 import persistence.model.License;
+import persistence.model.Game;
+
 
 public class LicenseDAO extends DAO<License> {
 
@@ -17,5 +21,13 @@ public class LicenseDAO extends DAO<License> {
             instance = new LicenseDAO();
         }
         return instance;
+    }
+       public Game getGameById(int id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.find(Game.class, id);
+        } finally {
+            em.close();
+        }
     }
 }

@@ -1,5 +1,7 @@
 package persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +10,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "game")
 @Table(name = "license")
 public class License {
     @Id
@@ -29,7 +31,13 @@ public class License {
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
+     @JsonIgnore
     private Game game;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LicenseStatus status;
+
 
     public License(String username, String password, String email, Game game) {
         this.username = username;
@@ -38,11 +46,24 @@ public class License {
         this.game = game;
     }
 
-    public License(String username, String password, String email, Integer pcNumber, Game game) {
+    public License(String username, String password, String email, Integer pcNumber,  Game game ) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.pcNumber = pcNumber;
         this.game = game;
+    }
+    
+    public License(String username, String password, String email, Integer pcNumber, Game game, LicenseStatus status) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.pcNumber = pcNumber;
+        this.game = game;
+        this.status = status;
+    }
+    public enum LicenseStatus {
+        ACTIVE,
+        INACTIVE
     }
 }
