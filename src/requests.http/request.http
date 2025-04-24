@@ -57,3 +57,11 @@ Content-Type: application/json
   "status": "INACTIVE"
 }
 
+### Get all games
+GET http://localhost:7007/api/accounts
+
+
+### get account by id 
+
+GET http://localhost:7007/api/accounts/1
+

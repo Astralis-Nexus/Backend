@@ -67,16 +67,24 @@ public class AccountController implements IController {
     @Override
     public Handler create() {
         return ctx -> {
-            Account accountCreated = ctx.bodyAsClass(Account.class);
-            if (accountCreated != null) {
-                Account createdAccount = dao.create(accountCreated);
-                AccountDTO accountDTO = converter(createdAccount);
-                ctx.json(accountDTO);
-            } else {
-                throw new ApiException(500, "No data found. ", timestamp);
+            AccountDTO incoming = ctx.bodyAsClass(AccountDTO.class);
+    
+            if (incoming.getPassword() == null || incoming.getPassword().isBlank()) {
+                throw new ApiException(400, "Password is required", timestamp);
             }
+    
+            String rawPassword = incoming.getPassword();
+    
+            Account account = new Account();
+            account.setUsername(incoming.getUsername());
+            account.setPassword(rawPassword);
+            account.setRole(incoming.getRole());
+    
+            Account createdAccount = dao.create(account);
+            ctx.json(converter(createdAccount));
         };
     }
+    
 
     @Override
     public Handler update() {
