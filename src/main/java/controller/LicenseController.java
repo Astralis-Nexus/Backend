@@ -116,18 +116,30 @@ public class LicenseController implements IController {
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
-            License licenseToUpdate = ctx.bodyAsClass(License.class);
-            licenseToUpdate.setId(id);
-            License licenseUpdated = dao.update(licenseToUpdate);
-            if (licenseUpdated != null) {
-                LicenseDTO licenseDTO = converter(licenseUpdated);
-                ctx.json(licenseDTO);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+            LicenseDTO incoming = ctx.bodyAsClass(LicenseDTO.class);
+    
+            Game game = dao.getGameById(incoming.getGameId());
+            if (game == null) {
+                throw new ApiException(404, "Game not found with ID: " + incoming.getGameId(), timestamp);
             }
+    
+            License licenseToUpdate = dao.getById(id);
+            if (licenseToUpdate == null) {
+                throw new ApiException(404, "License not found with ID: " + id, timestamp);
+            }
+    
+            licenseToUpdate.setUsername(incoming.getUsername());
+            licenseToUpdate.setPassword(incoming.getPassword());
+            licenseToUpdate.setEmail(incoming.getEmail());
+            licenseToUpdate.setPcNumber(incoming.getPcNumber());
+            licenseToUpdate.setGame(game);
+            licenseToUpdate.setStatus(incoming.getStatus());
+    
+            License licenseUpdated = dao.update(licenseToUpdate);
+            ctx.json(converter(licenseUpdated));
         };
     }
-
+    
     @Override
     public Handler delete() {
         return ctx -> {
