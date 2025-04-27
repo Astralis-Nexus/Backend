@@ -21,7 +21,7 @@ public class Footer {
     @Column(nullable = false)
     private String description;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 

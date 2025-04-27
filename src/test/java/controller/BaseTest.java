@@ -59,7 +59,7 @@ public class BaseTest {
             Game game = new Game("username", account);
             em.persist(game);
 
-            em.persist(new License("username", "password", "username@email.dk", game));
+            em.persist(new License("username", "password", "username@email.dk", License.LicenseStatus.ACTIVE,game));
             em.getTransaction().commit();
         }
     }

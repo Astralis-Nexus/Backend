@@ -15,7 +15,6 @@ public class GameDTO {
     private Integer id;
     private String name;
     private List<License> licenses;
-    private Integer accountId; 
-
+    private Account account;
 
 }

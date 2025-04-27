@@ -29,7 +29,7 @@ public class LicenseController implements IController {
                 .password(license.getPassword())
                 .email(license.getEmail())
                 .pcNumber(license.getPcNumber())
-                .gameId(license.getGame().getId())
+                .game(license.getGame())
                 .status(license.getStatus()) 
                 .build();
     }
@@ -69,76 +69,71 @@ public class LicenseController implements IController {
     public Handler create() {
         return ctx -> {
             LicenseDTO incoming = ctx.bodyAsClass(LicenseDTO.class);
-    
-            if (incoming == null || incoming.getGameId() == null) {
+
+            if (incoming == null || incoming.getGame().getId() == null) {
                 throw new ApiException(400, "Game ID is required.", timestamp);
             }
-    
-            int gameId = incoming.getGameId();
+
+            int gameId = incoming.getGame().getId();
             Game game = dao.getGameById(gameId);
-    
+
             if (game == null) {
                 throw new ApiException(404, "Game not found with ID: " + gameId, timestamp);
             }
-    
+
             License license = new License(
-                incoming.getUsername(),
-                incoming.getPassword(),
-                incoming.getEmail(),
-                incoming.getPcNumber(),
-                game,
-                incoming.getStatus()
+                    incoming.getUsername(),
+                    incoming.getPassword(),
+                    incoming.getEmail(),
+                    incoming.getPcNumber(),
+                    game,
+                    incoming.getStatus()
             );
-    
+
             License createdLicense = dao.create(license);
-    
+
             LicenseDTO responseDTO = LicenseDTO.builder()
-                .id(createdLicense.getId())
-                .username(createdLicense.getUsername())
-                .password(createdLicense.getPassword())
-                .email(createdLicense.getEmail())
-                .pcNumber(createdLicense.getPcNumber())
-                .gameId(createdLicense.getGame().getId())
-                .status(createdLicense.getStatus())
-                .build();
-    
+                    .id(createdLicense.getId())
+                    .username(createdLicense.getUsername())
+                    .password(createdLicense.getPassword())
+                    .email(createdLicense.getEmail())
+                    .pcNumber(createdLicense.getPcNumber())
+                    .game(createdLicense.getGame())
+                    .status(createdLicense.getStatus())
+                    .build();
+
             ctx.json(responseDTO);
         };
     }
-    
-    
-
- 
-        
 
     @Override
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             LicenseDTO incoming = ctx.bodyAsClass(LicenseDTO.class);
-    
-            Game game = dao.getGameById(incoming.getGameId());
+
+            Game game = dao.getGameById(incoming.getGame().getId());
             if (game == null) {
-                throw new ApiException(404, "Game not found with ID: " + incoming.getGameId(), timestamp);
+                throw new ApiException(404, "Game not found with ID: " + incoming.getGame().getId(), timestamp);
             }
-    
+
             License licenseToUpdate = dao.getById(id);
             if (licenseToUpdate == null) {
                 throw new ApiException(404, "License not found with ID: " + id, timestamp);
             }
-    
+
             licenseToUpdate.setUsername(incoming.getUsername());
             licenseToUpdate.setPassword(incoming.getPassword());
             licenseToUpdate.setEmail(incoming.getEmail());
             licenseToUpdate.setPcNumber(incoming.getPcNumber());
             licenseToUpdate.setGame(game);
             licenseToUpdate.setStatus(incoming.getStatus());
-    
+
             License licenseUpdated = dao.update(licenseToUpdate);
             ctx.json(converter(licenseUpdated));
         };
     }
-    
+
     @Override
     public Handler delete() {
         return ctx -> {

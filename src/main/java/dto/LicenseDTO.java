@@ -15,8 +15,6 @@ public class LicenseDTO {
     private String password;
     private String email;
     private Integer pcNumber;
-    private Integer gameId;
+    private Game game;
     private License.LicenseStatus status;
-
-
 }
