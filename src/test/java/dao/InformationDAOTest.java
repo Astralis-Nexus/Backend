@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import persistence.model.Account;
 import persistence.model.Information;
+import persistence.model.Information.ImportanceLevel;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ class InformationDAOTest extends BaseTest {
                     .setParameter("name", "jack123")
                     .getSingleResult();
         }
-        Information informationToCreate = new Information("New computers coming soon.", account);
+        Information informationToCreate = new Information("New computers coming soon.", account, ImportanceLevel.LOW);
         int expectedId = 2;
 
         // When

@@ -12,5 +12,5 @@ public class QADTO {
     private Integer id;
     private String question;
     private String answer;
-    private Account account;
+    private Integer accountId;
 }

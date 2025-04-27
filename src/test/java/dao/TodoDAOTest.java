@@ -38,7 +38,8 @@ class TodoDAOTest extends BaseTest {
                     .getSingleResult();
         }
         int expectedId = 2;
-        Todo todoToCreate = new Todo(LocalDate.now(), "Change the screens.", false, account);
+        Todo todoToCreate = new Todo(LocalDate.now(), "Change the screens.", Todo.Status.PENDING, Todo.Source.STORE, account);
+
 
         // When
         Todo todoCreated = getDAO(TodoDAO.class).create(todoToCreate);

@@ -1,6 +1,8 @@
 package dao;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import persistence.model.Account;
 import persistence.model.Information;
 
 public class InformationDAO extends DAO<Information> {
@@ -18,4 +20,14 @@ public class InformationDAO extends DAO<Information> {
         }
         return instance;
     }
+
+ public Account getAccountById(int id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.find(Account.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
 }

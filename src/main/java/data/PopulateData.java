@@ -3,6 +3,7 @@ package data;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.*;
+import persistence.model.Information.ImportanceLevel;
 
 import java.time.LocalDate;
 
@@ -33,15 +34,15 @@ public class PopulateData {
             em.persist(admin);
             em.persist(john);
 
-            em.persist(new Information("All employees must update their passwords by April 15th.", john));
-            em.persist(new Information("Team meeting on Monday at 10 AM in Meeting Room B.", john));
+            em.persist(new Information("All employees must update their passwords by April 15th.", john, ImportanceLevel.HIGH));
+            em.persist(new Information("Team meeting on Monday at 10 AM in Meeting Room B.", john, ImportanceLevel.MEDIUM));
 
             em.persist(new QA("How do I reset my password?", "Click your profile icon and choose 'Reset Password'.", john));
             em.persist(new QA("Where can I see my tasks?", "Navigate to the 'Todos' tab on the dashboard.", john));
 
-            em.persist(new Todo(LocalDate.now().plusDays(1), "Update project documentation", false, john));
-            em.persist(new Todo(LocalDate.now().plusDays(2), "Prepare for Monday's team meeting", false, john));
-            em.persist(new Todo(LocalDate.now().minusDays(1), "Review PR from Sarah", true, john));
+            em.persist(new Todo(LocalDate.now().plusDays(1), "Update project documentation", Todo.Status.PENDING, Todo.Source.STORE, john));
+            em.persist(new Todo(LocalDate.now().plusDays(2), "Prepare for Monday's team meeting", Todo.Status.PENDING, Todo.Source.GAMEHUB, john));
+            em.persist(new Todo(LocalDate.now().minusDays(1), "Review PR from Sarah", Todo.Status.COMPLETED, Todo.Source.STORE, john));
 
             Game game = new Game("Code Breaker", john);
             em.persist(game);

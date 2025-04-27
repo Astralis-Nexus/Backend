@@ -1,0 +1,27 @@
+### get all Questions
+GET http://localhost:7007/api/qas
+
+###create a Question
+POST http://localhost:7007/api/qas
+Content-Type: application/json
+
+{
+  "question": "How do I reset my password?",
+  "answer": "Click on 'Forgot Password' on the login page.",
+  "account": {
+    "id": 1
+  }
+}
+### update a Question 
+
+
+PUT http://localhost:7007/api/qas/1
+Content-Type: application/json
+
+{
+  "question": "How do I reset my password?",
+  "answer": "You can reset it by email verification.",
+  "account": {
+    "id": 1
+  }
+}

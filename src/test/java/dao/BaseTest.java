@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.*;
 import persistence.config.HibernateConfig;
 import persistence.model.*;
+import persistence.model.Information.ImportanceLevel;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -49,9 +50,11 @@ public class BaseTest {
             em.persist(new Header("Home", regularRole));
             Account account = new Account("jack123", "123456Abc", regularRole);
             em.persist(account);
-            em.persist(new Information("Remember to throw out the trash!", account));
+            em.persist(new Information("Remember to throw out the trash!", account, ImportanceLevel.LOW));
+
             em.persist(new QA("Where is the trash bags?", "In the basement.", account));
-            em.persist(new Todo(LocalDate.now(), "Clean the basement.", false, account));
+            em.persist(new Todo(LocalDate.now(), "Clean the basement.", Todo.Status.PENDING, Todo.Source.STORE, account));
+
             Game game = new Game("Counter-strike 2", account);
             em.persist(game);
             em.persist(new License("jack99", "123456Abc", "jack99@email.dk", game));

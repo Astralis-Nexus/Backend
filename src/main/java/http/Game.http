@@ -1,0 +1,11 @@
+### Create game manually
+POST http://localhost:7007/api/games
+Content-Type: application/json
+
+{
+  "name": "mudnsadmhkhfh,fni",
+  "account": {
+    "id": 2
+  }
+}
+

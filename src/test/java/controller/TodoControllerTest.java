@@ -33,7 +33,8 @@ class TodoControllerTest extends BaseTest {
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new Todo(LocalDate.now(), "My Task", false, new Account("username", "password", new Role(Role.RoleName.REGULAR))))
+                .body(new Todo(LocalDate.now(), "My Task1", Todo.Status.COMPLETED, Todo.Source.STORE, new Account("username", "password", new Role(Role.RoleName.REGULAR))))
+
                 .when()
                 .post("/todos")
                 .then()
@@ -66,7 +67,7 @@ class TodoControllerTest extends BaseTest {
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new Todo(LocalDate.now(), "My Task2", false, new Account("username", "password", new Role(Role.RoleName.REGULAR))))
+                .body(new Todo(LocalDate.now(), "My Task2", Todo.Status.COMPLETED, Todo.Source.STORE, new Account("username", "password", new Role(Role.RoleName.REGULAR))))
                 .pathParam("id", 1)
                 .when()
                 .put("/todos/{id}")

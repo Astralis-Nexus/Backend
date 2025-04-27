@@ -5,6 +5,7 @@ import dto.TodoDTO;
 import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
+import persistence.model.Account;
 import persistence.model.Todo;
 import utility.DateUtil;
 
@@ -24,12 +25,13 @@ public class TodoController implements IController {
                 .id(todo.getId())
                 .date(todo.getDate())
                 .description(todo.getDescription())
-                .status(todo.isStatus())
+                .status(todo.getStatus()) // fixed here
+                .source(todo.getSource()) // added this
                 .done_by(todo.getDone_by())
-                .account(todo.getAccount())
+                .accountId(todo.getAccount().getId())
                 .build();
     }
-
+    
     @Override
     public Handler getAll() {
         return ctx -> {
@@ -64,31 +66,71 @@ public class TodoController implements IController {
     @Override
     public Handler create() {
         return ctx -> {
-            Todo todoCreated = ctx.bodyAsClass(Todo.class);
-            if (todoCreated != null) {
-                Todo todo = dao.create(todoCreated);
-                TodoDTO todoDTO = converter(todo);
-                ctx.json(todoDTO);
-            } else {
-                throw new ApiException(500, "No data found. ", timestamp);
+            Todo incoming = ctx.bodyAsClass(Todo.class);
+    
+            if (incoming == null ||
+                incoming.getDescription() == null ||
+                incoming.getAccount() == null ||
+                incoming.getAccount().getId() == null ||
+                incoming.getStatus() == null ||
+                incoming.getSource() == null) {
+                throw new ApiException(400, "Missing required fields: description, account ID, status, or source", timestamp);
             }
+    
+            int accountId = incoming.getAccount().getId();
+            Account account = dao.getAccountById(accountId);
+            if (account == null) {
+                throw new ApiException(404, "Account not found with ID: " + accountId, timestamp);
+            }
+    
+            Todo todo = new Todo();
+            todo.setDescription(incoming.getDescription());
+            todo.setStatus(incoming.getStatus());
+            todo.setSource(incoming.getSource());
+            todo.setDone_by(incoming.getDone_by());
+            todo.setDate(incoming.getDate());
+            todo.setAccount(account);
+    
+            Todo created = dao.create(todo);
+    
+            TodoDTO dto = new TodoDTO(
+                created.getId(),
+                created.getDate(),
+                created.getDescription(),
+                created.getStatus(),
+                created.getSource(),
+                created.getDone_by(),
+                created.getAccount().getId()
+            );
+    
+            ctx.json(dto);
         };
     }
+    
 
-    public Handler update() {
-        return ctx -> {
-            int id = Integer.parseInt(ctx.pathParam("id"));
-            Todo todoToUpdate = ctx.bodyAsClass(Todo.class);
-            todoToUpdate.setId(id);
-            Todo todoUpdated = dao.update(todoToUpdate);
-            if (todoUpdated != null) {
-                TodoDTO todoDTO = converter(todoUpdated);
-                ctx.json(todoDTO);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
-            }
-        };
-    }
+@Override
+public Handler update() {
+    return ctx -> {
+        int id = Integer.parseInt(ctx.pathParam("id"));
+        Todo todoToUpdate = ctx.bodyAsClass(Todo.class);
+        todoToUpdate.setId(id);
+
+        Account account = dao.getAccountById(todoToUpdate.getAccount().getId());
+        if (account == null) {
+            throw new ApiException(404, "Account not found", timestamp);
+        }
+        todoToUpdate.setAccount(account);
+
+        Todo updated = dao.update(todoToUpdate);
+        if (updated != null) {
+            TodoDTO dto = converter(updated);
+            ctx.json(dto);
+        } else {
+            throw new ApiException(404, "No data found.", timestamp);
+        }
+    };
+}
+
 
     @Override
     public Handler delete() {

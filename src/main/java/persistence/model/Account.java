@@ -44,11 +44,11 @@ public class Account {
     private List<QA> qas;
 
     public void setPassword(String password) {
-        if (password != null && !password.startsWith("$2a$")) { // Check if already hashed
-            this.password = BCrypt.hashpw(password, BCrypt.gensalt());
-        } else {
+        //if (password != null && !password.startsWith("$2a$")) { // Check if already hashed
+         //   this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+       // } else {
             this.password = password;
-        }
+        //}
     }
 
     public Account(String username, String password, Role role) {

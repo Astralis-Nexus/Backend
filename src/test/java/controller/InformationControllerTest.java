@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import persistence.model.Account;
 import persistence.model.Information;
 import persistence.model.Role;
+import persistence.model.Information.ImportanceLevel;
 
 import static org.hamcrest.Matchers.*;
 
@@ -31,7 +32,7 @@ class InformationControllerTest extends BaseTest {
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new Information("username", new Account("username", "password", new Role(Role.RoleName.REGULAR))))
+                .body(new Information("username", new Account("username", "password", new Role(Role.RoleName.REGULAR)), ImportanceLevel.HIGH))
                 .when()
                 .post("/informations")
                 .then()
@@ -70,7 +71,7 @@ class InformationControllerTest extends BaseTest {
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new Information("username", new Account("username", "password", new Role(Role.RoleName.REGULAR))))
+                .body(new Information("username", new Account("username", "password", new Role(Role.RoleName.REGULAR)), ImportanceLevel.HIGH))
                 .pathParam("id", 1)
                 .when()
                 .put("/informations/{id}")

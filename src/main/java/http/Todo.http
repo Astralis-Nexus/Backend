@@ -1,0 +1,39 @@
+
+
+
+
+
+### get all todos 
+GET http://localhost:7007/api/todos/1
+
+
+### create a todo
+
+POST http://localhost:7007/api/todos
+Content-Type: application/json
+
+{
+  "description": "Update project documentation",
+  "status": "PENDING",
+  "source": "STORE",
+  "done_by": "sumaia",
+  "date": "2025-04-25",
+  "account": {
+    "id": 2
+  }
+}
+
+### update a todo
+
+PUT http://localhost:7007/api/todos/1
+Content-Type: application/json
+
+{
+  "description": "Updated: Fix all bugs",
+  "status": "IN_PROGRESS",
+  "source": "GAMEHUB",
+  "date": "2025-04-25",
+  "account": {
+    "id": 2
+  }
+}

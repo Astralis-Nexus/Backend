@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LicenseController implements IController {
-    //private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static String timestamp = DateUtil.getTimestamp();
     private final LicenseDAO dao;
 

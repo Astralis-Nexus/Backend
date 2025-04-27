@@ -30,6 +30,7 @@ public class AccountDTO {
         this.information = account.getInformations();
         this.games = account.getGames();
         this.qas = account.getQas();
+        this.password=account.getPassword();
     }
 
     public Set<String> getRoles() {
