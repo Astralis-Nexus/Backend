@@ -7,6 +7,9 @@ import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.*;
 import persistence.config.HibernateConfig;
 import persistence.model.*;
+import persistence.model.Information.ImportanceLevel;
+import persistence.model.Todo.Source;
+import persistence.model.Todo.Status;
 import route.Route;
 
 import java.time.LocalDate;
@@ -48,9 +51,10 @@ public class BaseTest {
             Account account = new Account("username", "password", regularRole);
             em.persist(account);
 
-            em.persist(new Information("username", account));
+            em.persist(new Information("username", account, ImportanceLevel.HIGH));
+
             em.persist(new QA("username", "password", account));
-            em.persist(new Todo(LocalDate.now(), "My Task", false, account));
+            em.persist(new Todo(LocalDate.now(), "My Task", Status.COMPLETED, Source.GAMEHUB, account));
 
             Game game = new Game("username", account);
             em.persist(game);

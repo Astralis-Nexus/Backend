@@ -4,10 +4,8 @@ import io.javalin.http.ContentType;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import persistence.model.Account;
 import persistence.model.Game;
 import persistence.model.License;
-import persistence.model.Role;
 
 import static org.hamcrest.Matchers.equalTo;
 

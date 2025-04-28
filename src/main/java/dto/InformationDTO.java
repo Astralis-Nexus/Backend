@@ -1,7 +1,6 @@
 package dto;
 
 import lombok.*;
-import persistence.model.Account;
 
 @Builder
 @Getter
@@ -11,5 +10,7 @@ import persistence.model.Account;
 public class InformationDTO {
     private Integer id;
     private String description;
-    private Account account;
+    private Integer accountId; 
+    private String importanceLevel;
+
 }

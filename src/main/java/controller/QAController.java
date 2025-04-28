@@ -5,6 +5,7 @@ import dto.QADTO;
 import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
+import persistence.model.Account;
 import persistence.model.QA;
 import utility.DateUtil;
 
@@ -24,7 +25,7 @@ public class QAController implements IController {
                 .id(qa.getId())
                 .question(qa.getQuestion())
                 .answer(qa.getAnswer())
-                .account(qa.getAccount())
+                .accountId(qa.getAccount().getId())
                 .build();
     }
 
@@ -62,14 +63,32 @@ public class QAController implements IController {
     @Override
     public Handler create() {
         return ctx -> {
-            QA qaCreated = ctx.bodyAsClass(QA.class);
-            if (qaCreated != null) {
-                QA qa = dao.create(qaCreated);
-                QADTO qadto = converter(qa);
-                ctx.json(qadto);
-            } else {
-                throw new ApiException(500, "No data found. ", timestamp);
+            QA incoming = ctx.bodyAsClass(QA.class);
+
+            if (incoming == null ||
+                    incoming.getQuestion() == null ||
+                    incoming.getAnswer() == null ||
+                    incoming.getAccount() == null ||
+                    incoming.getAccount().getId() == null) {
+                throw new ApiException(400, "Missing required fields", timestamp);
             }
+
+            Account account = dao.getAccountById(incoming.getAccount().getId());
+            if (account == null) {
+                throw new ApiException(404, "Account not found with ID: " + incoming.getAccount().getId(), timestamp);
+            }
+
+            incoming.setAccount(account);
+
+            QA created = dao.create(incoming);
+
+            QADTO dto = new QADTO(
+                    created.getId(),
+                    created.getQuestion(),
+                    created.getAnswer(),
+                    created.getAccount().getId());
+
+            ctx.json(dto);
         };
     }
 
@@ -79,12 +98,18 @@ public class QAController implements IController {
             int id = Integer.parseInt(ctx.pathParam("id"));
             QA qaToUpdate = ctx.bodyAsClass(QA.class);
             qaToUpdate.setId(id);
-            QA qaUpdated = dao.update(qaToUpdate);
-            if (qaUpdated != null) {
-                QADTO qadto = converter(qaUpdated);
-                ctx.json(qadto);
+
+            Account account = dao.getAccountById(qaToUpdate.getAccount().getId());
+            if (account == null)
+                throw new ApiException(404, "Account not found", timestamp);
+            qaToUpdate.setAccount(account);
+
+            QA updated = dao.update(qaToUpdate);
+            if (updated != null) {
+                QADTO dto = converter(updated);
+                ctx.json(dto);
             } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+                throw new ApiException(404, "No data found.", timestamp);
             }
         };
     }

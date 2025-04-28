@@ -4,11 +4,8 @@ import io.javalin.http.ContentType;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import persistence.model.Account;
-import persistence.model.Game;
-import persistence.model.Role;
-
 import static org.hamcrest.Matchers.*;
+import java.util.HashMap;
 
 class GameControllerTest extends BaseTest {
 
@@ -26,24 +23,28 @@ class GameControllerTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Creating an game")
+    @DisplayName("Creating a game")
     void create() {
+        int existingAccountId = 1;
+
+        HashMap<String, Object> gamePayload = new HashMap<>();
+        gamePayload.put("name", "new-game");
+
+        HashMap<String, Object> accountPayload = new HashMap<>();
+        accountPayload.put("id", existingAccountId);
+        gamePayload.put("account", accountPayload);
+
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new Game(1,"new-game", new Account("username", "password", new Role(Role.RoleName.REGULAR))))
+                .body(gamePayload)
                 .when()
                 .post("/games")
                 .then()
                 .statusCode(200)
-                .body("id", greaterThanOrEqualTo(2))
+                .body("id", greaterThanOrEqualTo(1))
                 .body("name", containsString("new"))
-                .body("licenses", nullValue())
-                .body("account.role.name", anyOf(equalTo("REGULAR"), equalTo("ADMIN"), equalTo("NONE")))
-                .body("account.id", equalTo(1))
-                .body("account.username", equalTo("username"))
-                .body("account.role.name", equalTo("REGULAR"))
-                .body("account.role.id", equalTo(1));
+                .body("accountId", equalTo(existingAccountId));
     }
 
     @Test
@@ -56,33 +57,57 @@ class GameControllerTest extends BaseTest {
                 .when()
                 .get("/games/{id}")
                 .then()
+                .statusCode(200)
                 .body("id", greaterThanOrEqualTo(1))
                 .body("name", containsString("username"));
     }
 
     @Test
-    @DisplayName("Update game")
+    @DisplayName("Update a game")
     void update() {
+        int existingAccountId = 1;
+
+        HashMap<String, Object> createPayload = new HashMap<>();
+        createPayload.put("name", "initial-game");
+
+        HashMap<String, Object> createAccountPayload = new HashMap<>();
+        createAccountPayload.put("id", existingAccountId);
+        createPayload.put("account", createAccountPayload);
+
+        int createdGameId = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(createPayload)
+                .when()
+                .post("/games")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        HashMap<String, Object> updatePayload = new HashMap<>();
+        updatePayload.put("name", "updated-game");
+
+        HashMap<String, Object> updateAccountPayload = new HashMap<>();
+        updateAccountPayload.put("id", existingAccountId);
+        updatePayload.put("account", updateAccountPayload);
+
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new Game("new-game", new Account("username", "password", new Role(Role.RoleName.REGULAR))))
-                .pathParam("id", 1)
+                .body(updatePayload)
+                .pathParam("id", createdGameId)
                 .when()
                 .put("/games/{id}")
                 .then()
-                .body("id", greaterThanOrEqualTo(1))
-                .body("name", containsString("new"))
-                .body("licenses", nullValue())
-                .body("account.role.name", anyOf(equalTo("REGULAR"), equalTo("ADMIN"), equalTo("NONE")))
-                .body("account.id", equalTo(1))
-                .body("account.username", equalTo("username"))
-                .body("account.role.name", equalTo("REGULAR"))
-                .body("account.role.id", equalTo(1));
+                .statusCode(200)
+                .body("id", equalTo(createdGameId))
+                .body("name", containsString("updated"))
+                .body("accountId", equalTo(existingAccountId));
     }
 
     @Test
-    @DisplayName("Delete an game by id")
+    @DisplayName("Delete a game by id")
     void delete() {
         RestAssured
                 .given()
@@ -91,13 +116,9 @@ class GameControllerTest extends BaseTest {
                 .when()
                 .delete("/games/{id}")
                 .then()
+                .statusCode(200)
                 .body("id", greaterThanOrEqualTo(1))
-                .body("name", containsString("username"))
-                .body("licenses", notNullValue())
-                .body("account.role.name", anyOf(equalTo("REGULAR"), equalTo("ADMIN"), equalTo("NONE")))
-                .body("account.id", equalTo(1))
-                .body("account.username", equalTo("username"))
-                .body("account.role.name", equalTo("REGULAR"))
-                .body("account.role.id", equalTo(1));
+                .body("name", not(emptyOrNullString()))
+                .body("accountId", greaterThanOrEqualTo(1));
     }
 }

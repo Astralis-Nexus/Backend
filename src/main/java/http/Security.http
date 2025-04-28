@@ -3,6 +3,6 @@ POST http://localhost:7007/api/security/login
 Content-Type: application/json
 
 {
-  "username": "12test-username",
-  "password": "test-password"
+  "username": "admin",
+  "password": "admin"
 }

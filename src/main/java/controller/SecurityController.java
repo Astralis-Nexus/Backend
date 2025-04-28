@@ -47,7 +47,6 @@ public class SecurityController {
 
 
     private String createToken(String username, Role role) throws JOSEException {
-        // Prepare JWT with claims
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(username)
                 .claim("role", role.getName().toString())
@@ -56,10 +55,8 @@ public class SecurityController {
                 .expirationTime(new Date(System.currentTimeMillis() + 7200000)) // 2 hours
                 .build();
 
-        // Create a signed JWT
         SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
 
-        // Sign the JWT
         signedJWT.sign(new MACSigner(SECRET_KEY));
 
         return signedJWT.serialize();
@@ -69,12 +66,10 @@ public class SecurityController {
         try {
             SignedJWT jwt = SignedJWT.parse(token);
 
-            // Verify the signature
             if (!jwt.verify(new MACVerifier(SECRET_KEY))) {
                 throw new ApiException(403, "Invalid token signature", timestamp);
             }
 
-            // Check expiration
             Date expirationTime = jwt.getJWTClaimsSet().getExpirationTime();
             if (expirationTime != null && expirationTime.before(new Date())) {
                 throw new ApiException(403, "Token has expired", timestamp);
@@ -95,7 +90,6 @@ public class SecurityController {
                 return false;
             }
 
-            // Get roles from token
             List<String> roles = jwt.getJWTClaimsSet().getStringListClaim("roles");
             return roles != null && roles.contains(requiredRole);
         } catch (Exception e) {

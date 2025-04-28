@@ -2,7 +2,6 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import persistence.model.Account;
 import persistence.model.License;
 import persistence.model.Game;
 

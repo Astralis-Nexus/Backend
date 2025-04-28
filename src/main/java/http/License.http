@@ -1,0 +1,38 @@
+### Get all licenses
+GET http://localhost:7007/api/licences
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImV4cCI6MTc0NTQ0MzI2MCwiaWF0IjoxNzQ1NDM2MDYwLCJ1c2VybmFtZSI6ImFkbWluIn0.RW7lGCNSE170II2nV26epdUhcJQYCce5RmfhylaZ67I
+Accept: application/json
+
+
+### create a license
+POST http://localhost:7007/api/licences
+Content-Type: application/json
+
+{
+  "username": "updated_user",
+  "password": "updated_password",
+  "email": "updated_ekmail@example.com",
+  "pcNumber": 2,
+  "game": {
+    "id": 6
+  },
+  "status": "INACTIVE"
+}
+
+
+
+### editing license 
+
+PUT http://localhost:7007/api/licences/4
+Content-Type: application/json
+
+{
+  "username": "new-username",
+  "password": "new-password",
+  "email": "new-email@example.com",
+  "pcNumber": 5,
+  "game": {
+    "id": 6
+  },
+  "status": "ACTIVE"
+}

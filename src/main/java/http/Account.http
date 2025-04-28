@@ -7,17 +7,17 @@ POST http://localhost:7007/api/accounts
 Content-Type: application/json
 
 {
-  "username": "12testsldj-username",
-  "password": "testdaknk-password",
+  "username": "admin",
+  "password": "admin",
   "role": {
     "id": 1,
-    "name": "REGULAR"
+    "name": "ADMIN"
   }
 }
 
 
 
-### READ BY ID
+### Get by ID
 GET http://localhost:7007/api/accounts/1
 Content-Type: application/json
 

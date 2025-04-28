@@ -5,6 +5,7 @@ import dto.TodoDTO;
 import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
+import persistence.model.Account;
 import persistence.model.Todo;
 import utility.DateUtil;
 
@@ -24,10 +25,53 @@ public class TodoController implements IController {
                 .id(todo.getId())
                 .date(todo.getDate())
                 .description(todo.getDescription())
-                .status(todo.isStatus())
+                .status(todo.getStatus())
+                .source(todo.getSource())
                 .done_by(todo.getDone_by())
                 .account(todo.getAccount())
                 .build();
+    }
+
+    @Override
+    public Handler create() {
+        return ctx -> {
+            TodoDTO incoming = ctx.bodyAsClass(TodoDTO.class);
+
+            if (incoming == null ||
+                    incoming.getAccount() == null ||
+                    incoming.getAccount().getId() == null) {
+                throw new ApiException(400, "Account ID is required.", timestamp);
+            }
+
+            int accountId = incoming.getAccount().getId();
+            Account account = dao.getAccountById(accountId);
+
+            if (account == null) {
+                throw new ApiException(404, "Account not found with ID: " + accountId, timestamp);
+            }
+
+            Todo todo = new Todo(
+                    incoming.getDate(),
+                    incoming.getDescription(),
+                    incoming.getStatus(),
+                    incoming.getSource(),
+                    incoming.getDone_by(),
+                    account);
+
+            Todo createdTodo = dao.create(todo);
+
+            TodoDTO responseDTO = TodoDTO.builder()
+                    .id(createdTodo.getId())
+                    .date(createdTodo.getDate())
+                    .description(createdTodo.getDescription())
+                    .status(createdTodo.getStatus())
+                    .source(createdTodo.getSource())
+                    .done_by(createdTodo.getDone_by())
+                    .account(createdTodo.getAccount())
+                    .build();
+
+            ctx.json(responseDTO);
+        };
     }
 
     @Override
@@ -62,30 +106,35 @@ public class TodoController implements IController {
     }
 
     @Override
-    public Handler create() {
-        return ctx -> {
-            Todo todoCreated = ctx.bodyAsClass(Todo.class);
-            if (todoCreated != null) {
-                Todo todo = dao.create(todoCreated);
-                TodoDTO todoDTO = converter(todo);
-                ctx.json(todoDTO);
-            } else {
-                throw new ApiException(500, "No data found. ", timestamp);
-            }
-        };
-    }
-
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
-            Todo todoToUpdate = ctx.bodyAsClass(Todo.class);
-            todoToUpdate.setId(id);
-            Todo todoUpdated = dao.update(todoToUpdate);
-            if (todoUpdated != null) {
-                TodoDTO todoDTO = converter(todoUpdated);
-                ctx.json(todoDTO);
+
+            Todo existingTodo = dao.getById(id);
+            if (existingTodo == null) {
+                throw new ApiException(404, "Todo not found.", timestamp);
+            }
+
+            Todo todoFromRequest = ctx.bodyAsClass(Todo.class);
+
+            if (todoFromRequest.getDescription() != null) {
+                existingTodo.setDescription(todoFromRequest.getDescription());
+            }
+            if (todoFromRequest.getStatus() != null) {
+                existingTodo.setStatus(todoFromRequest.getStatus());
+            }
+            if (todoFromRequest.getSource() != null) {
+                existingTodo.setSource(todoFromRequest.getSource());
+            }
+
+            
+            Todo updated = dao.update(existingTodo);
+
+            if (updated != null) {
+                TodoDTO dto = converter(updated);
+                ctx.json(dto);
             } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+                throw new ApiException(404, "No data found.", timestamp);
             }
         };
     }

@@ -1,6 +1,8 @@
 package dao;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import persistence.model.Account;
 import persistence.model.Todo;
 
 public class TodoDAO extends DAO<Todo> {
@@ -17,5 +19,13 @@ public class TodoDAO extends DAO<Todo> {
             instance = new TodoDAO();
         }
         return instance;
+    }
+      public Account getAccountById(int id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.find(Account.class, id);
+        } finally {
+            em.close();
+        }
     }
 }

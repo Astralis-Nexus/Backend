@@ -18,7 +18,7 @@ class SecurityControllerTest extends BaseTest {
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(loginDTO)  // <-- passing the object
+                .body(loginDTO) 
                 .when()
                 .post("/security/login")
                 .then()
