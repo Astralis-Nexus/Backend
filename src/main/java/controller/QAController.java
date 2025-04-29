@@ -60,61 +60,59 @@ public class QAController implements IController {
         };
     }
 
-   @Override
-public Handler create() {
-    return ctx -> {
-        QA incoming = ctx.bodyAsClass(QA.class);
+    @Override
+    public Handler create() {
+        return ctx -> {
+            QA incoming = ctx.bodyAsClass(QA.class);
 
-        if (incoming == null ||
-            incoming.getQuestion() == null ||
-            incoming.getAnswer() == null ||
-            incoming.getAccount() == null ||
-            incoming.getAccount().getId() == null) {
-            throw new ApiException(400, "Missing required fields", timestamp);
-        }
+            if (incoming == null ||
+                    incoming.getQuestion() == null ||
+                    incoming.getAnswer() == null ||
+                    incoming.getAccount() == null ||
+                    incoming.getAccount().getId() == null) {
+                throw new ApiException(400, "Missing required fields", timestamp);
+            }
 
-        Account account = dao.getAccountById(incoming.getAccount().getId());
-        if (account == null) {
-            throw new ApiException(404, "Account not found with ID: " + incoming.getAccount().getId(), timestamp);
-        }
+            Account account = dao.getAccountById(incoming.getAccount().getId());
+            if (account == null) {
+                throw new ApiException(404, "Account not found with ID: " + incoming.getAccount().getId(), timestamp);
+            }
 
-        incoming.setAccount(account);
+            incoming.setAccount(account);
 
-        QA created = dao.create(incoming);
+            QA created = dao.create(incoming);
 
-        QADTO dto = new QADTO(
-            created.getId(),
-            created.getQuestion(),
-            created.getAnswer(),
-            created.getAccount().getId()
-        );
+            QADTO dto = new QADTO(
+                    created.getId(),
+                    created.getQuestion(),
+                    created.getAnswer(),
+                    created.getAccount().getId());
 
-        ctx.json(dto);
-    };
-}
-
-
-@Override
-public Handler update() {
-    return ctx -> {
-        int id = Integer.parseInt(ctx.pathParam("id"));
-        QA qaToUpdate = ctx.bodyAsClass(QA.class);
-        qaToUpdate.setId(id);
-
-        Account account = dao.getAccountById(qaToUpdate.getAccount().getId());
-        if (account == null) throw new ApiException(404, "Account not found", timestamp);
-        qaToUpdate.setAccount(account);
-
-        QA updated = dao.update(qaToUpdate);
-        if (updated != null) {
-            QADTO dto = converter(updated);
             ctx.json(dto);
-        } else {
-            throw new ApiException(404, "No data found.", timestamp);
-        }
-    };
-}
+        };
+    }
 
+    @Override
+    public Handler update() {
+        return ctx -> {
+            int id = Integer.parseInt(ctx.pathParam("id"));
+            QA qaToUpdate = ctx.bodyAsClass(QA.class);
+            qaToUpdate.setId(id);
+
+            Account account = dao.getAccountById(qaToUpdate.getAccount().getId());
+            if (account == null)
+                throw new ApiException(404, "Account not found", timestamp);
+            qaToUpdate.setAccount(account);
+
+            QA updated = dao.update(qaToUpdate);
+            if (updated != null) {
+                QADTO dto = converter(updated);
+                ctx.json(dto);
+            } else {
+                throw new ApiException(404, "No data found.", timestamp);
+            }
+        };
+    }
 
     @Override
     public Handler delete() {

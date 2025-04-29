@@ -7,8 +7,8 @@ POST http://localhost:7007/api/accounts
 Content-Type: application/json
 
 {
-  "username": "sumaia",
-  "password": "sumaia",
+  "username": "admin",
+  "password": "admin",
   "role": {
     "id": 1,
     "name": "ADMIN"
@@ -17,7 +17,7 @@ Content-Type: application/json
 
 
 
-### READ BY ID
+### Get by ID
 GET http://localhost:7007/api/accounts/1
 Content-Type: application/json
 

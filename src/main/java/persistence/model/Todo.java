@@ -41,6 +41,15 @@ public class Todo {
 
     private Account account;
 
+    public Todo(LocalDate date, String description, Status status, Source source, String done_by, Account account) {
+        this.date = date;
+        this.description = description;
+        this.status = status;
+        this.source = source;
+        this.done_by = done_by;
+        this.account = account;
+    }
+
     public Todo(LocalDate date, String description, Status status, Source source, Account account) {
         this.date = date;
         this.description = description;
@@ -48,7 +57,7 @@ public class Todo {
         this.source = source;
         this.account = account;
     }
-
+    
     @PreUpdate
     protected void onUpdate() {
         this.done_by = getCurrentUser();

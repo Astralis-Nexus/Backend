@@ -1,6 +1,5 @@
 package controller;
 
-import dao.GameDAO;
 import dao.LicenseDAO;
 import dto.LicenseDTO;
 import exception.ApiException;
@@ -21,7 +20,6 @@ public class LicenseController implements IController {
         this.dao = LicenseDAO.getInstance(emf);
     }
 
-   
     public LicenseDTO converter(License license) {
         return LicenseDTO.builder()
                 .id(license.getId())
@@ -30,10 +28,10 @@ public class LicenseController implements IController {
                 .email(license.getEmail())
                 .pcNumber(license.getPcNumber())
                 .game(license.getGame())
-                .status(license.getStatus()) 
+                .status(license.getStatus())
                 .build();
     }
-    
+
     @Override
     public Handler getAll() {
         return ctx -> {
@@ -87,8 +85,7 @@ public class LicenseController implements IController {
                     incoming.getEmail(),
                     incoming.getPcNumber(),
                     game,
-                    incoming.getStatus()
-            );
+                    incoming.getStatus());
 
             License createdLicense = dao.create(license);
 

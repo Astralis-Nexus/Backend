@@ -25,13 +25,55 @@ public class TodoController implements IController {
                 .id(todo.getId())
                 .date(todo.getDate())
                 .description(todo.getDescription())
-                .status(todo.getStatus()) // fixed here
-                .source(todo.getSource()) // added this
+                .status(todo.getStatus())
+                .source(todo.getSource())
                 .done_by(todo.getDone_by())
-                .accountId(todo.getAccount().getId())
+                .account(todo.getAccount())
                 .build();
     }
-    
+
+    @Override
+    public Handler create() {
+        return ctx -> {
+            TodoDTO incoming = ctx.bodyAsClass(TodoDTO.class);
+
+            if (incoming == null ||
+                    incoming.getAccount() == null ||
+                    incoming.getAccount().getId() == null) {
+                throw new ApiException(400, "Account ID is required.", timestamp);
+            }
+
+            int accountId = incoming.getAccount().getId();
+            Account account = dao.getAccountById(accountId);
+
+            if (account == null) {
+                throw new ApiException(404, "Account not found with ID: " + accountId, timestamp);
+            }
+
+            Todo todo = new Todo(
+                    incoming.getDate(),
+                    incoming.getDescription(),
+                    incoming.getStatus(),
+                    incoming.getSource(),
+                    incoming.getDone_by(),
+                    account);
+
+            Todo createdTodo = dao.create(todo);
+
+            TodoDTO responseDTO = TodoDTO.builder()
+                    .id(createdTodo.getId())
+                    .date(createdTodo.getDate())
+                    .description(createdTodo.getDescription())
+                    .status(createdTodo.getStatus())
+                    .source(createdTodo.getSource())
+                    .done_by(createdTodo.getDone_by())
+                    .account(createdTodo.getAccount())
+                    .build();
+
+            ctx.json(responseDTO);
+        };
+    }
+
     @Override
     public Handler getAll() {
         return ctx -> {
@@ -64,73 +106,38 @@ public class TodoController implements IController {
     }
 
     @Override
-    public Handler create() {
+    public Handler update() {
         return ctx -> {
-            Todo incoming = ctx.bodyAsClass(Todo.class);
-    
-            if (incoming == null ||
-                incoming.getDescription() == null ||
-                incoming.getAccount() == null ||
-                incoming.getAccount().getId() == null ||
-                incoming.getStatus() == null ||
-                incoming.getSource() == null) {
-                throw new ApiException(400, "Missing required fields: description, account ID, status, or source", timestamp);
+            int id = Integer.parseInt(ctx.pathParam("id"));
+
+            Todo existingTodo = dao.getById(id);
+            if (existingTodo == null) {
+                throw new ApiException(404, "Todo not found.", timestamp);
             }
-    
-            int accountId = incoming.getAccount().getId();
-            Account account = dao.getAccountById(accountId);
-            if (account == null) {
-                throw new ApiException(404, "Account not found with ID: " + accountId, timestamp);
+
+            Todo todoFromRequest = ctx.bodyAsClass(Todo.class);
+
+            if (todoFromRequest.getDescription() != null) {
+                existingTodo.setDescription(todoFromRequest.getDescription());
             }
-    
-            Todo todo = new Todo();
-            todo.setDescription(incoming.getDescription());
-            todo.setStatus(incoming.getStatus());
-            todo.setSource(incoming.getSource());
-            todo.setDone_by(incoming.getDone_by());
-            todo.setDate(incoming.getDate());
-            todo.setAccount(account);
-    
-            Todo created = dao.create(todo);
-    
-            TodoDTO dto = new TodoDTO(
-                created.getId(),
-                created.getDate(),
-                created.getDescription(),
-                created.getStatus(),
-                created.getSource(),
-                created.getDone_by(),
-                created.getAccount().getId()
-            );
-    
-            ctx.json(dto);
+            if (todoFromRequest.getStatus() != null) {
+                existingTodo.setStatus(todoFromRequest.getStatus());
+            }
+            if (todoFromRequest.getSource() != null) {
+                existingTodo.setSource(todoFromRequest.getSource());
+            }
+
+            
+            Todo updated = dao.update(existingTodo);
+
+            if (updated != null) {
+                TodoDTO dto = converter(updated);
+                ctx.json(dto);
+            } else {
+                throw new ApiException(404, "No data found.", timestamp);
+            }
         };
     }
-    
-
-@Override
-public Handler update() {
-    return ctx -> {
-        int id = Integer.parseInt(ctx.pathParam("id"));
-        Todo todoToUpdate = ctx.bodyAsClass(Todo.class);
-        todoToUpdate.setId(id);
-
-        Account account = dao.getAccountById(todoToUpdate.getAccount().getId());
-        if (account == null) {
-            throw new ApiException(404, "Account not found", timestamp);
-        }
-        todoToUpdate.setAccount(account);
-
-        Todo updated = dao.update(todoToUpdate);
-        if (updated != null) {
-            TodoDTO dto = converter(updated);
-            ctx.json(dto);
-        } else {
-            throw new ApiException(404, "No data found.", timestamp);
-        }
-    };
-}
-
 
     @Override
     public Handler delete() {

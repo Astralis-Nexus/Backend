@@ -63,6 +63,8 @@ public class Account {
     }
 
     public boolean verifyPassword(String password) {
-        return BCrypt.checkpw(password, this.password);
+       // return BCrypt.checkpw(password, this.password);
+       return this.password.equals(password);
+
     }
 }

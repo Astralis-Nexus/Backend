@@ -25,10 +25,9 @@ public class InformationController implements IController {
                 .id(information.getId())
                 .description(information.getDescription())
                 .accountId(information.getAccount().getId())
-                .importanceLevel(information.getImportanceLevel().name()) 
+                .importanceLevel(information.getImportanceLevel().name())
                 .build();
     }
-    
 
     @Override
     public Handler getAll() {
@@ -65,60 +64,56 @@ public class InformationController implements IController {
     public Handler create() {
         return ctx -> {
             Information incoming = ctx.bodyAsClass(Information.class);
-    
+
             if (incoming == null ||
-                incoming.getDescription() == null ||
-                incoming.getImportanceLevel() == null ||
-                incoming.getAccount() == null ||
-                incoming.getAccount().getId() == null) {
+                    incoming.getDescription() == null ||
+                    incoming.getImportanceLevel() == null ||
+                    incoming.getAccount() == null ||
+                    incoming.getAccount().getId() == null) {
                 throw new ApiException(400, "Description, importanceLevel, and accountId are required.", timestamp);
             }
-    
+
             int accountId = incoming.getAccount().getId();
-    
+
             Account account = dao.getAccountById(accountId);
             if (account == null) {
                 throw new ApiException(404, "Account not found with ID: " + accountId, timestamp);
             }
-    
+
             Information info = new Information(
-                incoming.getDescription(),
-                account,
-                incoming.getImportanceLevel() 
-            );
-    
+                    incoming.getDescription(),
+                    account,
+                    incoming.getImportanceLevel());
+
             Information createdInfo = dao.create(info);
             InformationDTO dto = converter(createdInfo);
-    
+
             ctx.json(dto);
         };
     }
-    
-
-
-         
 
     @Override
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             Information incoming = ctx.bodyAsClass(Information.class);
-    
-            if (incoming.getDescription() == null || incoming.getImportanceLevel() == null || incoming.getAccount() == null || incoming.getAccount().getId() == null) {
+
+            if (incoming.getDescription() == null || incoming.getImportanceLevel() == null
+                    || incoming.getAccount() == null || incoming.getAccount().getId() == null) {
                 throw new ApiException(400, "Missing fields", timestamp);
             }
-    
+
             int accountId = incoming.getAccount().getId();
             Account account = dao.getAccountById(accountId);
             if (account == null) {
                 throw new ApiException(404, "Account not found", timestamp);
             }
-    
+
             incoming.setId(id);
             incoming.setAccount(account);
-    
+
             Information updated = dao.update(incoming);
-    
+
             if (updated != null) {
                 InformationDTO dto = converter(updated);
                 ctx.json(dto);
@@ -127,7 +122,6 @@ public class InformationController implements IController {
             }
         };
     }
-    
 
     @Override
     public Handler delete() {

@@ -1,11 +1,14 @@
-### Create game manually
+### Create game 
 POST http://localhost:7007/api/games
 Content-Type: application/json
 
 {
-  "name": "mudnsadmhkhfh,fni",
+  "name": "call of duty",
   "account": {
-    "id": 2
+    "id": 4
   }
 }
 
+###Get all games
+
+GET http://localhost:7007/api/games

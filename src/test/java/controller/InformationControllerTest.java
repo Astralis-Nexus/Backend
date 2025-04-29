@@ -1,14 +1,9 @@
 package controller;
-
 import io.javalin.http.ContentType;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import persistence.model.Account;
-import persistence.model.Information;
-import persistence.model.Role;
-import persistence.model.Information.ImportanceLevel;
-
+import java.util.HashMap;
 import static org.hamcrest.Matchers.*;
 
 class InformationControllerTest extends BaseTest {
@@ -27,26 +22,6 @@ class InformationControllerTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Creating an information")
-    void create() {
-        RestAssured
-                .given()
-                .contentType(ContentType.JSON)
-                .body(new Information("username", new Account("username", "password", new Role(Role.RoleName.REGULAR)), ImportanceLevel.HIGH))
-                .when()
-                .post("/informations")
-                .then()
-                .statusCode(200)
-                .body("id", greaterThanOrEqualTo(2))
-                .body("description", containsString("user"))
-                .body("account.password", not(isEmptyOrNullString()))
-                .body("account.id", lessThanOrEqualTo(1))
-                .body("account.username", containsString("name"))
-                .body("account.role.name", anyOf(equalTo("REGULAR"), equalTo("ADMIN"), equalTo("NONE")))
-                .body("account.role.id", lessThanOrEqualTo(2));
-    }
-
-    @Test
     @DisplayName("Get information by id")
     void getById() {
         RestAssured
@@ -56,33 +31,85 @@ class InformationControllerTest extends BaseTest {
                 .when()
                 .get("/informations/{id}")
                 .then()
+                .statusCode(200)
                 .body("id", greaterThanOrEqualTo(1))
                 .body("description", containsString("user"))
-                .body("account.password", not(isEmptyOrNullString()))
-                .body("account.id", lessThanOrEqualTo(1))
-                .body("account.username", containsString("name"))
-                .body("account.role.name", anyOf(equalTo("REGULAR"), equalTo("ADMIN"), equalTo("NONE")))
-                .body("account.role.id", lessThanOrEqualTo(2));
+                .body("accountId", lessThanOrEqualTo(10))
+                .body("importanceLevel", anyOf(equalTo("HIGH"), equalTo("LOW"), equalTo("MEDIUM")));
     }
 
     @Test
-    @DisplayName("Update information")
-    void update() {
+    @DisplayName("Creating an information")
+    void create() {
+        int existingAccountId = 1;
+
+        HashMap<String, Object> informationPayload = new HashMap<>();
+        informationPayload.put("description", "user description");
+        informationPayload.put("importanceLevel", "MEDIUM");
+
+        HashMap<String, Object> accountPayload = new HashMap<>();
+        accountPayload.put("id", existingAccountId);
+        informationPayload.put("account", accountPayload);
+
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new Information("username", new Account("username", "password", new Role(Role.RoleName.REGULAR)), ImportanceLevel.HIGH))
-                .pathParam("id", 1)
+                .body(informationPayload)
+                .when()
+                .post("/informations")
+                .then()
+                .statusCode(200)
+                .body("id", greaterThanOrEqualTo(1))
+                .body("description", containsString("user"))
+                .body("accountId", equalTo(existingAccountId))
+                .body("importanceLevel", anyOf(equalTo("HIGH"), equalTo("MEDIUM"), equalTo("LOW")));
+    }
+
+    @Test
+    @DisplayName("Updating an information")
+    void update() {
+        int existingAccountId = 1;
+
+        HashMap<String, Object> createPayload = new HashMap<>();
+        createPayload.put("description", "original description");
+        createPayload.put("importanceLevel", "MEDIUM");
+
+        HashMap<String, Object> accountPayload = new HashMap<>();
+        accountPayload.put("id", existingAccountId);
+        createPayload.put("account", accountPayload);
+
+        int createdInfoId = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(createPayload)
+                .when()
+                .post("/informations")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id");
+
+        HashMap<String, Object> updatePayload = new HashMap<>();
+        updatePayload.put("description", "updated description");
+        updatePayload.put("importanceLevel", "HIGH");
+
+        HashMap<String, Object> updateAccountPayload = new HashMap<>();
+        updateAccountPayload.put("id", existingAccountId);
+        updatePayload.put("account", updateAccountPayload);
+
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(updatePayload)
+                .pathParam("id", createdInfoId)
                 .when()
                 .put("/informations/{id}")
                 .then()
-                .body("id", greaterThanOrEqualTo(1))
-                .body("description", containsString("user"))
-                .body("account.password", not(isEmptyOrNullString()))
-                .body("account.id", lessThanOrEqualTo(1))
-                .body("account.username", containsString("name"))
-                .body("account.role.name", anyOf(equalTo("REGULAR"), equalTo("ADMIN"), equalTo("NONE")))
-                .body("account.role.id", lessThanOrEqualTo(2));
+                .statusCode(200)
+                .body("id", equalTo(createdInfoId))
+                .body("description", containsString("updated"))
+                .body("accountId", equalTo(existingAccountId))
+                .body("importanceLevel", equalTo("HIGH"));
     }
 
     @Test
@@ -95,12 +122,10 @@ class InformationControllerTest extends BaseTest {
                 .when()
                 .delete("/informations/{id}")
                 .then()
+                .statusCode(200)
                 .body("id", greaterThanOrEqualTo(1))
                 .body("description", containsString("user"))
-                .body("account.password", not(isEmptyOrNullString()))
-                .body("account.id", lessThanOrEqualTo(1))
-                .body("account.username", containsString("name"))
-                .body("account.role.name", anyOf(equalTo("REGULAR"), equalTo("ADMIN"), equalTo("NONE")))
-                .body("account.role.id", lessThanOrEqualTo(2));
+                .body("accountId", greaterThanOrEqualTo(1))
+                .body("importanceLevel", anyOf(equalTo("HIGH"), equalTo("MEDIUM"), equalTo("LOW")));
     }
 }

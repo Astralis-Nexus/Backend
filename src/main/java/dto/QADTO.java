@@ -1,7 +1,6 @@
 package dto;
 
 import lombok.*;
-import persistence.model.Account;
 
 @Builder
 @Getter

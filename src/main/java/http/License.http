@@ -9,26 +9,30 @@ POST http://localhost:7007/api/licences
 Content-Type: application/json
 
 {
-  "username": "user21",
-  "password": "123456",
-  "email": "user1@llkjljl.com",
+  "username": "updated_user",
+  "password": "updated_password",
+  "email": "updated_ekmail@example.com",
   "pcNumber": 2,
-  "gameId": 18,
-  "status": "ACTIVE"
+  "game": {
+    "id": 6
+  },
+  "status": "INACTIVE"
 }
+
 
 
 ### editing license 
 
-PUT http://localhost:7007/api/licences/1
+PUT http://localhost:7007/api/licences/4
 Content-Type: application/json
 
 {
-  "id": 1,
-  "username": "user21",
-  "password": "newpass456",
-  "email": "user1@llkjljl.com",
-  "pcNumber": 2,
-  "gameId": 1,
-  "status": "INACTIVE"
+  "username": "new-username",
+  "password": "new-password",
+  "email": "new-email@example.com",
+  "pcNumber": 5,
+  "game": {
+    "id": 6
+  },
+  "status": "ACTIVE"
 }

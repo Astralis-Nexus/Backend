@@ -18,5 +18,6 @@ public class TodoDTO {
     private Todo.Status status;
     private Todo.Source source;
     private String done_by;
-    private Integer accountId;
+    private Account account;
 }
+

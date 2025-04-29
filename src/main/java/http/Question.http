@@ -9,7 +9,7 @@ Content-Type: application/json
   "question": "How do I reset my password?",
   "answer": "Click on 'Forgot Password' on the login page.",
   "account": {
-    "id": 1
+    "id": 4
   }
 }
 ### update a Question 

@@ -26,7 +26,7 @@ public class GameController implements IController {
                 .id(game.getId())
                 .name(game.getName())
                 .licenses(game.getLicenses())
-                .account(game.getAccount())
+                .accountId(game.getAccount().getId())
                 .build();
     }
 
@@ -72,17 +72,17 @@ public class GameController implements IController {
             if (incoming.getName() == null) {
                 throw new ApiException(400, "Missing game name.", timestamp);
             }
-            if (incoming.getAccount() == null) {
+            if (incoming.getAccount() == null || incoming.getAccount().getId() == null) {
                 throw new ApiException(400, "Missing account ID.", timestamp);
             }
 
-            Account account = dao.getAccountByUsername(incoming.getAccount().getUsername());
+            Account account = dao.getAccountById(incoming.getAccount().getId());
+            if (account == null) {
+                throw new ApiException(404, "Account not found with ID: " + incoming.getAccount().getId(), timestamp);
+            }
+
             Role role = dao.getRoleByName(account.getRole().getName());
             account.setRole(role);
-
-            /*if (account == null) {
-                throw new ApiException(404, "Account not found with ID: " + incoming.getAccount().getId(), timestamp);
-            }*/
 
             Game game = new Game(incoming.getName(), account);
             game.setAccount(account);
@@ -93,20 +93,30 @@ public class GameController implements IController {
         };
     }
 
-
-
-    @Override
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             Game gameToUpdate = ctx.bodyAsClass(Game.class);
+
+            if (gameToUpdate.getAccount() == null || gameToUpdate.getAccount().getId() == null) {
+                throw new ApiException(400, "Missing account information", timestamp);
+            }
+
+            Account account = dao.getAccountById(gameToUpdate.getAccount().getId());
+            if (account == null) {
+                throw new ApiException(404, "Account not found", timestamp);
+            }
+
             gameToUpdate.setId(id);
+            gameToUpdate.setAccount(account);
+
             Game gameUpdated = dao.update(gameToUpdate);
+
             GameDTO gameDTO = converter(gameUpdated);
             if (gameDTO != null) {
                 ctx.json(gameDTO);
             } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+                throw new ApiException(404, "No data found.", timestamp);
             }
         };
     }
