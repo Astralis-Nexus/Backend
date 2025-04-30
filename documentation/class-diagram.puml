@@ -1,0 +1,627 @@
+@startuml "Java Backend Structure"
+
+' ======================== APPLICATION PACKAGE ========================
+' Latest updated: 30.04.2025
+package "application" {
+    class Application {
+        + {static} void main (String[] args)
+    }
+    
+    package "config" {
+        class ApplicationConfig {
+            - Javalin app
+            - {static} ApplicationConfig instance
+            - ApplicationConfig()
+            + {static} ApplicationConfig getInstance()
+            + ApplicationConfig initiateServer()
+            + ApplicationConfig startServer(int port)
+            + ApplicationConfig setRoute(EndpointGroup route)
+        }
+    }
+}
+
+' ======================== CONTROLLER PACKAGE ========================
+' Latest updated: 30.04.2025
+package "controller" {
+        interface IController {
+        + getAll(): Handler
+        + getById(): Handler
+        + create(): Handler
+        + update(): Handler
+        + delete(): Handler
+    }
+
+    class SecurityController {
+        - {static} final String SECRET_KEY
+        - {static} final String timestamp
+        - final AccountDAO accountDAO
+        + SecurityController(EntityManagerFactory emf)
+        + Handler login()
+        - String createToken(String username, Role role) throws TokenCreationException
+        + boolean tokenIsValid(String token)
+        + boolean hasRole(String token, String requiredRole)
+        + Handler requireRole(String role, Handler handler)
+        + JWTClaimsSet decodeToken(String token)
+    }
+    
+    class AccountController implements IController {
+        - {static} final String timestamp
+        - final AccountDAO dao
+        + AccountController(EntityManagerFactory emf)
+        + AccountDTO converter(Account account)
+        + Handler getAll()
+        + Handler getById()
+        + Handler create()
+        + Handler update()
+        + Handler delete()
+    }
+
+    class GameController implements IController {
+        - {static} final String timestamp
+        - final GameDAO dao
+        + GameController(EntityManagerFactory emf)
+        + GameDTO converter(Game game)
+        + Handler getAll()
+        + Handler getById()
+        + Handler create()
+        + Handler update()
+        + Handler delete()
+    }
+    
+    class InformationController implements IController {
+        - {static} final String timestamp
+        - final InformationDAO dao
+        + InformationController(EntityManagerFactory emf)
+        + InformationDTO converter(Information information)
+        + Handler getAll()
+        + Handler getById()
+        + Handler create()
+        + Handler update()
+        + Handler delete()
+    }
+    
+    class LicenseController implements IController {
+        - {static} final String timestamp
+        - final LicenseDAO dao
+        + LicenseController(EntityManagerFactory emf)
+        + LicenseDTO converter(License license)
+        + Handler getAll()
+        + Handler getById()
+        + Handler create()
+        + Handler update()
+        + Handler delete()
+    }
+    
+    class QAController implements IController {
+        - {static} final String timestamp
+        - final QADAO dao
+        + QAController(EntityManagerFactory emf)
+        + QADTO converter(QA qa)
+        + Handler getAll()
+        + Handler getById()
+        + Handler create()
+        + Handler update()
+        + Handler delete()
+    }
+    
+    class RoleController implements IController {
+        - {static} final String timestamp
+        - final RoleDAO dao
+        + RoleController(EntityManagerFactory emf)
+        + RoleDTO converter(Role role)
+        + Handler getAll()
+        + Handler getById()
+        + Handler create()
+        + Handler update()
+        + Handler delete()
+    }
+    
+    class TodoController implements IController {
+        - {static} final String timestamp
+        - final TodoDAO dao
+        + TodoController(EntityManagerFactory emf)
+        + TodoDTO converter(Todo todo)
+        + Handler getAll()
+        + Handler getById()
+        + Handler create()
+        + Handler update()
+        + Handler delete()
+    }
+}
+
+' ======================== DAO PACKAGE ========================
+' Latest updated: 30.04.2025
+package "dao" {
+    interface IDAO<T> {
+        + List<T> getAll()
+        + T getById(int id)
+        + T create(T entity)
+        + T update(T entity)
+        + T delete(int id)
+    }
+
+    abstract class DAO<T> implements IDAO<T> {
+        # {static} EntityManagerFactory emf
+        # {static} String timestamp
+        - final Class<T> entityClass
+        # DAO (Class<T> entityClass)
+        + Role getRoleByName(Role.RoleName name)
+        + Account getAccountByUsername(String username)
+        + Game getGameByName(String name)
+        - Account attachAccountWithRole(EntityMange em, Account sourceAccount)
+        - private <E> void removeFromCollection(Collection<E> collection, E entity)
+        + List<T> getAll()
+        + T getById(int id)
+        + T create(T entity)
+        + T update(T entity)
+        + T delete(int id)
+    }
+
+    class AccountDAO extends DAO<Account> {
+        - {static} AccountDAO instance
+        - {static} EntityManagerFactory emf
+        - AccountDAO()
+        + {static} AccountDAO getInstance(EntityManagerFactory emf)
+        + Account verifyLogin(String username, String password)
+        + List<Account> getAll()
+    }
+
+    class GameDAO extends DAO<Game> {
+        - {static} GameDAO instance
+        - GameDAO()
+        + {static} GameDAO getInstance(EntityManagerFactory emf)
+        + Account getAccountById(int id)
+    }
+    
+    class InformationDAO extends DAO<Information> {
+        - {static} InformationDAO instance
+        - InformationDAO()
+        + {static} InformationDAO getInstance(EntityManagerFactory emf)
+        + Account getAccountById(int id)
+    }
+    
+    class LicenseDAO extends DAO<License> {
+        - {static} LicenseDAO instance
+        - LicenseDAO()
+        + {static} LicenseDAO getInstance(EntityManagerFactory emf)
+        + Game getGameById(int id)
+    }
+    
+    class QADAO extends DAO<QA> {
+        - {static} QADAO instance
+        - QADAO()
+        + {static} QADAO getInstance(EntityManagerFactory emf)
+        + Account getAccountById(int id)
+    }
+    
+    class RoleDAO extends DAO<Role> {
+        - {static} RoleDAO instance
+        - RoleDAO()
+        + {static} RoleDAO getInstance(EntityManagerFactory emf)
+    }
+    
+    class TodoDAO extends DAO<Todo> {
+        - {static} TodoDAO instance
+        - TodoDAO()
+        + {static} TodoDAO getInstance(EntityManagerFactory emf)
+        + Account getAccountById(int id)
+    }
+}
+
+' ======================== DTO PACKAGE ========================
+package "dto" {
+    class AccountDTO {
+        - Integer id
+        - String username
+        - String password
+        - Role role
+        - List<Todo> todos
+        - List<Information> information
+        - List<Game> games
+        - List<QA> qas
+        + builder(): AccountDTOBuilder
+    }
+    
+    class FooterDTO {
+        - Integer id
+        - String header
+        - String description
+        - Role role
+        + builder(): FooterDTOBuilder
+    }
+    
+    class GameDTO {
+        - Integer id
+        - String name
+        - List<License> licenses
+        - Account account
+        + builder(): GameDTOBuilder
+    }
+    
+    class HeaderDTO {
+        - Integer id
+        - String text
+        - Role role
+        + builder(): HeaderDTOBuilder
+    }
+    
+    class InformationDTO {
+        - Integer id
+        - String description
+        - Account account
+        + builder(): InformationDTOBuilder
+    }
+    
+    class LicenseDTO {
+        - Integer id
+        - String username
+        - String password
+        - String email
+        - String pcNumber
+        - Game game
+        - License.LicenseStatus status
+        + builder(): LicenseDTOBuilder
+    }
+    
+    class QADTO {
+        - Integer id
+        - String question
+        - String answer
+        - Account account
+        + builder(): QADTOBuilder
+    }
+    
+    class RoleDTO {
+        - Integer id
+        - String name
+        - List<Header> headers
+        - List<Footer> footers
+        + builder(): RoleDTOBuilder
+    }
+    
+    class TodoDTO {
+        - Integer id
+        - LocalDate date
+        - String description
+        - boolean status
+        - String done_by
+        - Account account
+        + builder(): TodoDTOBuilder
+    }
+    
+    class TokenDTO {
+        - String token
+        - String username
+        - String role
+        - Long id
+        + TokenDTO(String token, String username, String role, Long id)
+    }
+}
+
+' ======================== EXCEPTION PACKAGE ========================
+package "exception" {
+    class ApiException extends Exception {
+        - int statusCode
+        - String message
+        - String timestamp
+        + ApiException(int statusCode, String message, String timestamp)
+    }
+}
+
+' ======================== PERSISTENCE PACKAGE ========================
+package "persistence" {
+    package "config" {
+        class HibernateConfig {
+            - {static} EntityManagerFactory entityManagerFactory
+            - {static} buildEntityFactoryConfig(): EntityManagerFactory
+            - {static} setupHibernateConfigurationForTesting(): EntityManagerFactory
+            - {static} getEntityManagerFactory(Configuration, Properties): EntityManagerFactory
+            - {static} getAnnotationConfiguration(Configuration): void
+            - {static} getEntityManagerFactoryConfigDevelopment(): EntityManagerFactory
+            - {static} getEntityManagerFactoryConfigTest(): void
+            + {static} getEntityManagerFactoryConfig(boolean isTest): EntityManagerFactory
+        }
+    }
+    
+    package "model" {
+        class Account {
+            - Integer id
+            - String username
+            - String password
+            - Role role
+            - List<Todo> todos
+            - List<Information> informations
+            - List<Game> games
+            - List<QA> qas
+            + Account()
+            + Account(String username, String password, Role role)
+        }
+        
+        class Role {
+            - Integer id
+            - RoleName name
+            - List<Header> headers
+            - List<Footer> footers
+            + Role()
+            + Role(RoleName name)
+            + enum RoleName { REGULAR, NONE }
+        }
+        
+        class Footer {
+            - Integer id
+            - String header
+            - String description
+            - Role role
+            + Footer()
+            + Footer(String header, String description, Role role)
+        }
+        
+        class Header {
+            - Integer id
+            - String text
+            - Role role
+            + Header()
+            + Header(String text, Role role)
+        }
+        
+        class Information {
+            - Integer id
+            - String description
+            - Account account
+            + Information()
+            + Information(String description, Account account)
+        }
+        
+        class QA {
+            - Integer id
+            - String question
+            - String answer
+            - Account account
+            + QA()
+            + QA(String question, String answer, Account account)
+        }
+        
+        class Todo {
+            - Integer id
+            - LocalDate date
+            - String description
+            - boolean status
+            - String done_by
+            - Account account
+            + Todo()
+            + Todo(LocalDate date, String description, boolean status, Account account)
+        }
+        
+        class Game {
+            - Integer id
+            - String name
+            - Account account
+            - List<License> licenses
+            + Game()
+            + Game(String name, Account account)
+        }
+        
+        class License {
+            - Integer id
+            - String username
+            - String password
+            - String email
+            - String pcNumber
+            - LicenseStatus status
+            - Game game
+            + License()
+            + License(String username, String password, String email, String pcNumber, Game game, LicenseStatus status)
+            + enum LicenseStatus { ACTIVE, INACTIVE }
+        }
+    }
+}
+
+' ======================== ROUTE PACKAGE ========================
+package "route" {
+    class Route {
+        ~ SecurityRoute securityRoute
+        ~ AccountRoute accountRoute
+        ~ FooterRoute footerRoute
+        ~ GameRoute gameRoute
+        ~ HeaderRoute headerRoute
+        ~ InformationRoute informationRoute
+        ~ LicenseRoute licenseRoute
+        ~ QARoute qaRoute
+        ~ RoleRoute roleRoute
+        ~ TodoRoute todoRoute
+        + Route(EntityManagerFactory emf)
+        + EndpointGroup addRoutes()
+    }
+    
+    class SecurityRoute {
+        - SecurityController securityController
+        + SecurityRoute(EntityManagerFactory emf)
+        + EndpointGroup authRoutes()
+    }
+    
+    class AccountRoute {
+        - AccountController accountController
+        - SecurityController securityController
+        + AccountRoute(EntityManagerFactory emf)
+        + EndpointGroup itemRoutes()
+    }
+    
+    class FooterRoute {
+        - FooterController footerController
+        - SecurityController securityController
+        + FooterRoute(EntityManagerFactory emf)
+        + EndpointGroup itemRoutes()
+    }
+    
+    class GameRoute {
+        - GameController gameController
+        - SecurityController securityController
+        + GameRoute(EntityManagerFactory emf)
+        + EndpointGroup itemRoutes()
+    }
+    
+    class HeaderRoute {
+        - HeaderController headerController
+        - SecurityController securityController
+        + HeaderRoute(EntityManagerFactory emf)
+        + EndpointGroup itemRoutes()
+    }
+    
+    class InformationRoute {
+        - InformationController informationController
+        - SecurityController securityController
+        + InformationRoute(EntityManagerFactory emf)
+        + EndpointGroup itemRoutes()
+    }
+    
+    class LicenseRoute {
+        - LicenseController licenseController
+        - SecurityController securityController
+        + LicenseRoute(EntityManagerFactory emf)
+        + EndpointGroup itemRoutes()
+    }
+    
+    class QARoute {
+        - QAController qaController
+        - SecurityController securityController
+        + QARoute(EntityManagerFactory emf)
+        + EndpointGroup itemRoutes()
+    }
+    
+    class RoleRoute {
+        - RoleController roleController
+        - SecurityController securityController
+        + RoleRoute(EntityManagerFactory emf)
+        + EndpointGroup itemRoutes()
+    }
+    
+    class TodoRoute {
+        - TodoController todoController
+        - SecurityController securityController
+        + TodoRoute(EntityManagerFactory emf)
+        + EndpointGroup itemRoutes()
+    }
+}
+
+' ======================== UTILITY PACKAGE ========================
+package "utility" {
+    class DateUtil {
+        + {static} String getTimestamp()
+    }
+}
+
+' ======================== RELATIONSHIPS ========================
+' Application relationships
+Application --> ApplicationConfig
+Application --> HibernateConfig
+Application --> Route
+
+' Route relationships
+Route *-- SecurityRoute
+Route *-- AccountRoute 
+Route *-- FooterRoute
+Route *-- GameRoute
+Route *-- HeaderRoute
+Route *-- InformationRoute
+Route *-- LicenseRoute
+Route *-- QARoute
+Route *-- RoleRoute
+Route *-- TodoRoute
+
+
+' Route to Controller relationships
+SecurityRoute --> SecurityController
+AccountRoute --> AccountController
+AccountRoute --> SecurityController
+FooterRoute --> FooterController
+FooterRoute --> SecurityController
+GameRoute --> GameController
+GameRoute --> SecurityController
+HeaderRoute --> HeaderController
+HeaderRoute --> SecurityController
+InformationRoute --> InformationController
+InformationRoute --> SecurityController
+LicenseRoute --> LicenseController
+LicenseRoute --> SecurityController
+QARoute --> QAController
+QARoute --> SecurityController
+RoleRoute --> RoleController
+RoleRoute --> SecurityController
+TodoRoute --> TodoController
+TodoRoute --> SecurityController
+
+' Controller to DAO relationships
+SecurityController --> AccountDAO
+AccountController --> AccountDAO
+FooterController --> FooterDAO
+GameController --> GameDAO
+HeaderController --> HeaderDAO
+InformationController --> InformationDAO
+LicenseController --> LicenseDAO
+QAController --> QADAO
+RoleController --> RoleDAO
+TodoController --> TodoDAO
+
+' Controller to DTO relationships
+AccountController ..> AccountDTO
+FooterController ..> FooterDTO
+GameController ..> GameDTO
+HeaderController ..> HeaderDTO
+InformationController ..> InformationDTO
+LicenseController ..> LicenseDTO
+QAController ..> QADTO
+RoleController ..> RoleDTO
+TodoController ..> TodoDTO
+SecurityController ..> TokenDTO
+
+' Controller to Exception relationships
+SecurityController ..> ApiException
+AccountController ..> ApiException
+FooterController ..> ApiException
+GameController ..> ApiException
+HeaderController ..> ApiException
+InformationController ..> ApiException
+LicenseController ..> ApiException
+QAController ..> ApiException
+RoleController ..> ApiException
+TodoController ..> ApiException
+
+' Model relationships
+Account --> Role
+Account o--> Todo
+Account o--> Information
+Account o--> Game
+Account o--> QA
+Footer --> Role
+Header --> Role
+Game o--> License
+Game --> Account
+Information --> Account
+QA --> Account
+Todo --> Account
+License --> Game
+
+' DAO to Model relationships
+AccountDAO ..> Account
+FooterDAO ..> Footer
+GameDAO ..> Game
+HeaderDAO ..> Header
+InformationDAO ..> Information
+LicenseDAO ..> License
+QADAO ..> QA
+RoleDAO ..> Role
+TodoDAO ..> Todo
+
+' Utility relationships
+SecurityController --> DateUtil
+AccountController --> DateUtil
+FooterController --> DateUtil
+GameController --> DateUtil
+HeaderController --> DateUtil
+InformationController --> DateUtil
+LicenseController --> DateUtil
+QAController --> DateUtil
+RoleController --> DateUtil
+TodoController --> DateUtil
+
+@enduml

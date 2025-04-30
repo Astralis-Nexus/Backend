@@ -113,7 +113,6 @@ public class SecurityController {
         };
     }
 
-
     public JWTClaimsSet decodeToken(String token) {
         try {
             SignedJWT jwt = SignedJWT.parse(token);
