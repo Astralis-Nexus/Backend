@@ -2,6 +2,7 @@ package persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -22,8 +23,10 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(unique = true, nullable = false)
+    @Size(min = 1, max = 30)
+    @Column(unique = true, nullable = false, length = 30)
     private String username;
+    @Size(min = 1, max = 7)
     @Column(nullable = false)
     //@JsonIgnore
     private String password;

@@ -1,6 +1,6 @@
 package persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Size;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,15 +17,19 @@ public class License {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Size(min = 1)
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Size(min = 8)
     @Column(nullable = false)
     private String password;
 
+    @Size(min = 6)
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Size(min = 0)
     @Column(name = "pc_number")
     private Integer pcNumber = 0;
 

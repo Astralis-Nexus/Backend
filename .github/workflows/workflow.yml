@@ -13,6 +13,11 @@ jobs:
   ci:
     # Use a fresh Ubuntu runner for each CI run.
     runs-on: ubuntu-latest
+    env:
+      SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+      SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+      SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     steps:
       # Download the repository code into the runner.
@@ -30,3 +35,14 @@ jobs:
       # Compile the project, run tests, and execute Maven verification checks.
       - name: Build and test
         run: mvn --batch-mode verify
+
+      # Kører kun SonarQube hvis alle nødvendige GitHub variables/secrets findes.
+      - name: Run SonarQube analysis
+        if: ${{ env.SONAR_HOST_URL != '' && env.SONAR_PROJECT_KEY != '' && env.SONAR_ORGANIZATION != '' && env.SONAR_TOKEN != '' }}
+        run: >
+          mvn -B --no-transfer-progress
+          org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar
+          -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+          -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
+          -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
+          -Dsonar.token=${{ env.SONAR_TOKEN }}

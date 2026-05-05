@@ -1,6 +1,7 @@
 package persistence.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Entity
@@ -15,6 +16,7 @@ public class Information {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Size(min = 10)
     @Column(nullable = false)
     private String description;
 

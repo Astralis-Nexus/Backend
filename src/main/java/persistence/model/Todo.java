@@ -2,7 +2,7 @@ package persistence.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 
@@ -21,6 +21,7 @@ public class Todo {
     @Column(nullable = false, updatable = false)
     private LocalDate date;
 
+    @Size(min = 1)
     @Column(nullable = false)
     private String description;
 
@@ -32,6 +33,7 @@ public class Todo {
     @Column(nullable = false)
     private Source source;
 
+    @Size(min = 1, max = 30)
     @Column(nullable = false, updatable = false)
     private String done_by = "";
 
