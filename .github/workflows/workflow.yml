@@ -23,6 +23,8 @@ jobs:
       # Download the repository code into the runner.
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Install Java 17 and cache Maven dependencies for faster runs.
       - name: Set up JDK 17
@@ -39,8 +41,10 @@ jobs:
       # Kører kun SonarQube hvis alle nødvendige GitHub variables/secrets findes.
       - name: Run SonarQube analysis
         if: ${{ env.SONAR_HOST_URL != '' && env.SONAR_PROJECT_KEY != '' && env.SONAR_ORGANIZATION != '' && env.SONAR_TOKEN != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
-          mvn -B --no-transfer-progress
+          mvn -B -e --no-transfer-progress
           org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar
           -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
           -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
