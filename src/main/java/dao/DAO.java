@@ -160,7 +160,7 @@ public abstract class DAO<T> implements IDAO<T> {
                             Role role = getRoleByName(footer.getRole().getName());
                             existingFooter.setRole(role);
                         }
-                        entity = (T) existingFooter; // ADD THIS LINE to update entity reference
+                        entity = entityClass.cast(existingFooter);
                     }
 
                 } else if (entity instanceof Game game) {

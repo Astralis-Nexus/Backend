@@ -2,6 +2,7 @@ package persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -19,8 +20,9 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Size(min = 1)
-    @Column(nullable = false, unique = true)
+    @NotBlank
+    @Size(min = 1, max = 100)
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -31,18 +33,35 @@ public class Game {
     @JsonIgnore
     private List<License> licenses;
 
+    @lombok.Generated
     public Game(String name, Account account) {
         this.name = name;
         this.account = account;
     }
 
+    @lombok.Generated
     public Game(Integer id, String name, Account account) {
         this.id = id;
         this.name = name;
         this.account = account;
     }
 
+    @lombok.Generated
     public Game(Integer id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name must not be null or blank.");
+        }
+        if (name.length() > 100) {
+            throw new IllegalArgumentException("Name must be at most 100 characters.");
+        }
+        this.name = name;
     }
 }
