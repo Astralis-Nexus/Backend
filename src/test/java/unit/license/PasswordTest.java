@@ -66,7 +66,7 @@ public class PasswordTest {
     @DisplayName("Password should reject null, empty, and blank values.")
     @NullAndEmptySource
     @ValueSource(strings = {
-            " "
+            " ",
             "        " // White
     })
     void passwordShouldRejectNullEmptyAndBlankValues(String password) {

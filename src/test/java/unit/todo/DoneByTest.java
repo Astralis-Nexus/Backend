@@ -24,7 +24,7 @@ public class DoneByTest {
             "AA",
             "AAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "support_agent_02"
     })
     void doneByShouldAcceptValidLengths(String doneBy) {
@@ -80,7 +80,7 @@ public class DoneByTest {
 
     @Test
     @DisplayName("OnUpdate should set done by to the current account username.")
-    void onUpdateShouldSetDoneByToCurrentAccountUsername() {
+    void onUpdateShouldSetDoneByToCurrentAccountUsername() throws Exception {
         // Given
         Account account = new Account("PlayerOne");
         Todo subject = new Todo();
