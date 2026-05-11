@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class DoneByTest {
+class DoneByTest {
 
     // ------------------------------ Positive values ------------------------------
 
@@ -30,14 +30,10 @@ public class DoneByTest {
     void doneByShouldAcceptValidLengths(String doneBy) {
         // When
         Todo subject = new Todo();
-        subject.setDone_by(doneBy);
+        subject.setDoneBy(doneBy);
 
         // Then
-        assertThat(subject.getDone_by()).isEqualTo(doneBy).isNotBlank().hasSizeBetween(1, 30);
-        assertThat(subject.getDone_by() != null
-                && !subject.getDone_by().isBlank()
-                && subject.getDone_by().length() >= 1
-                && subject.getDone_by().length() <= 30).isTrue();
+        assertThat(subject.getDoneBy()).isEqualTo(doneBy).isNotBlank().hasSizeBetween(1, 30);
     }
 
     // ------------------------------ Negative values ------------------------------
@@ -55,7 +51,7 @@ public class DoneByTest {
         Todo subject = new Todo();
 
         // Then
-        assertThatThrownBy(() -> subject.setDone_by(doneBy))
+        assertThatThrownBy(() -> subject.setDoneBy(doneBy))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -72,7 +68,7 @@ public class DoneByTest {
         Todo subject = new Todo();
 
         // Then
-        assertThatThrownBy(() -> subject.setDone_by(doneBy))
+        assertThatThrownBy(() -> subject.setDoneBy(doneBy))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -85,7 +81,7 @@ public class DoneByTest {
         Account account = new Account("PlayerOne");
         Todo subject = new Todo();
         subject.setAccount(account);
-        subject.setDone_by("OldUser");
+        subject.setDoneBy("OldUser");
         Method onUpdate = Todo.class.getDeclaredMethod("onUpdate");
         onUpdate.setAccessible(true);
 
@@ -93,7 +89,7 @@ public class DoneByTest {
         onUpdate.invoke(subject);
 
         // Then
-        assertThat(subject.getDone_by()).isEqualTo("PlayerOne");
+        assertThat(subject.getDoneBy()).isEqualTo("PlayerOne");
     }
 
 }

@@ -14,7 +14,7 @@ import java.time.format.DateTimeParseException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class DateTest {
+class DateTest {
 
     // ------------------------------ Positive values ------------------------------
 

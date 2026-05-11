@@ -10,7 +10,7 @@ import persistence.model.Account;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class PasswordTest {
+class PasswordTest {
 
     // ------------------------------ Positive values ------------------------------
 

@@ -33,7 +33,7 @@ jobs:
 
       # Run only the unit tests under src/test/java/unit.
       - name: Run unit tests
-        run: mvn --batch-mode --no-transfer-progress "-Dtest=unit.**.*Test" test
+        run: mvn --batch-mode --no-transfer-progress "-Dtest=unit.**.*Test" test jacoco:report
 
       # Run SonarQube only when the required repository variables and secret are configured.
       - name: Run SonarQube analysis
@@ -47,3 +47,4 @@ jobs:
           -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
           -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
           -Dsonar.token=${{ env.SONAR_TOKEN }}
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml

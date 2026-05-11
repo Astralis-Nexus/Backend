@@ -41,20 +41,20 @@ public class Todo {
 
     @NotBlank
     @Size(min = 1, max = 30)
-    @Column(nullable = false, updatable = false)
-    private String done_by = "";
+    @Column(name = "done_by", nullable = false, updatable = false)
+    private String doneBy = "";
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
     @lombok.Generated
-    public Todo(LocalDate date, String description, Status status, Source source, String done_by, Account account) {
+    public Todo(LocalDate date, String description, Status status, Source source, String doneBy, Account account) {
         this.date = date;
         this.description = description;
         this.status = status;
         this.source = source;
-        this.done_by = done_by;
+        this.doneBy = doneBy;
         this.account = account;
     }
 
@@ -114,23 +114,17 @@ public class Todo {
         this.source = source;
     }
 
-    public String getDone_by() {
-        return done_by;
+    public String getDoneBy() {
+        return doneBy;
     }
 
-    public void setDone_by(String done_by) {
-        if (done_by == null || done_by.isBlank()) {
-            throw new IllegalArgumentException("DoneBy must not be null or blank.");
-        }
-        if (done_by.length() > 30) {
-            throw new IllegalArgumentException("DoneBy must be at most 30 characters.");
-        }
-        this.done_by = done_by;
+    public void setDoneBy(String doneBy) {
+        this.doneBy = ModelValidation.requireTextLength(doneBy, "DoneBy", 1, 30);
     }
     
     @PreUpdate
     protected void onUpdate() {
-        this.done_by = getCurrentUser();
+        this.doneBy = getCurrentUser();
     }
 
     private String getCurrentUser() {

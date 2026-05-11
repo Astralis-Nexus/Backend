@@ -27,7 +27,7 @@ public class TodoController implements IController {
                 .description(todo.getDescription())
                 .status(todo.getStatus())
                 .source(todo.getSource())
-                .done_by(todo.getDone_by())
+                .done_by(todo.getDoneBy())
                 .account(todo.getAccount())
                 .build();
     }
@@ -66,7 +66,7 @@ public class TodoController implements IController {
                     .description(createdTodo.getDescription())
                     .status(createdTodo.getStatus())
                     .source(createdTodo.getSource())
-                    .done_by(createdTodo.getDone_by())
+                    .done_by(createdTodo.getDoneBy())
                     .account(createdTodo.getAccount())
                     .build();
 

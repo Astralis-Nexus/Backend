@@ -12,7 +12,7 @@ import persistence.model.Information.ImportanceLevel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class ImportanceLevelTest {
+class ImportanceLevelTest {
 
     // ------------------------------ Positive values ------------------------------
 

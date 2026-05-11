@@ -12,7 +12,7 @@ import persistence.model.Todo.Source;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class SourceTest {
+class SourceTest {
 
     // ------------------------------ Positive values ------------------------------
 

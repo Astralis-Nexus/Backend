@@ -10,7 +10,7 @@ import persistence.model.Game;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class NameTest {
+class NameTest {
 
     // ------------------------------ Positive values ------------------------------
 

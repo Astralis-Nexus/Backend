@@ -10,7 +10,7 @@ import persistence.model.License.LicenseStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class StatusTest {
+class StatusTest {
 
     // ------------------------------ Positive values ------------------------------
 

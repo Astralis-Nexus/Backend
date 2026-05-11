@@ -9,7 +9,7 @@ import persistence.model.QA;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class QuestionTest {
+class QuestionTest {
 
     // ------------------------------ Positive values ------------------------------
 
