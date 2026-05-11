@@ -1,7 +1,6 @@
 package application;
 
 import application.config.ApplicationConfig;
-import data.PopulateData;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.config.HibernateConfig;
 import route.Route;

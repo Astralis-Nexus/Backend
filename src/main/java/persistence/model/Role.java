@@ -2,7 +2,7 @@ package persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Size(min = 1)
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private RoleName name;
@@ -35,7 +35,19 @@ public class Role {
     @JsonIgnore
     private List<Footer> footers;
 
+    @lombok.Generated
     public Role(RoleName name) {
+        this.name = name;
+    }
+
+    public RoleName getName() {
+        return name;
+    }
+
+    public void setName(RoleName name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Name must not be null.");
+        }
         this.name = name;
     }
 
