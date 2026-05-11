@@ -53,13 +53,7 @@ public class Account {
     }
 
     public void setUsername(String username) {
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username must not be null or blank.");
-        }
-        if (username.length() > 30) {
-            throw new IllegalArgumentException("Username must be between 1 and 30 characters.");
-        }
-        this.username = username;
+        this.username = ModelValidation.requireTextLength(username, "Username", 1, 30);
     }
 
     public String getPassword() {
@@ -67,16 +61,7 @@ public class Account {
     }
 
     public void setPassword(String password) {
-        if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Password must not be null or blank.");
-        }
-        if (password.length() < 8) {
-            throw new IllegalArgumentException("Password must be at least 8 characters.");
-        }
-        if (password.length() > 128) {
-            throw new IllegalArgumentException("Password must be at most 128 characters.");
-        }
-        this.password = password;
+        this.password = ModelValidation.requireTextLength(password, "Password", 8, 128);
     }
 
     @lombok.Generated

@@ -43,16 +43,7 @@ public class Footer {
     }
 
     public void setHeader(String header) {
-        if (header == null || header.isBlank()) {
-            throw new IllegalArgumentException("Header must not be null or blank.");
-        }
-        if (header.length() < 4) {
-            throw new IllegalArgumentException("Header must be at least 4 characters.");
-        }
-        if (header.length() > 50) {
-            throw new IllegalArgumentException("Header must be at most 50 characters.");
-        }
-        this.header = header;
+        this.header = ModelValidation.requireTextLength(header, "Header", 4, 50);
     }
 
     public String getDescription() {
@@ -60,15 +51,6 @@ public class Footer {
     }
 
     public void setDescription(String description) {
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("Description must not be null or blank.");
-        }
-        if (description.length() < 10) {
-            throw new IllegalArgumentException("Description must be at least 10 characters.");
-        }
-        if (description.length() > 255) {
-            throw new IllegalArgumentException("Description must be at most 255 characters.");
-        }
-        this.description = description;
+        this.description = ModelValidation.requireTextLength(description, "Description", 10, 255);
     }
 }

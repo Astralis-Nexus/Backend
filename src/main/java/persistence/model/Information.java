@@ -44,16 +44,7 @@ public class Information {
     }
 
     public void setDescription(String description) {
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("Description must not be null or blank.");
-        }
-        if (description.length() < 10) {
-            throw new IllegalArgumentException("Description must be at least 10 characters.");
-        }
-        if (description.length() > 500) {
-            throw new IllegalArgumentException("Description must be at most 500 characters.");
-        }
-        this.description = description;
+        this.description = ModelValidation.requireTextLength(description, "Description", 10, 500);
     }
 
     public ImportanceLevel getImportanceLevel() {
@@ -61,10 +52,7 @@ public class Information {
     }
 
     public void setImportanceLevel(ImportanceLevel importanceLevel) {
-        if (importanceLevel == null) {
-            throw new IllegalArgumentException("Importance level must not be null.");
-        }
-        this.importanceLevel = importanceLevel;
+        this.importanceLevel = ModelValidation.requireNotNull(importanceLevel, "Importance level");
     }
 
     public enum ImportanceLevel {

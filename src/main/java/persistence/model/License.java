@@ -81,13 +81,7 @@ public class License {
     }
 
     public void setUsername(String username) {
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username must not be null or blank.");
-        }
-        if (username.length() > 30) {
-            throw new IllegalArgumentException("Username must be at most 30 characters.");
-        }
-        this.username = username;
+        this.username = ModelValidation.requireTextLength(username, "Username", 1, 30);
     }
 
     public String getPassword() {
@@ -95,16 +89,7 @@ public class License {
     }
 
     public void setPassword(String password) {
-        if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Password must not be null or blank.");
-        }
-        if (password.length() < 8) {
-            throw new IllegalArgumentException("Password must be at least 8 characters.");
-        }
-        if (password.length() > 128) {
-            throw new IllegalArgumentException("Password must be at most 128 characters.");
-        }
-        this.password = password;
+        this.password = ModelValidation.requireTextLength(password, "Password", 8, 128);
     }
 
     public String getEmail() {
@@ -112,15 +97,7 @@ public class License {
     }
 
     public void setEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email must not be null or blank.");
-        }
-        if (email.length() < 6) {
-            throw new IllegalArgumentException("Email must be at least 6 characters.");
-        }
-        if (email.length() > 254) {
-            throw new IllegalArgumentException("Email must be at most 254 characters.");
-        }
+        ModelValidation.requireTextLength(email, "Email", 6, 254);
         if (!email.contains("@")) {
             throw new IllegalArgumentException("Email must contain @.");
         }
@@ -141,16 +118,7 @@ public class License {
     }
 
     public void setPcNumber(Integer pcNumber) {
-        if (pcNumber == null) {
-            throw new IllegalArgumentException("PcNumber must not be null.");
-        }
-        if (pcNumber < 0) {
-            throw new IllegalArgumentException("PcNumber must be at least 0.");
-        }
-        if (pcNumber > 20) {
-            throw new IllegalArgumentException("PcNumber must be at most 20.");
-        }
-        this.pcNumber = pcNumber;
+        this.pcNumber = ModelValidation.requireRange(pcNumber, "PcNumber", 0, 20);
     }
 
     public LicenseStatus getStatus() {
@@ -158,10 +126,7 @@ public class License {
     }
 
     public void setStatus(LicenseStatus status) {
-        if (status == null) {
-            throw new IllegalArgumentException("Status must not be null.");
-        }
-        this.status = status;
+        this.status = ModelValidation.requireNotNull(status, "Status");
     }
 
     public enum LicenseStatus {
