@@ -20,27 +20,10 @@ public class PasswordTest {
             "AAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    })
-    void passwordShouldAcceptValidLengths(String password) {
-        // When
-        License subject = new License();
-        subject.setPassword(password);
-
-        // Then
-        assertThat(subject.getPassword()).isEqualTo(password).isNotBlank().hasSizeBetween(8, 128);
-        assertThat(subject.getPassword() != null
-                && !subject.getPassword().isBlank()
-                && subject.getPassword().length() >= 8
-                && subject.getPassword().length() <= 128).isTrue();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Password should accept valid special edge cases.")
-    @ValueSource(strings = {
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "Lic@2026!"
     })
-    void passwordShouldAcceptValidSpecialEdgeCases(String password) {
+    void passwordShouldAcceptValidLengths(String password) {
         // When
         License subject = new License();
         subject.setPassword(password);
@@ -84,6 +67,7 @@ public class PasswordTest {
     @NullAndEmptySource
     @ValueSource(strings = {
             " "
+            "        " // White
     })
     void passwordShouldRejectNullEmptyAndBlankValues(String password) {
         // Given
@@ -93,19 +77,4 @@ public class PasswordTest {
         assertThatThrownBy(() -> subject.setPassword(password))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
-    @ParameterizedTest
-    @DisplayName("Password should reject invalid special edge cases.")
-    @ValueSource(strings = {
-            "        " // White
-    })
-    void passwordShouldRejectInvalidSpecialEdgeCases(String password) {
-        // Given
-        License subject = new License();
-
-        // Then
-        assertThatThrownBy(() -> subject.setPassword(password))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
 }

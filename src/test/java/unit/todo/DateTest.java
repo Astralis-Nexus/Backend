@@ -70,7 +70,7 @@ public class DateTest {
 
     @Test
     @DisplayName("OnCreate should set date to today.")
-    void onCreateShouldSetDateToToday() throws Exception {
+    void onCreateShouldSetDateToToday() {
         // Given
         Todo subject = new Todo();
         Method onCreate = Todo.class.getDeclaredMethod("onCreate");

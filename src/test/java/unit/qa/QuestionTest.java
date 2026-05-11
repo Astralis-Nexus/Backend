@@ -20,29 +20,12 @@ public class QuestionTest {
             "AA",
             "AAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    })
-    void questionShouldAcceptValidLengths(String question) {
-        // When
-        QA subject = new QA();
-        subject.setQuestion(question);
-
-        // Then
-        assertThat(subject.getQuestion()).isEqualTo(question).isNotBlank().hasSizeBetween(1, 255);
-        assertThat(subject.getQuestion() != null
-                && !subject.getQuestion().isBlank()
-                && subject.getQuestion().length() >= 1
-                && subject.getQuestion().length() <= 255).isTrue();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Question should accept valid special edge cases.")
-    @ValueSource(strings = {
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "?",
             "https://example.com/help?",
             "Line one\nLine two"
     })
-    void questionShouldAcceptValidSpecialEdgeCases(String question) {
+    void questionShouldAcceptValidLengths(String question) {
         // When
         QA subject = new QA();
         subject.setQuestion(question);

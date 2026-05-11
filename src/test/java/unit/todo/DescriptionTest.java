@@ -20,28 +20,11 @@ public class DescriptionTest {
             "AA",
             "AAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    })
-    void descriptionShouldAcceptValidLengths(String description) {
-        // When
-        Todo subject = new Todo();
-        subject.setDescription(description);
-
-        // Then
-        assertThat(subject.getDescription()).isEqualTo(description).isNotBlank().hasSizeBetween(1, 255);
-        assertThat(subject.getDescription() != null
-                && !subject.getDescription().isBlank()
-                && subject.getDescription().length() >= 1
-                && subject.getDescription().length() <= 255).isTrue();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Description should accept valid special edge cases.")
-    @ValueSource(strings = {
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "GH-42 Fix checkout",
             "Line one\nLine two"
     })
-    void descriptionShouldAcceptValidSpecialEdgeCases(String description) {
+    void descriptionShouldAcceptValidLengths(String description) {
         // When
         Todo subject = new Todo();
         subject.setDescription(description);

@@ -21,27 +21,10 @@ public class NameTest {
             "AA",
             "AAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    })
-    void nameShouldAcceptValidLengths(String name) {
-        // When
-        Game subject = new Game();
-        subject.setName(name);
-
-        // Then
-        assertThat(subject.getName()).isEqualTo(name).isNotBlank().hasSizeBetween(1, 100);
-        assertThat(subject.getName() != null
-                && !subject.getName().isBlank()
-                && subject.getName().length() >= 1
-                && subject.getName().length() <= 100).isTrue();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Name should accept valid special edge cases.")
-    @ValueSource(strings = {
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "Baldur's Gate 3"
     })
-    void nameShouldAcceptValidSpecialEdgeCases(String name) {
+    void nameShouldAcceptValidLengths(String name) {
         // When
         Game subject = new Game();
         subject.setName(name);

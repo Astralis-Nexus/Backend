@@ -20,28 +20,11 @@ public class HeaderTest {
             "AAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    })
-    void headerShouldAcceptValidLengths(String header) {
-        // When
-        Footer subject = new Footer();
-        subject.setHeader(header);
-
-        // Then
-        assertThat(subject.getHeader()).isEqualTo(header).isNotBlank().hasSizeBetween(4, 50);
-        assertThat(subject.getHeader() != null
-                && !subject.getHeader().isBlank()
-                && subject.getHeader().length() >= 4
-                && subject.getHeader().length() <= 50).isTrue();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Header should accept valid special edge cases.")
-    @ValueSource(strings = {
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "Help!",
             "FAQ 2026"
     })
-    void headerShouldAcceptValidSpecialEdgeCases(String header) {
+    void headerShouldAcceptValidLengths(String header) {
         // When
         Footer subject = new Footer();
         subject.setHeader(header);

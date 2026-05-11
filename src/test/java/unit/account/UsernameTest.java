@@ -21,28 +21,11 @@ public class UsernameTest {
             "AA",
             "AAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    })
-    void usernameShouldAcceptValidLengths(String username) {
-        // When
-        Account subject = new Account();
-        subject.setUsername(username);
-
-        // Then
-        assertThat(subject.getUsername()).isEqualTo(username).isNotBlank().hasSizeBetween(1, 30);
-        assertThat(subject.getUsername() != null
-                && !subject.getUsername().isBlank()
-                && subject.getUsername().length() >= 1
-                && subject.getUsername().length() <= 30).isTrue();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Username should accept valid special edge cases.")
-    @ValueSource(strings = {
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             " PlayerOne",
             "PlayerOne "
     })
-    void usernameShouldAcceptValidSpecialEdgeCases(String username) {
+    void usernameShouldAcceptValidLengths(String username) {
         // When
         Account subject = new Account();
         subject.setUsername(username);

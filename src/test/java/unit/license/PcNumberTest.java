@@ -67,7 +67,6 @@ public class PcNumberTest {
     void pcNumberShouldRejectNonIntegerValues(String pcNumber) {
         // Then
         assertThat(pcNumber).isNotInstanceOf(Integer.class);
-        assertThat((Object) pcNumber instanceof Integer).isFalse();
     }
 
     @ParameterizedTest

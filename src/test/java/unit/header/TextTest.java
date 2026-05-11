@@ -20,28 +20,11 @@ public class TextTest {
             "AA",
             "AAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    })
-    void textShouldAcceptValidLengths(String text) {
-        // When
-        Header subject = new Header();
-        subject.setText(text);
-
-        // Then
-        assertThat(subject.getText()).isEqualTo(text).isNotBlank().hasSizeBetween(1, 80);
-        assertThat(subject.getText() != null
-                && !subject.getText().isBlank()
-                && subject.getText().length() >= 1
-                && subject.getText().length() <= 80).isTrue();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Text should accept valid special edge cases.")
-    @ValueSource(strings = {
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "Welcome!",
             "Line one\nLine two"
     })
-    void textShouldAcceptValidSpecialEdgeCases(String text) {
+    void textShouldAcceptValidLengths(String text) {
         // When
         Header subject = new Header();
         subject.setText(text);

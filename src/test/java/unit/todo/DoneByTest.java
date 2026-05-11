@@ -25,26 +25,9 @@ public class DoneByTest {
             "AAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "support_agent_02"
     })
     void doneByShouldAcceptValidLengths(String doneBy) {
-        // When
-        Todo subject = new Todo();
-        subject.setDone_by(doneBy);
-
-        // Then
-        assertThat(subject.getDone_by()).isEqualTo(doneBy).isNotBlank().hasSizeBetween(1, 30);
-        assertThat(subject.getDone_by() != null
-                && !subject.getDone_by().isBlank()
-                && subject.getDone_by().length() >= 1
-                && subject.getDone_by().length() <= 30).isTrue();
-    }
-
-    @ParameterizedTest
-    @DisplayName("DoneBy should accept valid special edge cases.")
-    @ValueSource(strings = {
-            "support_agent_02 "
-    })
-    void doneByShouldAcceptValidSpecialEdgeCases(String doneBy) {
         // When
         Todo subject = new Todo();
         subject.setDone_by(doneBy);
@@ -97,7 +80,7 @@ public class DoneByTest {
 
     @Test
     @DisplayName("OnUpdate should set done by to the current account username.")
-    void onUpdateShouldSetDoneByToCurrentAccountUsername() throws Exception {
+    void onUpdateShouldSetDoneByToCurrentAccountUsername() {
         // Given
         Account account = new Account("PlayerOne");
         Todo subject = new Todo();

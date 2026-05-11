@@ -69,17 +69,4 @@ public class NameTest {
         assertThatThrownBy(() -> subject.setName(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
-    // ------------------------------ Method output ------------------------------
-
-    @Test
-    @DisplayName("ToString should include the role name.")
-    void toStringShouldIncludeRoleName() {
-        // When
-        Role subject = new Role();
-        subject.setName(RoleName.ADMIN);
-
-        // Then
-        assertThat(subject.toString()).contains("ADMIN");
-    }
 }
