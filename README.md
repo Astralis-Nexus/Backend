@@ -95,6 +95,22 @@ docker compose down -v
 
 Brug kun `-v`, hvis du vil slette databasen helt og starte forfra.
 
+## Kør tests og generer JaCoCo rapport
+
+Kør unit tests, integration tests og generer én samlet rapport:
+
+```powershell
+mvn "-Dtest=unit.**.*Test" test
+mvn "-Dtest=integration.**.*Test" test
+mvn jacoco:report
+```
+
+Rapporten findes herefter i:
+
+```text
+target/site/jacoco/index.html
+```
+
 ## Start backend fra IntelliJ
 
 Start `application.Application` fra IntelliJ.
