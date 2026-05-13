@@ -1,7 +1,16 @@
+FROM maven:3.9.9-eclipse-temurin-17-alpine AS build
+WORKDIR /app
+
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+COPY src ./src
+RUN mvn -DskipTests package
+
 FROM eclipse-temurin:17-alpine
-# This is the jar file that you want to run
-COPY target/app.jar /app.jar
-# This is the port that your javalin application will listen on
+WORKDIR /app
+
+COPY --from=build /app/target/app.jar /app/app.jar
+
 EXPOSE 7007
-# This is the command that will be run when the container starts
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

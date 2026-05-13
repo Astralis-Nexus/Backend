@@ -18,9 +18,12 @@ public class HibernateConfig {
         try {
             Configuration configuration = new Configuration();
             Properties props = new Properties();
-            props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/astralis?currentSchema=public");
-            props.put("hibernate.connection.username", "postgres");
-            props.put("hibernate.connection.password", "postgres");
+            props.put("hibernate.connection.url", getEnvOrDefault(
+                    "DB_URL",
+                    "jdbc:postgresql://localhost:5432/astralis?currentSchema=public"
+            ));
+            props.put("hibernate.connection.username", getEnvOrDefault("DB_USERNAME", "postgres"));
+            props.put("hibernate.connection.password", getEnvOrDefault("DB_PASSWORD", "postgres"));
             props.put("hibernate.show_sql", "true");
             props.put("hibernate.format_sql", "true");
             props.put("hibernate.use_sql_comments", "true");
@@ -34,6 +37,11 @@ public class HibernateConfig {
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
+    }
+
+    private static String getEnvOrDefault(String key, String defaultValue) {
+        String value = System.getenv(key);
+        return value == null || value.isBlank() ? defaultValue : value;
     }
 
     private static EntityManagerFactory setupHibernateConfigurationForTesting() {
