@@ -52,12 +52,12 @@ class EmailTest extends BaseIntegrationTest {
             "player.example@",
     })
     void createShouldRejectLicensesWithInvalidEmails(String email) {
+        // Given
+        License license = new License();
+
         // Then
-        assertThatThrownBy(() -> {
-            License license = validLicense();
-            license.setEmail(email);
-            licenseDAO.create(license);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> license.setEmail(email))
+                .isInstanceOf(IllegalArgumentException.class);
     }
     @Test
     @DisplayName("LicenseDAO should reject duplicate emails.")
@@ -65,8 +65,9 @@ class EmailTest extends BaseIntegrationTest {
         // Given
         Game game = createGame("license-game");
         licenseDAO.create(validLicense(game, "steam_user_42", "player@example.com"));
+        License duplicateLicense = validLicense(game, "steam_user_43", "player@example.com");
         // Then
-        assertThatThrownBy(() -> licenseDAO.create(validLicense(game, "steam_user_43", "player@example.com")))
+        assertThatThrownBy(() -> licenseDAO.create(duplicateLicense))
                 .isInstanceOf(RuntimeException.class);
     }
     private License validLicense() {

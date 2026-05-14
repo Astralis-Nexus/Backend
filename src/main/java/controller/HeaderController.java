@@ -45,12 +45,8 @@ public class HeaderController implements IController {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             Header header = dao.getById(id);
-            if (header != null) {
-                HeaderDTO headerDTO = converter(header);
-                ctx.status(200).json(headerDTO);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
-            }
+            HeaderDTO headerDTO = converter(header);
+            ctx.status(200).json(headerDTO);
         };
     }
 
@@ -80,11 +76,7 @@ public class HeaderController implements IController {
             headerToUpdate.setId(id);
             Header headerUpdated = dao.update(headerToUpdate);
             HeaderDTO headerDTO = converter(headerUpdated);
-            if (headerDTO != null) {
-                ctx.status(200).json(headerDTO);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
-            }
+            ctx.status(200).json(headerDTO);
         };
     }
 

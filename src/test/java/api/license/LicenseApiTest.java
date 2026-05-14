@@ -88,6 +88,18 @@ class LicenseApiTest extends BaseApiTest {
 
         RestAssured.given().contentType(ContentType.JSON)
                 .body(Map.of(
+                        "username", "missing-game-reference",
+                        "password", "NewPass2026",
+                        "email", "missing-game-reference@example.com",
+                        "pcNumber", 1,
+                        "game", Map.of("id", 999),
+                        "status", "INACTIVE"
+                ))
+                .when().post("/licences")
+                .then().statusCode(404);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of(
                         "username", "updated-license",
                         "password", "NewPass2026",
                         "email", "updated-license@example.com",
@@ -96,6 +108,23 @@ class LicenseApiTest extends BaseApiTest {
                         "status", "INACTIVE"
                 ))
                 .when().put("/licences/999")
+                .then().statusCode(404);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body("{\"username\":\"updated-license\",\"game\":{}}")
+                .when().put("/licences/1")
+                .then().statusCode(400);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of(
+                        "username", "updated-license",
+                        "password", "NewPass2026",
+                        "email", "updated-license@example.com",
+                        "pcNumber", 1,
+                        "game", Map.of("id", 999),
+                        "status", "INACTIVE"
+                ))
+                .when().put("/licences/1")
                 .then().statusCode(404);
 
         RestAssured.given().contentType(ContentType.JSON)

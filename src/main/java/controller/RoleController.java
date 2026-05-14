@@ -46,12 +46,8 @@ public class RoleController implements IController {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             Role role = dao.getById(id);
-            if (role != null) {
-                RoleDTO roleDTO = converter(role);
-                ctx.status(200).json(roleDTO);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
-            }
+            RoleDTO roleDTO = converter(role);
+            ctx.status(200).json(roleDTO);
         };
     }
 
@@ -79,12 +75,8 @@ public class RoleController implements IController {
             roleToUpdate.setId(id);
 
             Role roleUpdated = dao.update(roleToUpdate);
-            if (roleUpdated != null) {
-                RoleDTO roleDTO = converter(roleUpdated);
-                ctx.status(200).json(roleDTO);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
-            }
+            RoleDTO roleDTO = converter(roleUpdated);
+            ctx.status(200).json(roleDTO);
         };
     }
 

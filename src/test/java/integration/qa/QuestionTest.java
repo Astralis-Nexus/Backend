@@ -54,15 +54,13 @@ class QuestionTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectQaWithInvalidQuestions(String question) {
+        // Given
+        QA qa = new QA();
+        qa.setAnswer("Valid answer");
+
         // Then
-        assertThatThrownBy(() -> {
-            Account account = createAccount("qa-user");
-            QA qa = new QA();
-            qa.setQuestion(question);
-            qa.setAnswer("Valid answer");
-            qa.setAccount(account);
-            qaDAO.create(qa);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> qa.setQuestion(question))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     // ------------------------------ White box positive branches ------------------------------

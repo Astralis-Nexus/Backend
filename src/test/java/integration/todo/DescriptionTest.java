@@ -53,13 +53,12 @@ class DescriptionTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectTodosWithInvalidDescriptions(String description) {
+        // Given
+        Todo todo = new Todo();
+
         // Then
-        assertThatThrownBy(() -> {
-            Account account = createAccount("todo-user");
-            Todo todo = validTodo(account);
-            todo.setDescription(description);
-            todoDAO.create(todo);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> todo.setDescription(description))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     // ------------------------------ White box positive branches ------------------------------

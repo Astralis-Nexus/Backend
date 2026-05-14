@@ -51,14 +51,12 @@ class NameTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectGamesWithInvalidNames(String name) {
+        // Given
+        Game game = new Game();
+
         // Then
-        assertThatThrownBy(() -> {
-            Account account = createAccount("game-user");
-            Game game = new Game();
-            game.setName(name);
-            game.setAccount(account);
-            gameDAO.create(game);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> game.setName(name))
+                .isInstanceOf(IllegalArgumentException.class);
     }
     @Test
     @DisplayName("GameDAO should reject duplicate game names.")
@@ -66,8 +64,9 @@ class NameTest extends BaseIntegrationTest {
         // Given
         Account account = createAccount("game-user");
         gameDAO.create(new Game("BaldursGate3", account));
+        Game duplicateGame = new Game("BaldursGate3", account);
         // Then
-        assertThatThrownBy(() -> gameDAO.create(new Game("BaldursGate3", account)))
+        assertThatThrownBy(() -> gameDAO.create(duplicateGame))
                 .isInstanceOf(RuntimeException.class);
     }
 

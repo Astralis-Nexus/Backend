@@ -52,14 +52,13 @@ class UsernameTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectAccountsWithInvalidUsernames(String username) {
+        // Given
+        Account account = new Account();
+        account.setPassword("P@ssw0rd2026");
+        account.setRole(regularRole);
+
         // Then
-        assertThatThrownBy(() -> {
-            Account account = new Account();
-            account.setUsername(username);
-            account.setPassword("P@ssw0rd2026");
-            account.setRole(regularRole);
-            accountDAO.create(account);
-        })
+        assertThatThrownBy(() -> account.setUsername(username))
                 .isInstanceOf(IllegalArgumentException.class);
     }
     @Test
@@ -67,8 +66,9 @@ class UsernameTest extends BaseIntegrationTest {
     void createShouldRejectDuplicateUsername() {
         // Given
         accountDAO.create(new Account("PlayerOne2026DK", "P@ssw0rd2026", regularRole));
+        Account duplicateAccount = new Account("PlayerOne2026DK", "P@ssw0rd2026", regularRole);
         // Then
-        assertThatThrownBy(() -> accountDAO.create(new Account("PlayerOne2026DK", "P@ssw0rd2026", regularRole)))
+        assertThatThrownBy(() -> accountDAO.create(duplicateAccount))
                 .isInstanceOf(RuntimeException.class);
     }
 

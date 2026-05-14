@@ -59,15 +59,13 @@ class DescriptionTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectInformationWithInvalidDescriptions(String description) {
+        // Given
+        Information information = new Information();
+        information.setImportanceLevel(ImportanceLevel.HIGH);
+
         // Then
-        assertThatThrownBy(() -> {
-            Account account = createAccount("information-user");
-            Information information = new Information();
-            information.setDescription(description);
-            information.setImportanceLevel(ImportanceLevel.HIGH);
-            information.setAccount(account);
-            informationDAO.create(information);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> information.setDescription(description))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     // ------------------------------ White box positive branches ------------------------------

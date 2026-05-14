@@ -51,7 +51,7 @@ class PasswordTest extends BaseIntegrationTest {
         // Given
         String username = "invalid-password-user";
         // Then
-        assertThatThrownBy(() -> accountDAO.create(new Account(username, password, regularRole)))
+        assertThatThrownBy(() -> new Account(username, password, regularRole))
                 .isInstanceOf(IllegalArgumentException.class);
     }
     @ParameterizedTest

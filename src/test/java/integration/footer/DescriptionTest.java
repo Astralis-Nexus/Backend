@@ -56,14 +56,14 @@ class DescriptionTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectFootersWithInvalidDescriptions(String description) {
+        // Given
+        Footer footer = new Footer();
+        footer.setHeader("Help");
+        footer.setRole(regularRole);
+
         // Then
-        assertThatThrownBy(() -> {
-            Footer footer = new Footer();
-            footer.setHeader("Help");
-            footer.setDescription(description);
-            footer.setRole(regularRole);
-            footerDAO.create(footer);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> footer.setDescription(description))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     // ------------------------------ White box positive branches ------------------------------

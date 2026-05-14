@@ -49,12 +49,12 @@ class UsernameTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectLicensesWithInvalidUsernames(String username) {
+        // Given
+        License license = new License();
+
         // Then
-        assertThatThrownBy(() -> {
-            License license = validLicense();
-            license.setUsername(username);
-            licenseDAO.create(license);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> license.setUsername(username))
+                .isInstanceOf(IllegalArgumentException.class);
     }
     @Test
     @DisplayName("LicenseDAO should reject duplicate usernames.")
@@ -62,8 +62,9 @@ class UsernameTest extends BaseIntegrationTest {
         // Given
         Game game = createGame("license-game");
         licenseDAO.create(validLicense(game));
+        License duplicateLicense = validLicense(game);
         // Then
-        assertThatThrownBy(() -> licenseDAO.create(validLicense(game)))
+        assertThatThrownBy(() -> licenseDAO.create(duplicateLicense))
                 .isInstanceOf(RuntimeException.class);
     }
 

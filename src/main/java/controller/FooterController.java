@@ -46,12 +46,8 @@ public class FooterController implements IController {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             Footer footer = dao.getById(id);
-            if (footer != null) {
-                FooterDTO footerDTO = converter(footer);
-                ctx.status(200).json(footerDTO);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
-            }
+            FooterDTO footerDTO = converter(footer);
+            ctx.status(200).json(footerDTO);
         };
     }
 
@@ -82,11 +78,7 @@ public class FooterController implements IController {
             footerToUpdate.setId(id);
             Footer footerUpdated = dao.update(footerToUpdate);
             FooterDTO footerDTO = converter(footerUpdated);
-            if (footerDTO != null) {
-                ctx.status(200).json(footerDTO);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
-            }
+            ctx.status(200).json(footerDTO);
         };
     }
 

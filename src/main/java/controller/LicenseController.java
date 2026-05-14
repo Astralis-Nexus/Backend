@@ -50,12 +50,8 @@ public class LicenseController implements IController {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             License license = dao.getById(id);
-            if (license != null) {
-                LicenseDTO licenseDTO = converter(license);
-                ctx.status(200).json(licenseDTO);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
-            }
+            LicenseDTO licenseDTO = converter(license);
+            ctx.status(200).json(licenseDTO);
         };
     }
 
@@ -64,7 +60,7 @@ public class LicenseController implements IController {
         return ctx -> {
             LicenseDTO incoming = ctx.bodyAsClass(LicenseDTO.class);
 
-            if (incoming == null || incoming.getGame() == null || incoming.getGame().getId() == null) {
+            if (incoming.getGame() == null || incoming.getGame().getId() == null) {
                 throw new ApiException(400, "Game ID is required.", timestamp);
             }
 
@@ -104,6 +100,10 @@ public class LicenseController implements IController {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             LicenseDTO incoming = ctx.bodyAsClass(LicenseDTO.class);
+
+            if (incoming.getGame() == null || incoming.getGame().getId() == null) {
+                throw new ApiException(400, "Game ID is required.", timestamp);
+            }
 
             Game game = dao.getGameById(incoming.getGame().getId());
             if (game == null) {

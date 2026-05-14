@@ -4,9 +4,6 @@
   <groupId>app</groupId>
   <artifactId>Backend</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <properties>
-    <sonar.coverage.exclusions>**/application/config/**,**/persistence/config/**</sonar.coverage.exclusions>
-  </properties>
   <build>
     <finalName>app</finalName>
     <plugins>
@@ -104,13 +101,9 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>
-      <version>1.19.5</version>
+      <version>2.0.5</version>
       <scope>test</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>junit</artifactId>
-          <groupId>junit</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>commons-compress</artifactId>
           <groupId>org.apache.commons</groupId>
@@ -131,14 +124,26 @@
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>1.19.5</version>
+      <artifactId>testcontainers-postgresql</artifactId>
+      <version>2.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>1.19.5</version>
+      <artifactId>testcontainers-jdbc</artifactId>
+      <version>2.0.5</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>testcontainers-database-commons</artifactId>
+          <groupId>org.testcontainers</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-junit-jupiter</artifactId>
+      <version>2.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -213,6 +218,9 @@
   <properties>
     <maven.compiler.target>17</maven.compiler.target>
     <maven.compiler.source>17</maven.compiler.source>
+    <testcontainers.version>2.0.5</testcontainers.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <sonar.coverage.exclusions>**/application/config/**,
+            **/persistence/config/**</sonar.coverage.exclusions>
   </properties>
 </project>

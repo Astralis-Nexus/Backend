@@ -46,13 +46,13 @@ class HeaderTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectFootersWithInvalidHeaders(String header) {
+        // Given
+        Footer footer = new Footer();
+        footer.setDescription("Valid footer description.");
+        footer.setRole(regularRole);
+
         // Then
-        assertThatThrownBy(() -> {
-            Footer footer = new Footer();
-            footer.setHeader(header);
-            footer.setDescription("Valid footer description.");
-            footer.setRole(regularRole);
-            footerDAO.create(footer);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> footer.setHeader(header))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -46,12 +46,12 @@ class PasswordTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectLicensesWithInvalidPasswords(String password) {
+        // Given
+        License license = new License();
+
         // Then
-        assertThatThrownBy(() -> {
-            License license = validLicense();
-            license.setPassword(password);
-            licenseDAO.create(license);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> license.setPassword(password))
+                .isInstanceOf(IllegalArgumentException.class);
     }
     private License validLicense() {
         License license = new License();

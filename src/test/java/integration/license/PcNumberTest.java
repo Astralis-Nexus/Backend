@@ -41,12 +41,12 @@ class PcNumberTest extends BaseIntegrationTest {
             100,
     })
     void createShouldRejectLicensesWithInvalidPcNumberValues(Integer pcNumber) {
+        // Given
+        License license = new License();
+
         // Then
-        assertThatThrownBy(() -> {
-            License license = validLicense();
-            license.setPcNumber(pcNumber);
-            licenseDAO.create(license);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> license.setPcNumber(pcNumber))
+                .isInstanceOf(IllegalArgumentException.class);
     }
     @ParameterizedTest
     @DisplayName("PcNumber should reject non-integer values.")

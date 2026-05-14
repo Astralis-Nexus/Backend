@@ -50,13 +50,13 @@ class TextTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectHeadersWithInvalidTexts(String text) {
+        // Given
+        Header header = new Header();
+        header.setRole(regularRole);
+
         // Then
-        assertThatThrownBy(() -> {
-            Header header = new Header();
-            header.setText(text);
-            header.setRole(regularRole);
-            headerDAO.create(header);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> header.setText(text))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     // ------------------------------ White box positive branches ------------------------------

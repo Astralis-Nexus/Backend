@@ -51,13 +51,12 @@ class DateTest extends BaseIntegrationTest {
     @DisplayName("TodoDAO should reject todos with null dates before persistence.")
     @NullSource
     void createShouldRejectTodosWithNullDates(LocalDate date) {
+        // Given
+        Todo todo = new Todo();
+
         // Then
-        assertThatThrownBy(() -> {
-            Account account = createAccount("todo-user");
-            Todo todo = validTodo(account);
-            todo.setDate(date);
-            todoDAO.create(todo);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> todo.setDate(date))
+                .isInstanceOf(IllegalArgumentException.class);
     }
     @Test
     @DisplayName("TodoDAO should set date to today on create.")

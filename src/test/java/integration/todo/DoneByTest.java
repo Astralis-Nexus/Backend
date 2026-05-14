@@ -44,13 +44,12 @@ class DoneByTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectTodosWithInvalidDoneByValues(String doneBy) {
+        // Given
+        Todo todo = new Todo();
+
         // Then
-        assertThatThrownBy(() -> {
-            Account account = createAccount("todo-user");
-            Todo todo = validTodo(account);
-            todo.setDoneBy(doneBy);
-            todoDAO.create(todo);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> todo.setDoneBy(doneBy))
+                .isInstanceOf(IllegalArgumentException.class);
     }
     @Test
     @DisplayName("TodoDAO should set doneBy to the account username on update.")
