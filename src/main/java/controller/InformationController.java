@@ -32,17 +32,13 @@ public class InformationController implements IController {
     @Override
     public Handler getAll() {
         return ctx -> {
-            if (!dao.getAll().isEmpty()) {
-                List<Information> informations = dao.getAll();
-                List<InformationDTO> informationDTOS = new ArrayList<>();
-                for (Information i : informations) {
-                    InformationDTO informationDTO = converter(i);
-                    informationDTOS.add(informationDTO);
-                }
-                ctx.json(informationDTOS);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+            List<Information> informations = dao.getAll();
+            List<InformationDTO> informationDTOS = new ArrayList<>();
+            for (Information i : informations) {
+                InformationDTO informationDTO = converter(i);
+                informationDTOS.add(informationDTO);
             }
+            ctx.status(200).json(informationDTOS);
         };
     }
 
@@ -53,7 +49,7 @@ public class InformationController implements IController {
             Information information = dao.getById(id);
             if (information != null) {
                 InformationDTO informationDTO = converter(information);
-                ctx.json(informationDTO);
+                ctx.status(200).json(informationDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -88,7 +84,7 @@ public class InformationController implements IController {
             Information createdInfo = dao.create(info);
             InformationDTO dto = converter(createdInfo);
 
-            ctx.json(dto);
+            ctx.status(201).json(dto);
         };
     }
 
@@ -96,6 +92,7 @@ public class InformationController implements IController {
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
+            dao.getById(id);
             Information incoming = ctx.bodyAsClass(Information.class);
 
             if (incoming.getDescription() == null || incoming.getImportanceLevel() == null
@@ -116,7 +113,7 @@ public class InformationController implements IController {
 
             if (updated != null) {
                 InformationDTO dto = converter(updated);
-                ctx.json(dto);
+                ctx.status(200).json(dto);
             } else {
                 throw new ApiException(404, "No data found", timestamp);
             }
@@ -130,7 +127,7 @@ public class InformationController implements IController {
             Information informationDeleted = dao.delete(id);
             if (informationDeleted != null) {
                 InformationDTO informationDTO = converter(informationDeleted);
-                ctx.json(informationDTO);
+                ctx.status(200).json(informationDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }

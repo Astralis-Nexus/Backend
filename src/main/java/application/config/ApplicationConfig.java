@@ -1,8 +1,13 @@
 package application.config;
 
+import exception.ApiException;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.plugin.bundled.CorsPluginConfig;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceException;
+
+import java.util.Map;
 
 
 public class ApplicationConfig {
@@ -15,6 +20,23 @@ public class ApplicationConfig {
             config.routing.contextPath = "/api";
             config.plugins.enableCors(cors -> cors.add(CorsPluginConfig::anyHost));
         });
+        app.exception(ApiException.class, (e, ctx) -> ctx.status(e.getStatusCode()).json(Map.of(
+                "status", e.getStatusCode(),
+                "message", e.getMessage(),
+                "timestamp", e.getTimeStamp()
+        )));
+        app.exception(EntityNotFoundException.class, (e, ctx) -> ctx.status(404).json(Map.of(
+                "status", 404,
+                "message", e.getMessage()
+        )));
+        app.exception(IllegalArgumentException.class, (e, ctx) -> ctx.status(400).json(Map.of(
+                "status", 400,
+                "message", e.getMessage()
+        )));
+        app.exception(PersistenceException.class, (e, ctx) -> ctx.status(409).json(Map.of(
+                "status", 409,
+                "message", e.getMessage()
+        )));
     }
 
     public static ApplicationConfig getInstance() {

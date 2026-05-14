@@ -89,7 +89,7 @@ class PasswordTest {
         subject.setPassword("P@ssw0rd2026");
 
         // Then
-        assertThat(subject.verifyPassword("P@ssw0rd2026")).isTrue();
+        assertThat(subject.verifyPassword("P@ssw0rd2026")).isTrue(); // White box value: password != null and equals branch.
     }
 
     // <------------------------------ Negative ------------------------------>
@@ -102,7 +102,7 @@ class PasswordTest {
         subject.setPassword("P@ssw0rd2026");
 
         // Then
-        assertThat(subject.verifyPassword("WrongPassword")).isFalse();
+        assertThat(subject.verifyPassword("WrongPassword")).isFalse(); // White box value: password != null and not equals branch.
     }
 
     @Test
@@ -112,7 +112,7 @@ class PasswordTest {
         Account subject = new Account();
 
         // Then
-        assertThat(subject.verifyPassword("P@ssw0rd2026")).isFalse();
+        assertThat(subject.verifyPassword("P@ssw0rd2026")).isFalse(); // White box value: password null short-circuit branch.
     }
 
 }

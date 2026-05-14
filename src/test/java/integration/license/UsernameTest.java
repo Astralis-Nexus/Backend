@@ -19,21 +19,19 @@ class UsernameTest extends BaseIntegrationTest {
     @ParameterizedTest
     @DisplayName("LicenseDAO should persist licenses with valid username lengths.")
     @ValueSource(strings = {
-            "A", // White box value: min boundary
-            "AA", // White box value: just above min
+            "A",
+            "AA",
             "AAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // White box value: just below max
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // White box value: max boundary
-            "steam_user_42"
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "steam_user_42",
     })
     void createShouldPersistLicensesWithValidUsernameLengths(String username) {
         // Given
         License license = validLicense();
         license.setUsername(username);
-
         // When
         License created = licenseDAO.create(license);
-
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getUsername()).isEqualTo(username).hasSizeBetween(1, 30);
@@ -43,13 +41,12 @@ class UsernameTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @DisplayName("LicenseDAO should reject licenses with invalid usernames.")
-    // White box values: null and empty string branches.
     @NullAndEmptySource
     @ValueSource(strings = {
-            " ", // White box value: blank branch
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // White box value: just above max
+            " ",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectLicensesWithInvalidUsernames(String username) {
         // Then
@@ -59,17 +56,74 @@ class UsernameTest extends BaseIntegrationTest {
             licenseDAO.create(license);
         }).isInstanceOf(IllegalArgumentException.class);
     }
-
     @Test
     @DisplayName("LicenseDAO should reject duplicate usernames.")
     void createShouldRejectDuplicateUsername() {
         // Given
         Game game = createGame("license-game");
         licenseDAO.create(validLicense(game));
-
         // Then
         assertThatThrownBy(() -> licenseDAO.create(validLicense(game)))
                 .isInstanceOf(RuntimeException.class);
+    }
+
+    // ------------------------------ White box positive branches ------------------------------
+
+    @Test
+    @DisplayName("LicenseDAO should cover update value branches and find an existing game.")
+    void whiteBoxShouldCoverUpdateBranchesAndFindExistingGame() {
+        // Given
+        Game firstGame = createGame("license-update-game");
+        License firstLicense = licenseDAO.create(validLicense(firstGame));
+        License partialUpdate = new License(
+                firstLicense.getId(),
+                null, // White box: DAO.update License username null branch.
+                null, // White box: DAO.update License password null branch.
+                null, // White box: DAO.update License email null branch.
+                firstLicense.getPcNumber() + 1, // White box: DAO.update License pcNumber mismatch branch.
+                firstGame,
+                License.LicenseStatus.ACTIVE
+        );
+
+        Game secondGame = gameDAO.create(new Game("license-provided-update-game", createAccount("license-game-owner-2")));
+        License secondLicense = licenseDAO.create(validLicense(
+                secondGame,
+                "steam_user_43",
+                "player-three@example.com"
+        ));
+        License fullUpdate = new License(
+                secondLicense.getId(),
+                "new_steam_user", // White box: DAO.update License username present branch.
+                "NewLic@2026!", // White box: DAO.update License password present branch.
+                "updated@example.com", // White box: DAO.update License email present branch.
+                secondLicense.getPcNumber(), // White box: DAO.update License pcNumber equal branch.
+                secondGame,
+                License.LicenseStatus.ACTIVE
+        );
+
+        // When
+        License unchanged = licenseDAO.update(partialUpdate);
+        License updated = licenseDAO.update(fullUpdate);
+
+        // Then
+        assertThat(unchanged.getUsername()).isEqualTo("steam_user_42");
+        assertThat(unchanged.getPassword()).isEqualTo("Lic@2026!");
+        assertThat(unchanged.getEmail()).isEqualTo("player-two@example.com");
+        assertThat(unchanged.getPcNumber()).isEqualTo(firstLicense.getPcNumber());
+        assertThat(updated.getUsername()).isEqualTo("new_steam_user");
+        assertThat(updated.getPassword()).isEqualTo("NewLic@2026!");
+        assertThat(updated.getEmail()).isEqualTo("updated@example.com");
+        assertThat(updated.getPcNumber()).isEqualTo(secondLicense.getPcNumber());
+        assertThat(licenseDAO.getGameById(secondGame.getId())).isNotNull();
+    }
+
+    // ------------------------------ White box negative branches ------------------------------
+
+    @Test
+    @DisplayName("LicenseDAO should return null for missing game.")
+    void whiteBoxGetGameByIdShouldReturnNullForMissingGame() {
+        // Then
+        assertThat(licenseDAO.getGameById(404)).isNull(); // White box: LicenseDAO missing game branch.
     }
 
     private License validLicense() {
@@ -84,10 +138,14 @@ class UsernameTest extends BaseIntegrationTest {
     }
 
     private License validLicense(Game game) {
+        return validLicense(game, "steam_user_42", "player-two@example.com");
+    }
+
+    private License validLicense(Game game, String username, String email) {
         License license = new License();
-        license.setUsername("steam_user_42");
+        license.setUsername(username);
         license.setPassword("Lic@2026!");
-        license.setEmail("player-two@example.com");
+        license.setEmail(email);
         license.setPcNumber(1);
         license.setStatus(License.LicenseStatus.ACTIVE);
         license.setGame(game);

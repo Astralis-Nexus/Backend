@@ -30,17 +30,13 @@ public class HeaderController implements IController {
     @Override
     public Handler getAll() {
         return ctx -> {
-            if (!dao.getAll().isEmpty()) {
-                List<Header> headers = dao.getAll();
-                List<HeaderDTO> headerDTOS = new ArrayList<>();
-                for (Header h : headers) {
-                    HeaderDTO headerDTO = converter(h);
-                    headerDTOS.add(headerDTO);
-                }
-                ctx.json(headerDTOS);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+            List<Header> headers = dao.getAll();
+            List<HeaderDTO> headerDTOS = new ArrayList<>();
+            for (Header h : headers) {
+                HeaderDTO headerDTO = converter(h);
+                headerDTOS.add(headerDTO);
             }
+            ctx.status(200).json(headerDTOS);
         };
     }
 
@@ -51,7 +47,7 @@ public class HeaderController implements IController {
             Header header = dao.getById(id);
             if (header != null) {
                 HeaderDTO headerDTO = converter(header);
-                ctx.json(headerDTO);
+                ctx.status(200).json(headerDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -62,12 +58,15 @@ public class HeaderController implements IController {
     public Handler create() {
         return ctx -> {
             Header inputHeader = ctx.bodyAsClass(Header.class);
-            if (inputHeader != null) {
+            if (inputHeader != null &&
+                    inputHeader.getText() != null &&
+                    inputHeader.getRole() != null &&
+                    inputHeader.getRole().getName() != null) {
                 Header createdHeader = dao.create(inputHeader);
                 HeaderDTO headerDTO = converter(createdHeader);
-                ctx.json(headerDTO);
+                ctx.status(201).json(headerDTO);
             } else {
-                throw new ApiException(500, "No data found. ", timestamp);
+                throw new ApiException(400, "Text and role are required.", timestamp);
             }
         };
     }
@@ -76,12 +75,13 @@ public class HeaderController implements IController {
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
+            dao.getById(id);
             Header headerToUpdate = ctx.bodyAsClass(Header.class);
             headerToUpdate.setId(id);
             Header headerUpdated = dao.update(headerToUpdate);
             HeaderDTO headerDTO = converter(headerUpdated);
             if (headerDTO != null) {
-                ctx.json(headerDTO);
+                ctx.status(200).json(headerDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -95,7 +95,7 @@ public class HeaderController implements IController {
             Header headerDeleted = dao.delete(id);
             if (headerDeleted != null) {
                 HeaderDTO headerDTO = converter(headerDeleted);
-                ctx.json(headerDTO);
+                ctx.status(200).json(headerDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }

@@ -1,6 +1,7 @@
 package integration.account;
 
 import integration.BaseIntegrationTest;
+import jakarta.persistence.PersistenceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,13 +19,13 @@ class UsernameTest extends BaseIntegrationTest {
     @ParameterizedTest
     @DisplayName("AccountDAO should persist accounts with valid username lengths.")
     @ValueSource(strings = {
-            "A", // White box value: min boundary
-            "AA", // White box value: just above min
+            "A",
+            "AA",
             "AAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // White box value: just below max
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // White box value: max boundary
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             " PlayerOne",
-            "PlayerOne "
+            "PlayerOne ",
     })
     void createShouldPersistAccountsWithValidUsernameLengths(String username) {
         // Given
@@ -32,10 +33,8 @@ class UsernameTest extends BaseIntegrationTest {
         account.setUsername(username);
         account.setPassword("P@ssw0rd2026");
         account.setRole(regularRole);
-
         // When
         Account created = accountDAO.create(account);
-
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getUsername()).isEqualTo(username).hasSizeBetween(1, 30);
@@ -45,13 +44,12 @@ class UsernameTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @DisplayName("AccountDAO should reject accounts with invalid usernames.")
-    // White box values: null and empty string branches.
     @NullAndEmptySource
     @ValueSource(strings = {
-            " ", // White box value: blank branch
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // White box value: just above max
+            " ",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectAccountsWithInvalidUsernames(String username) {
         // Then
@@ -64,15 +62,72 @@ class UsernameTest extends BaseIntegrationTest {
         })
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
     @Test
     @DisplayName("AccountDAO should reject duplicate usernames.")
     void createShouldRejectDuplicateUsername() {
         // Given
         accountDAO.create(new Account("PlayerOne2026DK", "P@ssw0rd2026", regularRole));
-
         // Then
         assertThatThrownBy(() -> accountDAO.create(new Account("PlayerOne2026DK", "P@ssw0rd2026", regularRole)))
                 .isInstanceOf(RuntimeException.class);
+    }
+
+    // ------------------------------ White box positive branches ------------------------------
+
+    @Test
+    @DisplayName("AccountDAO should keep existing username and password when update values are null.")
+    void whiteBoxUpdateShouldKeepExistingValuesWhenUsernameAndPasswordAreNull() {
+        // Given
+        Account created = accountDAO.create(new Account("UpdatePlayer", "P@ssw0rd2026", regularRole));
+        Account partialUpdate = new Account(
+                null,
+                created.getId(),
+                null, // White box: DAO.update Account username null branch.
+                null, // White box: DAO.update Account password null branch.
+                regularRole,
+                null,
+                null,
+                null,
+                null
+        );
+        // When
+        Account updated = accountDAO.update(partialUpdate);
+        // Then
+        assertThat(updated.getUsername()).isEqualTo("UpdatePlayer");
+        assertThat(updated.getPassword()).isEqualTo("P@ssw0rd2026");
+    }
+
+    // ------------------------------ White box negative branches ------------------------------
+
+    @Test
+    @DisplayName("AccountDAO should reject null update entity.")
+    void whiteBoxUpdateShouldRejectNullEntity() {
+        // Then
+        assertThatThrownBy(() -> accountDAO.update(null)) // White box: DAO.update entity null branch.
+                .isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    @DisplayName("AccountDAO should wrap persistence errors when update violates username uniqueness.")
+    void whiteBoxUpdateShouldWrapPersistenceException() {
+        // Given
+        Account firstAccount = accountDAO.create(new Account("ExistingPlayer", "P@ssw0rd2026", regularRole));
+        Account secondAccount = accountDAO.create(new Account("UpdateTarget", "P@ssw0rd2026", regularRole));
+        Account duplicateUpdate = new Account(
+                null,
+                secondAccount.getId(),
+                firstAccount.getUsername(), // White box: DAO.update PersistenceException catch branch.
+                "P@ssw0rd2026",
+                regularRole,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Then
+        assertThatThrownBy(() -> accountDAO.update(duplicateUpdate))
+                .isInstanceOf(PersistenceException.class)
+                .hasMessageContaining("Error updating");
     }
 }

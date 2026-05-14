@@ -31,17 +31,13 @@ public class FooterController implements IController {
     @Override
     public Handler getAll() {
         return ctx -> {
-            if (!dao.getAll().isEmpty()) {
-                List<Footer> footers = dao.getAll();
-                List<FooterDTO> footerDTOS = new ArrayList<>();
-                for (Footer f : footers) {
-                    FooterDTO footerDTO = converter(f);
-                    footerDTOS.add(footerDTO);
-                }
-                ctx.json(dao.getAll());
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+            List<Footer> footers = dao.getAll();
+            List<FooterDTO> footerDTOS = new ArrayList<>();
+            for (Footer f : footers) {
+                FooterDTO footerDTO = converter(f);
+                footerDTOS.add(footerDTO);
             }
+            ctx.status(200).json(footerDTOS);
         };
     }
 
@@ -52,7 +48,7 @@ public class FooterController implements IController {
             Footer footer = dao.getById(id);
             if (footer != null) {
                 FooterDTO footerDTO = converter(footer);
-                ctx.json(footerDTO);
+                ctx.status(200).json(footerDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -63,12 +59,16 @@ public class FooterController implements IController {
     public Handler create() {
         return ctx -> {
             Footer footerCreated = ctx.bodyAsClass(Footer.class);
-            if (footerCreated != null) {
+            if (footerCreated != null &&
+                    footerCreated.getHeader() != null &&
+                    footerCreated.getDescription() != null &&
+                    footerCreated.getRole() != null &&
+                    footerCreated.getRole().getName() != null) {
                 Footer createdFooter = dao.create(footerCreated);
                 FooterDTO footerDTO = converter(createdFooter);
-                ctx.json(footerDTO);
+                ctx.status(201).json(footerDTO);
             } else {
-                throw new ApiException(500, "No data found. ", timestamp);
+                throw new ApiException(400, "Header, description, and role are required.", timestamp);
             }
         };
     }
@@ -77,12 +77,13 @@ public class FooterController implements IController {
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
+            dao.getById(id);
             Footer footerToUpdate = ctx.bodyAsClass(Footer.class);
             footerToUpdate.setId(id);
             Footer footerUpdated = dao.update(footerToUpdate);
             FooterDTO footerDTO = converter(footerUpdated);
             if (footerDTO != null) {
-                ctx.json(footerDTO);
+                ctx.status(200).json(footerDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -94,9 +95,9 @@ public class FooterController implements IController {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             Footer footerDeleted = dao.delete(id);
-            FooterDTO footerDTO = converter(footerDeleted);
-            if (footerDTO != null) {
-                ctx.json(footerDTO);
+            if (footerDeleted != null) {
+                FooterDTO footerDTO = converter(footerDeleted);
+                ctx.status(200).json(footerDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }

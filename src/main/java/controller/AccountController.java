@@ -36,17 +36,13 @@ public class AccountController implements IController {
     @Override
     public Handler getAll() {
         return ctx -> {
-            if (!dao.getAll().isEmpty()) {
-                List<Account> accounts = dao.getAll();
-                List<AccountDTO> accountDTOS = new ArrayList<>();
-                for (Account a : accounts) {
-                    AccountDTO accountDTO = converter(a);
-                    accountDTOS.add(accountDTO);
-                }
-                ctx.json(accountDTOS);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+            List<Account> accounts = dao.getAll();
+            List<AccountDTO> accountDTOS = new ArrayList<>();
+            for (Account a : accounts) {
+                AccountDTO accountDTO = converter(a);
+                accountDTOS.add(accountDTO);
             }
+            ctx.status(200).json(accountDTOS);
         };
     }
 
@@ -57,7 +53,7 @@ public class AccountController implements IController {
             Account account = dao.getById(id);
             AccountDTO accountDTO = converter(account);
             if (accountDTO != null) {
-                ctx.json(accountDTO);
+                ctx.status(200).json(accountDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -81,7 +77,7 @@ public class AccountController implements IController {
             account.setRole(incoming.getRole());
     
             Account createdAccount = dao.create(account);
-            ctx.json(converter(createdAccount));
+            ctx.status(201).json(converter(createdAccount));
         };
     }
     
@@ -90,12 +86,13 @@ public class AccountController implements IController {
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
+            dao.getById(id);
             Account accountToUpdate = ctx.bodyAsClass(Account.class);
             accountToUpdate.setId(id);
             Account accountUpdated = dao.update(accountToUpdate);
             AccountDTO accountDTO = converter(accountUpdated);
             if (accountDTO != null) {
-                ctx.json(accountDTO);
+                ctx.status(200).json(accountDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -107,9 +104,9 @@ public class AccountController implements IController {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             Account accountDeleted = dao.delete(id);
-            AccountDTO accountDTO = converter(accountDeleted);
-            if (accountDTO != null) {
-                ctx.json(accountDTO);
+            if (accountDeleted != null) {
+                AccountDTO accountDTO = converter(accountDeleted);
+                ctx.status(200).json(accountDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }

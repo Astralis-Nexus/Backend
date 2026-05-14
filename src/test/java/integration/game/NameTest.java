@@ -19,12 +19,12 @@ class NameTest extends BaseIntegrationTest {
     @ParameterizedTest
     @DisplayName("GameDAO should persist games with valid name lengths.")
     @ValueSource(strings = {
-            "A", // White box value: min boundary
-            "AA", // White box value: just above min
+            "A",
+            "AA",
             "AAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // White box value: just below max
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // White box value: max boundary
-            "Baldur's Gate 3"
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "Baldur's Gate 3",
     })
     void createShouldPersistGamesWithValidNameLengths(String name) {
         // Given
@@ -32,10 +32,8 @@ class NameTest extends BaseIntegrationTest {
         Game game = new Game();
         game.setName(name);
         game.setAccount(account);
-
         // When
         Game created = gameDAO.create(game);
-
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getName()).isEqualTo(name).hasSizeBetween(1, 100);
@@ -45,13 +43,12 @@ class NameTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @DisplayName("GameDAO should reject games with invalid names.")
-    // White box values: null and empty string branches.
     @NullAndEmptySource
     @ValueSource(strings = {
-            " ", // White box value: blank branch
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // White box value: just above max
+            " ",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
     void createShouldRejectGamesWithInvalidNames(String name) {
         // Then
@@ -63,16 +60,33 @@ class NameTest extends BaseIntegrationTest {
             gameDAO.create(game);
         }).isInstanceOf(IllegalArgumentException.class);
     }
-
     @Test
     @DisplayName("GameDAO should reject duplicate game names.")
     void createShouldRejectDuplicateName() {
         // Given
         Account account = createAccount("game-user");
         gameDAO.create(new Game("BaldursGate3", account));
-
         // Then
         assertThatThrownBy(() -> gameDAO.create(new Game("BaldursGate3", account)))
                 .isInstanceOf(RuntimeException.class);
+    }
+
+    // ------------------------------ White box positive branches ------------------------------
+
+    @Test
+    @DisplayName("GameDAO should keep existing name when update name is null.")
+    void whiteBoxUpdateShouldKeepExistingNameWhenNameIsNull() {
+        // Given
+        Account account = createAccount("game-update-user");
+        Game created = gameDAO.create(new Game("OriginalGame", account));
+        Game partialUpdate = new Game(
+                created.getId(),
+                null, // White box: DAO.update Game name null branch.
+                account
+        );
+        // When
+        Game updated = gameDAO.update(partialUpdate);
+        // Then
+        assertThat(updated.getName()).isEqualTo("OriginalGame");
     }
 }

@@ -48,9 +48,6 @@
         </executions>
         <configuration>
           <excludes>
-            <exclude>controller/**</exclude>
-            <exclude>route/**</exclude>
-            <exclude>dao/**</exclude>
             <exclude>persistence/config/**</exclude>
             <exclude>data/**</exclude>
             <exclude>dto/**</exclude>

@@ -35,17 +35,13 @@ public class LicenseController implements IController {
     @Override
     public Handler getAll() {
         return ctx -> {
-            if (!dao.getAll().isEmpty()) {
-                List<License> licenses = dao.getAll();
-                List<LicenseDTO> licenseDTOS = new ArrayList<>();
-                for (License l : licenses) {
-                    LicenseDTO licenseDTO = converter(l);
-                    licenseDTOS.add(licenseDTO);
-                }
-                ctx.json(licenseDTOS);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+            List<License> licenses = dao.getAll();
+            List<LicenseDTO> licenseDTOS = new ArrayList<>();
+            for (License l : licenses) {
+                LicenseDTO licenseDTO = converter(l);
+                licenseDTOS.add(licenseDTO);
             }
+            ctx.status(200).json(licenseDTOS);
         };
     }
 
@@ -56,7 +52,7 @@ public class LicenseController implements IController {
             License license = dao.getById(id);
             if (license != null) {
                 LicenseDTO licenseDTO = converter(license);
-                ctx.json(licenseDTO);
+                ctx.status(200).json(licenseDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -68,7 +64,7 @@ public class LicenseController implements IController {
         return ctx -> {
             LicenseDTO incoming = ctx.bodyAsClass(LicenseDTO.class);
 
-            if (incoming == null || incoming.getGame().getId() == null) {
+            if (incoming == null || incoming.getGame() == null || incoming.getGame().getId() == null) {
                 throw new ApiException(400, "Game ID is required.", timestamp);
             }
 
@@ -99,7 +95,7 @@ public class LicenseController implements IController {
                     .status(createdLicense.getStatus())
                     .build();
 
-            ctx.json(responseDTO);
+            ctx.status(201).json(responseDTO);
         };
     }
 
@@ -127,7 +123,7 @@ public class LicenseController implements IController {
             licenseToUpdate.setStatus(incoming.getStatus());
 
             License licenseUpdated = dao.update(licenseToUpdate);
-            ctx.json(converter(licenseUpdated));
+            ctx.status(200).json(converter(licenseUpdated));
         };
     }
 
@@ -138,7 +134,7 @@ public class LicenseController implements IController {
             License licenseDeleted = dao.delete(id);
             if (licenseDeleted != null) {
                 LicenseDTO licenseDTO = converter(licenseDeleted);
-                ctx.json(licenseDTO);
+                ctx.status(200).json(licenseDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
