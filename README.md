@@ -102,6 +102,7 @@ Kør unit tests, integration tests og generer én samlet rapport:
 ```powershell
 mvn "-Dtest=unit.**.*Test" test
 mvn "-Dtest=integration.**.*Test" test
+mvn "-Dtest=api.**.*Test" test
 mvn jacoco:report
 ```
 
