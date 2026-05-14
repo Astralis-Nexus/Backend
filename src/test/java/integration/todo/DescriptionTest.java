@@ -72,7 +72,7 @@ class DescriptionTest extends BaseIntegrationTest {
         Todo partialUpdate = new Todo(
                 created.getId(),
                 created.getDate(),
-                null, // White box: DAO.update Todo description null branch.
+                null, // White box: DAO.update description null branch.
                 created.getStatus(),
                 created.getSource(),
                 created.getDoneBy(),

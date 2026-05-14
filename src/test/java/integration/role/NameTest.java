@@ -113,10 +113,11 @@ class NameTest extends BaseIntegrationTest {
     void whiteBoxDeleteShouldWrapPersistenceException() {
         // Given
         createAccount("role-delete-error-user");
+        Integer regularRoleId = regularRole.getId();
 
         // Then
-        assertThatThrownBy(() -> roleDAO.delete(regularRole.getId())) // White box: DAO.delete PersistenceException catch branch.
+        assertThatThrownBy(() -> roleDAO.delete(regularRoleId)) // White box: DAO.delete PersistenceException catch branch.
                 .isInstanceOf(PersistenceException.class)
-                .hasMessageContaining("Error deleting Role with id: " + regularRole.getId());
+                .hasMessageContaining("Error deleting Role with id: " + regularRoleId);
     }
 }
