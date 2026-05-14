@@ -68,6 +68,16 @@ class FooterApiTest extends BaseApiTest {
                 .then().statusCode(400);
 
         RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("header", "News", "description", "Missing role"))
+                .when().post("/footers")
+                .then().statusCode(400);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body("{\"header\":\"News\",\"description\":\"Missing role name\",\"role\":{}}")
+                .when().post("/footers")
+                .then().statusCode(400);
+
+        RestAssured.given().contentType(ContentType.JSON)
                 .body(Map.of("header", "Docs", "description", "Updated footer description", "role", Map.of("name", "REGULAR")))
                 .when().put("/footers/999")
                 .then().statusCode(404);

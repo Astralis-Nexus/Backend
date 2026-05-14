@@ -82,6 +82,11 @@ class LicenseApiTest extends BaseApiTest {
                 .then().statusCode(400);
 
         RestAssured.given().contentType(ContentType.JSON)
+                .body("{\"username\":\"missing-game-id\",\"game\":{}}")
+                .when().post("/licences")
+                .then().statusCode(400);
+
+        RestAssured.given().contentType(ContentType.JSON)
                 .body(Map.of(
                         "username", "updated-license",
                         "password", "NewPass2026",

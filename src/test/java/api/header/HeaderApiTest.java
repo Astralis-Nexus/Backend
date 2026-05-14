@@ -68,6 +68,16 @@ class HeaderApiTest extends BaseApiTest {
                 .then().statusCode(400);
 
         RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("role", Map.of("name", "REGULAR")))
+                .when().post("/headers")
+                .then().statusCode(400);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body("{\"text\":\"Missing role name\",\"role\":{}}")
+                .when().post("/headers")
+                .then().statusCode(400);
+
+        RestAssured.given().contentType(ContentType.JSON)
                 .body(Map.of("text", "Updated header", "role", Map.of("name", "REGULAR")))
                 .when().put("/headers/999")
                 .then().statusCode(404);

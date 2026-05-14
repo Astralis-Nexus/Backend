@@ -4,6 +4,9 @@
   <groupId>app</groupId>
   <artifactId>Backend</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <properties>
+    <sonar.coverage.exclusions>**/application/config/**,**/persistence/config/**</sonar.coverage.exclusions>
+  </properties>
   <build>
     <finalName>app</finalName>
     <plugins>
