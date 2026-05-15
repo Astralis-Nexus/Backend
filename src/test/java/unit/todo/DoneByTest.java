@@ -40,30 +40,15 @@ class DoneByTest {
 
     @ParameterizedTest
     @DisplayName("DoneBy should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     })
     void doneByShouldRejectInvalidLengths(String doneBy) {
-        // Given
-        Todo subject = new Todo();
-
-        // Then
-        assertThatThrownBy(() -> subject.setDoneBy(doneBy))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("DoneBy should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " "
-    })
-    void doneByShouldRejectNullEmptyAndBlankValues(String doneBy) {
         // Given
         Todo subject = new Todo();
 

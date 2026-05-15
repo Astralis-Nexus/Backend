@@ -41,8 +41,10 @@ class HeaderTest {
 
     @ParameterizedTest
     @DisplayName("Header should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
             "A",
             "AA",
             "AAA",
@@ -58,22 +60,4 @@ class HeaderTest {
         assertThatThrownBy(() -> subject.setHeader(header))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
-    // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("Header should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " "
-    })
-    void headerShouldRejectNullEmptyAndBlankValues(String header) {
-        // Given
-        Footer subject = new Footer();
-
-        // Then
-        assertThatThrownBy(() -> subject.setHeader(header))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
 }

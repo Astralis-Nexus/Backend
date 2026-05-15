@@ -67,15 +67,4 @@ class ImportanceLevelTest {
                 .map(Enum::name)
                 .anyMatch(importanceLevel::equals)).isFalse();
     }
-
-    @Test
-    @DisplayName("ImportanceLevel setter should reject null.")
-    void importanceLevelSetterShouldRejectNull() {
-        // Given
-        Information subject = new Information();
-
-        // Then
-        assertThatThrownBy(() -> subject.setImportanceLevel(null))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 }

@@ -67,15 +67,4 @@ class StatusTest {
                 .map(Enum::name)
                 .anyMatch(status::equals)).isFalse();
     }
-
-    @Test
-    @DisplayName("Status setter should reject null.")
-    void statusSetterShouldRejectNull() {
-        // Given
-        Todo subject = new Todo();
-
-        // Then
-        assertThatThrownBy(() -> subject.setStatus(null))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 }

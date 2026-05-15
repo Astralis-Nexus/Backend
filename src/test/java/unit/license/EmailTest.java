@@ -46,8 +46,10 @@ class EmailTest {
 
     @ParameterizedTest
     @DisplayName("Email should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
             "A",
             "AA",
             "AAA",
@@ -72,21 +74,6 @@ class EmailTest {
     }
 
     // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("Email should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " "
-    })
-    void emailShouldRejectNullEmptyAndBlankValues(String email) {
-        // Given
-        License subject = new License();
-
-        // Then
-        assertThatThrownBy(() -> subject.setEmail(email))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 
     @Test
     @DisplayName("Email duplicate edge case should be detected.")

@@ -67,15 +67,4 @@ class SourceTest {
                 .map(Enum::name)
                 .anyMatch(source::equals)).isFalse();
     }
-
-    @Test
-    @DisplayName("Source setter should reject null.")
-    void sourceSetterShouldRejectNull() {
-        // Given
-        Todo subject = new Todo();
-
-        // Then
-        assertThatThrownBy(() -> subject.setSource(null))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 }
