@@ -9,7 +9,9 @@ import persistence.model.License;
 import persistence.model.License.LicenseStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class StatusTest extends BaseIntegrationTest {
+
     // ------------------------------ Positive values ------------------------------
     @ParameterizedTest
     @DisplayName("LicenseDAO should persist licenses with valid status enum values.")
@@ -18,12 +20,15 @@ class StatusTest extends BaseIntegrationTest {
         // Given
         License license = validLicense();
         license.setStatus(status);
+
         // When
         License created = licenseDAO.create(license);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getStatus()).isEqualTo(status);
     }
+
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("LicenseStatus should reject invalid enum values.")
@@ -32,20 +37,24 @@ class StatusTest extends BaseIntegrationTest {
             "PENDING",
             "EXPIRED",
     })
+
     void licenseStatusShouldRejectInvalidEnumValues(String status) {
         // Then
         assertThatThrownBy(() -> LicenseStatus.valueOf(status))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
     @Test
     @DisplayName("LicenseStatus setter should reject null.")
     void licenseStatusSetterShouldRejectNull() {
         // Given
         License license = new License();
+
         // Then
         assertThatThrownBy(() -> license.setStatus(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+    
     private License validLicense() {
         License license = new License();
         license.setUsername("steam_user_42");

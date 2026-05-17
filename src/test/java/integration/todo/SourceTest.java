@@ -12,7 +12,9 @@ import persistence.model.Todo.Source;
 import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class SourceTest extends BaseIntegrationTest {
+
     // ------------------------------ Positive values ------------------------------
     @ParameterizedTest
     @DisplayName("TodoDAO should persist todos with valid source enum values.")
@@ -22,12 +24,15 @@ class SourceTest extends BaseIntegrationTest {
         Account account = createAccount("todo-user");
         Todo todo = validTodo(account);
         todo.setSource(source);
+
         // When
         Todo created = todoDAO.create(todo);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getSource()).isEqualTo(source);
     }
+
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("Source should reject invalid enum values.")
@@ -36,17 +41,20 @@ class SourceTest extends BaseIntegrationTest {
             "WEB",
             "MOBILE",
     })
+
     void sourceShouldRejectInvalidEnumValues(String source) {
         // Then
         assertThatThrownBy(() -> Source.valueOf(source))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
     @ParameterizedTest
     @DisplayName("Source should reject null, empty, and blank values.")
     @NullAndEmptySource
     @ValueSource(strings = {
             " ",
     })
+
     void sourceShouldRejectNullEmptyAndBlankValues(String source) {
         // Then
         assertThat(source).satisfiesAnyOf(
@@ -54,15 +62,18 @@ class SourceTest extends BaseIntegrationTest {
                 value -> assertThat(value).isBlank()
         );
     }
+
     @Test
     @DisplayName("Source setter should reject null.")
     void sourceSetterShouldRejectNull() {
         // Given
         Todo todo = new Todo();
+
         // Then
         assertThatThrownBy(() -> todo.setSource(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+    
     private Todo validTodo(Account account) {
         Todo todo = new Todo();
         todo.setDate(LocalDate.now());

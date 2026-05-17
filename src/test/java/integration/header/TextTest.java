@@ -26,13 +26,16 @@ class TextTest extends BaseIntegrationTest {
             "Welcome!",
             "Line one\nLine two",
     })
+
     void createShouldPersistHeadersWithValidTextLengths(String text) {
         // Given
         Header header = new Header();
         header.setText(text);
         header.setRole(regularRole);
+
         // When
         Header created = headerDAO.create(header);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getText()).isEqualTo(text).hasSizeBetween(1, 80);
@@ -49,6 +52,7 @@ class TextTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
+    
     void createShouldRejectHeadersWithInvalidTexts(String text) {
         // Given
         Header header = new Header();
@@ -59,11 +63,11 @@ class TextTest extends BaseIntegrationTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    // ------------------------------ White box positive branches ------------------------------
+    // ------------------------------ Positive branches ------------------------------
 
     @Test
     @DisplayName("HeaderDAO should keep existing text when update text is null.")
-    void whiteBoxUpdateShouldKeepExistingTextWhenTextIsNull() {
+    void updateShouldKeepExistingTextWhenTextIsNull() {
         // Given
         Header created = headerDAO.create(new Header("Original header", regularRole));
         Header partialUpdate = new Header(
@@ -71,8 +75,10 @@ class TextTest extends BaseIntegrationTest {
                 null, // White box: DAO.update Header text null branch.
                 regularRole
         );
+
         // When
         Header updated = headerDAO.update(partialUpdate);
+        
         // Then
         assertThat(updated.getText()).isEqualTo("Original header");
     }

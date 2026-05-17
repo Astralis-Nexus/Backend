@@ -9,7 +9,9 @@ import persistence.model.Game;
 import persistence.model.License;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class EmailTest extends BaseIntegrationTest {
+
     // ------------------------------ Positive values ------------------------------
     @ParameterizedTest
     @DisplayName("LicenseDAO should persist licenses with valid email lengths.")
@@ -21,16 +23,20 @@ class EmailTest extends BaseIntegrationTest {
             "user@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.dddddddddddddddddddddddddddddddddddddddddddddddddddddd.dk",
             "support.user+dk@example.co",
     })
+
     void createShouldPersistLicensesWithValidEmailLengths(String email) {
         // Given
         License license = validLicense();
         license.setEmail(email);
+
         // When
         License created = licenseDAO.create(license);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getEmail()).isEqualTo(email).hasSizeBetween(6, 254).contains("@").contains(".");
     }
+
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("LicenseDAO should reject licenses with invalid emails.")
@@ -51,6 +57,7 @@ class EmailTest extends BaseIntegrationTest {
             "@example.com",
             "player.example@",
     })
+
     void createShouldRejectLicensesWithInvalidEmails(String email) {
         // Given
         License license = new License();
@@ -66,13 +73,16 @@ class EmailTest extends BaseIntegrationTest {
         Game game = createGame("license-game");
         licenseDAO.create(validLicense(game, "steam_user_42", "player@example.com"));
         License duplicateLicense = validLicense(game, "steam_user_43", "player@example.com");
+
         // Then
         assertThatThrownBy(() -> licenseDAO.create(duplicateLicense))
                 .isInstanceOf(RuntimeException.class);
     }
+
     private License validLicense() {
         return validLicense(createGame("license-game"), "steam_user_42", "player@example.com");
     }
+    
     private License validLicense(Game game, String username, String email) {
         License license = new License();
         license.setUsername(username);

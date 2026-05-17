@@ -11,7 +11,9 @@ import persistence.model.Information;
 import persistence.model.Information.ImportanceLevel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class ImportanceLevelTest extends BaseIntegrationTest {
+
     // ------------------------------ Positive values ------------------------------
     @ParameterizedTest
     @DisplayName("InformationDAO should persist information with valid importance levels.")
@@ -23,12 +25,15 @@ class ImportanceLevelTest extends BaseIntegrationTest {
         information.setDescription("Valid information description.");
         information.setImportanceLevel(importanceLevel);
         information.setAccount(account);
+
         // When
         Information created = informationDAO.create(information);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getImportanceLevel()).isEqualTo(importanceLevel);
     }
+
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("ImportanceLevel should reject invalid enum values.")
@@ -37,11 +42,13 @@ class ImportanceLevelTest extends BaseIntegrationTest {
             "URGENT",
             "CRITICAL",
     })
+
     void importanceLevelShouldRejectInvalidEnumValues(String importanceLevel) {
         // Then
         assertThatThrownBy(() -> ImportanceLevel.valueOf(importanceLevel))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
     @ParameterizedTest
     @DisplayName("ImportanceLevel should reject null, empty, and blank values.")
     @NullAndEmptySource
@@ -55,6 +62,7 @@ class ImportanceLevelTest extends BaseIntegrationTest {
                 value -> assertThat(value).isBlank()
         );
     }
+    
     @Test
     @DisplayName("ImportanceLevel setter should reject null.")
     void importanceLevelSetterShouldRejectNull() {

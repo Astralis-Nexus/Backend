@@ -26,14 +26,17 @@ class DescriptionTest extends BaseIntegrationTest {
             "Line one\nLine two",
             "<b>Support</b>",
     })
+
     void createShouldPersistFootersWithValidDescriptionLengths(String description) {
         // Given
         Footer footer = new Footer();
         footer.setHeader("Help");
         footer.setDescription(description);
         footer.setRole(regularRole);
+
         // When
         Footer created = footerDAO.create(footer);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getDescription()).isEqualTo(description).hasSizeBetween(10, 255);
@@ -55,6 +58,7 @@ class DescriptionTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
+    
     void createShouldRejectFootersWithInvalidDescriptions(String description) {
         // Given
         Footer footer = new Footer();
@@ -66,11 +70,12 @@ class DescriptionTest extends BaseIntegrationTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    // ------------------------------ White box positive branches ------------------------------
+    // ------------------------------ Positive branches ------------------------------
 
     @Test
     @DisplayName("FooterDAO should update provided values and keep existing values when update values are null.")
-    void whiteBoxUpdateShouldHandleProvidedAndNullValues() {
+    void updateShouldHandleProvidedAndNullValues() {
+
         // Given
         Footer created = footerDAO.create(new Footer("Help", "Original description", regularRole));
         Footer providedUpdate = new Footer(
@@ -79,6 +84,7 @@ class DescriptionTest extends BaseIntegrationTest {
                 "Updated description", // White box: DAO.update Footer description present branch.
                 regularRole // White box: DAO.update Footer role present branch.
         );
+
         // When
         Footer updated = footerDAO.update(providedUpdate);
         Footer nullUpdate = new Footer(
@@ -88,17 +94,18 @@ class DescriptionTest extends BaseIntegrationTest {
                 null // White box: DAO.update Footer role null branch.
         );
         Footer unchanged = footerDAO.update(nullUpdate);
+
         // Then
         assertThat(unchanged.getHeader()).isEqualTo("News");
         assertThat(unchanged.getDescription()).isEqualTo("Updated description");
         assertThat(unchanged.getRole()).isNotNull();
     }
 
-    // ------------------------------ White box negative branches ------------------------------
+    // ------------------------------ Negative branches ------------------------------
 
     @Test
     @DisplayName("FooterDAO should handle update when footer does not already exist.")
-    void whiteBoxUpdateShouldHandleMissingExistingFooter() {
+    void updateShouldHandleMissingExistingFooter() {
         // Given
         Footer missingFooter = new Footer(
                 404,
@@ -106,8 +113,10 @@ class DescriptionTest extends BaseIntegrationTest {
                 "Missing footer description",
                 regularRole
         );
+
         // When
         Footer updated = footerDAO.update(missingFooter);
+
         // Then
         assertThat(updated.getId()).isNotNull();
     }

@@ -32,6 +32,7 @@ class NameTest extends BaseIntegrationTest {
             role.setName(name);
             created = roleDAO.create(role);
         }
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getName()).isEqualTo(name);
@@ -46,6 +47,7 @@ class NameTest extends BaseIntegrationTest {
             "SUPER_ADMIN",
             "USER",
     })
+
     void roleNameShouldRejectInvalidEnumValues(String name) {
         // Then
         assertThatThrownBy(() -> RoleName.valueOf(name))
@@ -57,6 +59,7 @@ class NameTest extends BaseIntegrationTest {
     @ValueSource(strings = {
             " ",
     })
+
     void roleNameShouldRejectNullEmptyAndBlankValues(String name) {
         // Then
         assertThat(name).satisfiesAnyOf(
@@ -64,6 +67,7 @@ class NameTest extends BaseIntegrationTest {
                 value -> assertThat(value).isBlank()
         );
     }
+
     @Test
     @DisplayName("Role setter should reject null.")
     void nameSetterShouldRejectNull() {
@@ -74,27 +78,29 @@ class NameTest extends BaseIntegrationTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    // ------------------------------ White box positive branches ------------------------------
+    // ------------------------------ Positive branches ------------------------------
 
     @Test
     @DisplayName("RoleDAO should move accounts to NONE before deleting a role.")
-    void whiteBoxDeleteShouldMoveAccountsToNoneRole() {
+    void updateShouldMoveAccountsToNoneRole() {
         // Given
         roleDAO.create(new Role(RoleName.NONE));
         Account account = createAccount("role-delete-user");
+
         // When
         Role deleted = roleDAO.delete(regularRole.getId()); // White box: DAO.delete Role account reassignment branch.
         Account updatedAccount = accountDAO.getById(account.getId());
+
         // Then
         assertThat(deleted).isNotNull();
         assertThat(updatedAccount.getRole().getName()).isEqualTo(RoleName.NONE);
     }
 
-    // ------------------------------ White box negative branches ------------------------------
+    // ------------------------------ Negative branches ------------------------------
 
     @Test
     @DisplayName("RoleDAO should handle update when role does not already exist.")
-    void whiteBoxUpdateShouldHandleMissingExistingRole() {
+    void updateShouldHandleMissingExistingRole() {
         // Given
         Role missingRole = new Role(
                 404,
@@ -102,15 +108,17 @@ class NameTest extends BaseIntegrationTest {
                 null,
                 null
         );
+
         // When
         Role updated = roleDAO.update(missingRole); // White box: DAO.update Role existingRole null branch.
+        
         // Then
         assertThat(updated).isNotNull();
     }
 
     @Test
     @DisplayName("RoleDAO should wrap persistence errors when delete cannot find NONE role.")
-    void whiteBoxDeleteShouldWrapPersistenceException() {
+    void deleteShouldWrapPersistenceException() {
         // Given
         createAccount("role-delete-error-user");
         Integer regularRoleId = regularRole.getId();

@@ -7,7 +7,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import persistence.model.License;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class PasswordTest extends BaseIntegrationTest {
+
     // ------------------------------ Positive values ------------------------------
     @ParameterizedTest
     @DisplayName("LicenseDAO should persist licenses with valid password lengths.")
@@ -19,16 +21,20 @@ class PasswordTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "Lic@2026!",
     })
+
     void createShouldPersistLicensesWithValidPasswordLengths(String password) {
         // Given
         License license = validLicense();
         license.setPassword(password);
+
         // When
         License created = licenseDAO.create(license);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getPassword()).isEqualTo(password).hasSizeBetween(8, 128);
     }
+
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("LicenseDAO should reject licenses with invalid passwords.")
@@ -45,6 +51,7 @@ class PasswordTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
+
     void createShouldRejectLicensesWithInvalidPasswords(String password) {
         // Given
         License license = new License();
@@ -53,6 +60,7 @@ class PasswordTest extends BaseIntegrationTest {
         assertThatThrownBy(() -> license.setPassword(password))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+    
     private License validLicense() {
         License license = new License();
         license.setUsername("steam_user_42");

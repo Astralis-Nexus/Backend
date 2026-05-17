@@ -29,13 +29,16 @@ class DescriptionTest extends BaseIntegrationTest {
             "GH-42 Fix checkout",
             "Line one\nLine two",
     })
+
     void createShouldPersistTodosWithValidDescriptionLengths(String description) {
         // Given
         Account account = createAccount("todo-user");
         Todo todo = validTodo(account);
         todo.setDescription(description);
+
         // When
         Todo created = todoDAO.create(todo);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getDescription()).isEqualTo(description).hasSizeBetween(1, 255);
@@ -52,6 +55,7 @@ class DescriptionTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
+
     void createShouldRejectTodosWithInvalidDescriptions(String description) {
         // Given
         Todo todo = new Todo();
@@ -61,11 +65,11 @@ class DescriptionTest extends BaseIntegrationTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    // ------------------------------ White box positive branches ------------------------------
+    // ------------------------------ Positive branches ------------------------------
 
     @Test
     @DisplayName("TodoDAO should keep existing description on null update and find an existing account.")
-    void whiteBoxShouldKeepExistingDescriptionAndFindExistingAccount() {
+    void positiveShouldKeepExistingDescriptionAndFindExistingAccount() {
         // Given
         Account account = createAccount("todo-update-user");
         Todo created = todoDAO.create(validTodo(account));
@@ -78,18 +82,20 @@ class DescriptionTest extends BaseIntegrationTest {
                 created.getDoneBy(),
                 account
         );
+
         // When
         Todo updated = todoDAO.update(partialUpdate);
+
         // Then
         assertThat(updated.getDescription()).isEqualTo("Valid todo");
         assertThat(todoDAO.getAccountById(account.getId())).isNotNull();
     }
 
-    // ------------------------------ White box negative branches ------------------------------
+    // ------------------------------ Negative branches ------------------------------
 
     @Test
     @DisplayName("TodoDAO should return null for missing account and reject missing account relation.")
-    void whiteBoxShouldHandleMissingAccountBranches() {
+    void negativeShouldHandleMissingAccountBranches() {
         // Given
         Todo todo = validTodo(null); // White box: DAO.create attachAccountWithRole sourceAccount null branch.
 

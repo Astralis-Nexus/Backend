@@ -35,8 +35,10 @@ class QuestionTest extends BaseIntegrationTest {
         qa.setQuestion(question);
         qa.setAnswer("Valid answer");
         qa.setAccount(account);
+
         // When
         QA created = qaDAO.create(qa);
+        
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getQuestion()).isEqualTo(question).hasSizeBetween(1, 255);
@@ -63,11 +65,11 @@ class QuestionTest extends BaseIntegrationTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    // ------------------------------ White box positive branches ------------------------------
+    // ------------------------------ Positive branches ------------------------------
 
     @Test
     @DisplayName("QADAO should keep existing question and answer when update values are null.")
-    void whiteBoxUpdateShouldKeepExistingValuesWhenQuestionAndAnswerAreNull() {
+    void updateShouldKeepExistingValuesWhenQuestionAndAnswerAreNull() {
         // Given
         Account account = createAccount("qa-update-user");
         QA created = qaDAO.create(new QA("Original question", "Original answer", account));
@@ -77,8 +79,10 @@ class QuestionTest extends BaseIntegrationTest {
                 null, // White box: DAO.update QA answer null branch.
                 account
         );
+
         // When
         QA updated = qaDAO.update(partialUpdate);
+        
         // Then
         assertThat(updated.getQuestion()).isEqualTo("Original question");
         assertThat(updated.getAnswer()).isEqualTo("Original answer");

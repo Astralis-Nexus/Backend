@@ -8,7 +8,9 @@ import persistence.model.Account;
 import persistence.model.QA;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class AnswerTest extends BaseIntegrationTest {
+
     // ------------------------------ Positive values ------------------------------
     @ParameterizedTest
     @DisplayName("QADAO should persist QA with valid answer lengths.")
@@ -21,6 +23,7 @@ class AnswerTest extends BaseIntegrationTest {
             "https://example.com/help",
             "Line one\nLine two",
     })
+
     void createShouldPersistQaWithValidAnswerLengths(String answer) {
         // Given
         Account account = createAccount("qa-user");
@@ -28,12 +31,15 @@ class AnswerTest extends BaseIntegrationTest {
         qa.setQuestion("Valid question");
         qa.setAnswer(answer);
         qa.setAccount(account);
+
         // When
         QA created = qaDAO.create(qa);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getAnswer()).isEqualTo(answer).hasSizeBetween(1, 1000);
     }
+    
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("QADAO should reject QA with invalid answers.")

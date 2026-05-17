@@ -10,7 +10,9 @@ import persistence.model.Todo;
 import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class DoneByTest extends BaseIntegrationTest {
+
     // ------------------------------ Positive values ------------------------------
     @ParameterizedTest
     @DisplayName("TodoDAO should persist todos with valid doneBy lengths.")
@@ -22,17 +24,21 @@ class DoneByTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "support_agent_02",
     })
+
     void createShouldPersistTodosWithValidDoneByLengths(String doneBy) {
         // Given
         Account account = createAccount("todo-user");
         Todo todo = validTodo(account);
         todo.setDoneBy(doneBy);
+
         // When
         Todo created = todoDAO.create(todo);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getDoneBy()).isEqualTo(doneBy).hasSizeBetween(1, 30);
     }
+
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("TodoDAO should reject todos with invalid doneBy values.")
@@ -43,6 +49,7 @@ class DoneByTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
+
     void createShouldRejectTodosWithInvalidDoneByValues(String doneBy) {
         // Given
         Todo todo = new Todo();
@@ -51,6 +58,7 @@ class DoneByTest extends BaseIntegrationTest {
         assertThatThrownBy(() -> todo.setDoneBy(doneBy))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
     @Test
     @DisplayName("TodoDAO should set doneBy to the account username on update.")
     void updateShouldSetDoneByToCurrentAccountUsername() {
@@ -58,11 +66,14 @@ class DoneByTest extends BaseIntegrationTest {
         Account account = createAccount("PlayerOne");
         Todo created = todoDAO.create(validTodo(account));
         created.setDescription("Updated todo");
+
         // When
         Todo updated = todoDAO.update(created);
+
         // Then
         assertThat(updated.getDoneBy()).isEqualTo("PlayerOne");
     }
+    
     private Todo validTodo(Account account) {
         Todo todo = new Todo();
         todo.setDate(LocalDate.now());

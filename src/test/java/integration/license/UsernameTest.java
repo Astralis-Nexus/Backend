@@ -30,8 +30,10 @@ class UsernameTest extends BaseIntegrationTest {
         // Given
         License license = validLicense();
         license.setUsername(username);
+
         // When
         License created = licenseDAO.create(license);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getUsername()).isEqualTo(username).hasSizeBetween(1, 30);
@@ -48,6 +50,7 @@ class UsernameTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
+
     void createShouldRejectLicensesWithInvalidUsernames(String username) {
         // Given
         License license = new License();
@@ -63,16 +66,17 @@ class UsernameTest extends BaseIntegrationTest {
         Game game = createGame("license-game");
         licenseDAO.create(validLicense(game));
         License duplicateLicense = validLicense(game);
+
         // Then
         assertThatThrownBy(() -> licenseDAO.create(duplicateLicense))
                 .isInstanceOf(RuntimeException.class);
     }
 
-    // ------------------------------ White box positive branches ------------------------------
+    // ------------------------------ Positive branches ------------------------------
 
     @Test
     @DisplayName("LicenseDAO should cover update value branches and find an existing game.")
-    void whiteBoxShouldCoverUpdateBranchesAndFindExistingGame() {
+    void shouldCoverUpdateBranchesAndFindExistingGame() {
         // Given
         Game firstGame = createGame("license-update-game");
         License firstLicense = licenseDAO.create(validLicense(firstGame));
@@ -92,6 +96,7 @@ class UsernameTest extends BaseIntegrationTest {
                 "steam_user_43",
                 "player-three@example.com"
         ));
+
         License fullUpdate = new License(
                 secondLicense.getId(),
                 "new_steam_user", // White box: DAO.update License username present branch.
@@ -118,11 +123,11 @@ class UsernameTest extends BaseIntegrationTest {
         assertThat(licenseDAO.getGameById(secondGame.getId())).isNotNull();
     }
 
-    // ------------------------------ White box negative branches ------------------------------
+    // ------------------------------ Negative branches ------------------------------
 
     @Test
     @DisplayName("LicenseDAO should return null for missing game.")
-    void whiteBoxGetGameByIdShouldReturnNullForMissingGame() {
+    void getGameByIdShouldReturnNullForMissingGame() {
         // Then
         assertThat(licenseDAO.getGameById(404)).isNull(); // White box: LicenseDAO missing game branch.
     }

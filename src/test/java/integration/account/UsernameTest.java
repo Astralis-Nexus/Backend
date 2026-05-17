@@ -61,22 +61,24 @@ class UsernameTest extends BaseIntegrationTest {
         assertThatThrownBy(() -> account.setUsername(username))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
     @Test
     @DisplayName("AccountDAO should reject duplicate usernames.")
     void createShouldRejectDuplicateUsername() {
         // Given
         accountDAO.create(new Account("PlayerOne2026DK", "P@ssw0rd2026", regularRole));
         Account duplicateAccount = new Account("PlayerOne2026DK", "P@ssw0rd2026", regularRole);
+
         // Then
         assertThatThrownBy(() -> accountDAO.create(duplicateAccount))
                 .isInstanceOf(RuntimeException.class);
     }
 
-    // ------------------------------ White box positive branches ------------------------------
+    // ------------------------------ Positive branches ------------------------------
 
     @Test
     @DisplayName("AccountDAO should keep existing username and password when update values are null.")
-    void whiteBoxUpdateShouldKeepExistingValuesWhenUsernameAndPasswordAreNull() {
+    void updateShouldKeepExistingValuesWhenUsernameAndPasswordAreNull() {
         // Given
         Account created = accountDAO.create(new Account("UpdatePlayer", "P@ssw0rd2026", regularRole));
         Account partialUpdate = new Account(
@@ -90,18 +92,20 @@ class UsernameTest extends BaseIntegrationTest {
                 null,
                 null
         );
+
         // When
         Account updated = accountDAO.update(partialUpdate);
+        
         // Then
         assertThat(updated.getUsername()).isEqualTo("UpdatePlayer");
         assertThat(updated.getPassword()).isEqualTo("P@ssw0rd2026");
     }
 
-    // ------------------------------ White box negative branches ------------------------------
+    // ------------------------------ Negative branches ------------------------------
 
     @Test
     @DisplayName("AccountDAO should reject null update entity.")
-    void whiteBoxUpdateShouldRejectNullEntity() {
+    void updateShouldRejectNullEntity() {
         // Then
         assertThatThrownBy(() -> accountDAO.update(null)) // White box: DAO.update entity null branch.
                 .isInstanceOf(RuntimeException.class);
@@ -109,7 +113,7 @@ class UsernameTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("AccountDAO should wrap persistence errors when update violates username uniqueness.")
-    void whiteBoxUpdateShouldWrapPersistenceException() {
+    void updateShouldWrapPersistenceException() {
         // Given
         Account firstAccount = accountDAO.create(new Account("ExistingPlayer", "P@ssw0rd2026", regularRole));
         Account secondAccount = accountDAO.create(new Account("UpdateTarget", "P@ssw0rd2026", regularRole));

@@ -26,14 +26,17 @@ class NameTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "Baldur's Gate 3",
     })
+
     void createShouldPersistGamesWithValidNameLengths(String name) {
         // Given
         Account account = createAccount("game-user");
         Game game = new Game();
         game.setName(name);
         game.setAccount(account);
+
         // When
         Game created = gameDAO.create(game);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getName()).isEqualTo(name).hasSizeBetween(1, 100);
@@ -50,6 +53,7 @@ class NameTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
+
     void createShouldRejectGamesWithInvalidNames(String name) {
         // Given
         Game game = new Game();
@@ -65,16 +69,17 @@ class NameTest extends BaseIntegrationTest {
         Account account = createAccount("game-user");
         gameDAO.create(new Game("BaldursGate3", account));
         Game duplicateGame = new Game("BaldursGate3", account);
+        
         // Then
         assertThatThrownBy(() -> gameDAO.create(duplicateGame))
                 .isInstanceOf(RuntimeException.class);
     }
 
-    // ------------------------------ White box positive branches ------------------------------
+    // ------------------------------ Positive branches ------------------------------
 
     @Test
     @DisplayName("GameDAO should keep existing name when update name is null.")
-    void whiteBoxUpdateShouldKeepExistingNameWhenNameIsNull() {
+    void updateShouldKeepExistingNameWhenNameIsNull() {
         // Given
         Account account = createAccount("game-update-user");
         Game created = gameDAO.create(new Game("OriginalGame", account));
@@ -83,8 +88,10 @@ class NameTest extends BaseIntegrationTest {
                 null, // White box: DAO.update Game name null branch.
                 account
         );
+
         // When
         Game updated = gameDAO.update(partialUpdate);
+        
         // Then
         assertThat(updated.getName()).isEqualTo("OriginalGame");
     }

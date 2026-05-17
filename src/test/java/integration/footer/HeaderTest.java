@@ -7,7 +7,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import persistence.model.Footer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class HeaderTest extends BaseIntegrationTest {
+
     // ------------------------------ Positive values ------------------------------
     @ParameterizedTest
     @DisplayName("FooterDAO should persist footers with valid header lengths.")
@@ -20,18 +22,22 @@ class HeaderTest extends BaseIntegrationTest {
             "Help!",
             "FAQ 2026",
     })
+
     void createShouldPersistFootersWithValidHeaderLengths(String header) {
         // Given
         Footer footer = new Footer();
         footer.setHeader(header);
         footer.setDescription("Valid footer description.");
         footer.setRole(regularRole);
+
         // When
         Footer created = footerDAO.create(footer);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getHeader()).isEqualTo(header).hasSizeBetween(4, 50);
     }
+    
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("FooterDAO should reject footers with invalid headers.")

@@ -7,7 +7,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import persistence.model.License;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class PcNumberTest extends BaseIntegrationTest {
+
     // ------------------------------ Positive values ------------------------------
     @ParameterizedTest
     @DisplayName("LicenseDAO should persist licenses with pcNumber values from 0 to 20.")
@@ -18,16 +20,20 @@ class PcNumberTest extends BaseIntegrationTest {
             19,
             20,
     })
+
     void createShouldPersistLicensesWithPcNumberValuesFromZeroToTwenty(Integer pcNumber) {
         // Given
         License license = validLicense();
         license.setPcNumber(pcNumber);
+
         // When
         License created = licenseDAO.create(license);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getPcNumber()).isEqualTo(pcNumber).isBetween(0, 20);
     }
+
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("LicenseDAO should reject licenses with invalid pcNumber values.")
@@ -48,6 +54,7 @@ class PcNumberTest extends BaseIntegrationTest {
         assertThatThrownBy(() -> license.setPcNumber(pcNumber))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
     @ParameterizedTest
     @DisplayName("PcNumber should reject non-integer values.")
     @ValueSource(strings = {
@@ -55,10 +62,12 @@ class PcNumberTest extends BaseIntegrationTest {
             "1.5",
             "\uD83D\uDE00",
     })
+
     void pcNumberShouldRejectNonIntegerValues(String pcNumber) {
         // Then
         assertThat(pcNumber).isNotInstanceOf(Integer.class);
     }
+    
     private License validLicense() {
         License license = new License();
         license.setUsername("steam_user_42");

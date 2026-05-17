@@ -8,7 +8,9 @@ import integration.BaseIntegrationTest;
 import persistence.model.Account;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class PasswordTest extends BaseIntegrationTest {
+    
     // ------------------------------ Positive values ------------------------------
     @ParameterizedTest
     @DisplayName("AccountDAO should persist accounts with valid password lengths.")
@@ -20,17 +22,21 @@ class PasswordTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "P@ssw0rd2026",
     })
+
     void createShouldPersistAccountsWithValidPasswordLengths(String password) {
         // Given
         String username = "integration-user";
         Account account = new Account(username, password, regularRole);
+
         // When
         Account created = accountDAO.create(account);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getPassword()).isEqualTo(password).hasSizeBetween(8, 128);
         assertThat(accountDAO.verifyLogin(username, password)).isNotNull();
     }
+
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("AccountDAO should reject accounts with invalid passwords.")
@@ -47,13 +53,16 @@ class PasswordTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
+
     void createShouldRejectAccountsWithInvalidPasswords(String password) {
         // Given
         String username = "invalid-password-user";
+
         // Then
         assertThatThrownBy(() -> new Account(username, password, regularRole))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
     @ParameterizedTest
     @DisplayName("AccountDAO should verify login based on username and password.")
     @CsvSource({
@@ -61,18 +70,22 @@ class PasswordTest extends BaseIntegrationTest {
             "wrong-password-user, WrongPassword, true, false",
             "missing-user, P@ssw0rd2026, false, false"
     })
+
     void verifyLoginShouldReturnExpectedResult(
             String username,
             String password,
             boolean shouldCreateAccount,
             boolean shouldFindAccount
     ) {
+
         // Given
         if (shouldCreateAccount) {
             accountDAO.create(new Account(username, "P@ssw0rd2026", regularRole));
         }
+
         // When
         Account result = accountDAO.verifyLogin(username, password);
+        
         // Then
         assertThat(result != null).isEqualTo(shouldFindAccount);
     }

@@ -28,6 +28,7 @@ class DescriptionTest extends BaseIntegrationTest {
             "Line one\nLine two",
             "Maintenance starts at 18:00.",
     })
+
     void createShouldPersistInformationWithValidDescriptionLengths(String description) {
         // Given
         Account account = createAccount("information-user");
@@ -35,8 +36,10 @@ class DescriptionTest extends BaseIntegrationTest {
         information.setDescription(description);
         information.setImportanceLevel(ImportanceLevel.HIGH);
         information.setAccount(account);
+
         // When
         Information created = informationDAO.create(information);
+
         // Then
         assertThat(created.getId()).isNotNull();
         assertThat(created.getDescription()).isEqualTo(description).hasSizeBetween(10, 500);
@@ -58,6 +61,7 @@ class DescriptionTest extends BaseIntegrationTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     })
+
     void createShouldRejectInformationWithInvalidDescriptions(String description) {
         // Given
         Information information = new Information();
@@ -68,11 +72,11 @@ class DescriptionTest extends BaseIntegrationTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    // ------------------------------ White box positive branches ------------------------------
+    // ------------------------------ Positive branches ------------------------------
 
     @Test
     @DisplayName("InformationDAO should keep existing description when update description is null.")
-    void whiteBoxUpdateShouldKeepExistingDescriptionWhenDescriptionIsNull() {
+    void updateShouldKeepExistingDescriptionWhenDescriptionIsNull() {
         // Given
         Account account = createAccount("information-update-user");
         Information created = informationDAO.create(new Information(
@@ -86,8 +90,10 @@ class DescriptionTest extends BaseIntegrationTest {
                 created.getImportanceLevel(),
                 account
         );
+
         // When
         Information updated = informationDAO.update(partialUpdate);
+
         // Then
         assertThat(updated.getDescription()).isEqualTo("Original description");
     }
