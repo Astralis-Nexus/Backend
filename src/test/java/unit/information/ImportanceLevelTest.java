@@ -25,7 +25,7 @@ class ImportanceLevelTest {
 
         // Then
         assertThat(subject.getImportanceLevel()).isNotNull().isEqualTo(importanceLevel);
-        assertThat(java.util.Arrays.asList(ImportanceLevel.values()).contains(importanceLevel)).isTrue();
+        assertThat(ImportanceLevel.values()).contains(importanceLevel);
     }
 
     // ------------------------------ Negative values ------------------------------

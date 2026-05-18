@@ -25,7 +25,7 @@ class SourceTest {
 
         // Then
         assertThat(subject.getSource()).isNotNull().isEqualTo(source);
-        assertThat(java.util.Arrays.asList(Source.values()).contains(source)).isTrue();
+        assertThat(Source.values()).contains(source);
     }
 
     // ------------------------------ Negative values ------------------------------

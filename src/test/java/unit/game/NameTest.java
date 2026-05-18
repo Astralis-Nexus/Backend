@@ -33,7 +33,7 @@ class NameTest {
         assertThat(subject.getName()).isEqualTo(name).isNotBlank().hasSizeBetween(1, 100);
         assertThat(subject.getName() != null
                 && !subject.getName().isBlank()
-                && subject.getName().length() >= 1
+                && !subject.getName().isEmpty()
                 && subject.getName().length() <= 100).isTrue();
     }
 

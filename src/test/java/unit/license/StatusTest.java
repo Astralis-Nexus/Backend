@@ -24,7 +24,7 @@ class StatusTest {
 
         // Then
         assertThat(subject.getStatus()).isNotNull().isEqualTo(status);
-        assertThat(java.util.Arrays.asList(LicenseStatus.values()).contains(status)).isTrue();
+        assertThat(LicenseStatus.values()).contains(status);
     }
 
     // ------------------------------ Negative values ------------------------------

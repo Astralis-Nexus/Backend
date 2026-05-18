@@ -33,7 +33,7 @@ class UsernameTest {
         assertThat(subject.getUsername()).isEqualTo(username).isNotBlank().hasSizeBetween(1, 30);
         assertThat(subject.getUsername() != null
                 && !subject.getUsername().isBlank()
-                && subject.getUsername().length() >= 1
+                && !subject.getUsername().isEmpty()
                 && subject.getUsername().length() <= 30).isTrue();
     }
 

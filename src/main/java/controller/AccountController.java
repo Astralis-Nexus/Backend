@@ -6,8 +6,8 @@ import exception.ApiException;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.model.Account;
+import persistence.model.Role;
 import utility.DateUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +64,8 @@ public class AccountController implements IController {
     public Handler create() {
         return ctx -> {
             AccountDTO incoming = ctx.bodyAsClass(AccountDTO.class);
-    
+           
+
             if (incoming.getPassword() == null || incoming.getPassword().isBlank()) {
                 throw new ApiException(400, "Password is required", timestamp);
             }
@@ -74,7 +75,7 @@ public class AccountController implements IController {
             Account account = new Account();
             account.setUsername(incoming.getUsername());
             account.setPassword(rawPassword);
-            account.setRole(incoming.getRole());
+            account.setRole(incoming.getRole() != null ? incoming.getRole() : new Role(Role.RoleName.REGULAR));
     
             Account createdAccount = dao.create(account);
             ctx.status(201).json(converter(createdAccount));

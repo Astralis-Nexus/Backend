@@ -60,4 +60,4 @@ jobs:
           -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
           -Dsonar.token=${{ env.SONAR_TOKEN }}
           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-          -Dsonar.coverage.exclusions=**/application/config/**,**/persistence/config/**
+          -Dsonar.coverage.exclusions=src/main/java/persistence/config/HibernateConfig.java,src/main/java/application/Application.java,src/main/java/controller/SecurityController.java

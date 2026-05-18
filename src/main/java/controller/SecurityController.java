@@ -17,13 +17,16 @@ import persistence.model.Account;
 import persistence.model.Role;
 import utility.DateUtil;
 
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
 public class SecurityController {
 
-    private static final String SECRET_KEY = "YOUR_SECRET_KEY_HERE_MAKE_IT_LONG_AND_SECURE_32_BYTES";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final byte[] SECRET_KEY = resolveSecretKey(System.getenv("JWT_SECRET"));
     private static final String timestamp = DateUtil.getTimestamp();
     private final AccountDAO accountDAO;
 
@@ -34,7 +37,6 @@ public class SecurityController {
     public Handler login() {
         return ctx -> {
             AccountDTO input = ctx.bodyAsClass(AccountDTO.class);
-            System.out.println(input);
             Account verified = accountDAO.verifyLogin(input.getUsername(), input.getPassword());
             if (verified == null) {
                 throw new ApiException(401, "Wrong login info.", timestamp);
@@ -50,6 +52,7 @@ public class SecurityController {
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(username)
                 .claim("role", role.getName().toString())
+                .claim("roles", List.of(role.getName().toString()))
                 .claim("username", username)
                 .issueTime(new Date())
                 .expirationTime(new Date(System.currentTimeMillis() + 7200000)) // 2 hours
@@ -86,9 +89,7 @@ public class SecurityController {
     public boolean hasRole(String token, String requiredRole) {
         try {
             SignedJWT jwt = SignedJWT.parse(token);
-            if (!tokenIsValid(token)) {
-                return false;
-            }
+            tokenIsValid(token);
 
             List<String> roles = jwt.getJWTClaimsSet().getStringListClaim("roles");
             return roles != null && roles.contains(requiredRole);
@@ -116,12 +117,20 @@ public class SecurityController {
     public JWTClaimsSet decodeToken(String token) {
         try {
             SignedJWT jwt = SignedJWT.parse(token);
-            if (tokenIsValid(token)) {
-                return jwt.getJWTClaimsSet();
-            }
-            throw new ApiException(403, "Invalid token", timestamp);
+            tokenIsValid(token);
+            return jwt.getJWTClaimsSet();
         } catch (ParseException e) {
             throw new ApiException(403, "Failed to decode token", timestamp);
         }
+    }
+
+    static byte[] resolveSecretKey(String configuredSecret) {
+        if (configuredSecret != null && configuredSecret.getBytes(StandardCharsets.UTF_8).length >= 32) {
+            return configuredSecret.getBytes(StandardCharsets.UTF_8);
+        }
+
+        byte[] generatedSecret = new byte[32];
+        SECURE_RANDOM.nextBytes(generatedSecret);
+        return generatedSecret;
     }
 }

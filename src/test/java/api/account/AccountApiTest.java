@@ -34,6 +34,14 @@ class AccountApiTest extends BaseApiTest {
                 .then().statusCode(201).body("id", notNullValue()).body("username", equalTo("api-account"));
 
         RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("username", "default-role-account", "password", "P@ssw0rd2026"))
+                .when().post("/accounts")
+                .then().statusCode(201)
+                .body("id", notNullValue())
+                .body("username", equalTo("default-role-account"))
+                .body("role.name", equalTo("REGULAR"));
+
+        RestAssured.given().contentType(ContentType.JSON)
                 .body(Map.of("username", "updated-account", "password", "NewPass2026", "role", Map.of("name", "NONE")))
                 .when().put("/accounts/1")
                 .then().statusCode(200).body("id", equalTo(1)).body("username", equalTo("updated-account"));

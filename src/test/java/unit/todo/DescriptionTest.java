@@ -33,7 +33,7 @@ class DescriptionTest {
         assertThat(subject.getDescription()).isEqualTo(description).isNotBlank().hasSizeBetween(1, 255);
         assertThat(subject.getDescription() != null
                 && !subject.getDescription().isBlank()
-                && subject.getDescription().length() >= 1
+                && !subject.getDescription().isEmpty()
                 && subject.getDescription().length() <= 255).isTrue();
     }
 
