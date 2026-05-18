@@ -12,6 +12,11 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <testcontainers.version>2.0.5</testcontainers.version>
+        <sonar.coverage.exclusions>
+            **/application/config/**,
+            **/persistence/config/**
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencies>
@@ -78,24 +83,25 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>1.19.5</version>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>1.19.5</version>
+            <artifactId>testcontainers-postgresql</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>jdbc</artifactId>
-            <version>1.19.5</version>
+            <artifactId>testcontainers-jdbc</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>1.19.5</version>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -173,9 +179,6 @@
                 <version>0.8.12</version>
                 <configuration>
                     <excludes>
-                        <exclude>controller/**</exclude>
-                        <exclude>route/**</exclude>
-                        <exclude>dao/**</exclude>
                         <exclude>persistence/config/**</exclude>
                         <exclude>data/**</exclude>
                         <exclude>dto/**</exclude>
@@ -214,7 +217,7 @@
                                 implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <mainClass>
                                 <!-- The plugin needs to know which class has the main method  -->
-                                application\Application
+                                application.Application
                             </mainClass>
                         </transformer>
                     </transformers>

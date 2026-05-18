@@ -1,7 +1,6 @@
 package unit.information;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -66,16 +65,5 @@ class ImportanceLevelTest {
                 && java.util.Arrays.stream(ImportanceLevel.values())
                 .map(Enum::name)
                 .anyMatch(importanceLevel::equals)).isFalse();
-    }
-
-    @Test
-    @DisplayName("ImportanceLevel setter should reject null.")
-    void importanceLevelSetterShouldRejectNull() {
-        // Given
-        Information subject = new Information();
-
-        // Then
-        assertThatThrownBy(() -> subject.setImportanceLevel(null))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }

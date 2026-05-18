@@ -41,8 +41,10 @@ class TextTest {
 
     @ParameterizedTest
     @DisplayName("Text should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -55,22 +57,4 @@ class TextTest {
         assertThatThrownBy(() -> subject.setText(text))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
-    // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("Text should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " "
-    })
-    void textShouldRejectNullEmptyAndBlankValues(String text) {
-        // Given
-        Header subject = new Header();
-
-        // Then
-        assertThatThrownBy(() -> subject.setText(text))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
 }

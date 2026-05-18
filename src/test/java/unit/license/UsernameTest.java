@@ -41,8 +41,10 @@ class UsernameTest {
 
     @ParameterizedTest
     @DisplayName("Username should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -57,21 +59,6 @@ class UsernameTest {
     }
 
     // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("Username should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " "
-    })
-    void usernameShouldRejectNullEmptyAndBlankValues(String username) {
-        // Given
-        License subject = new License();
-
-        // Then
-        assertThatThrownBy(() -> subject.setUsername(username))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 
     @Test
     @DisplayName("Username duplicate edge case should be detected.")

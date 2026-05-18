@@ -40,8 +40,11 @@ class PasswordTest {
 
     @ParameterizedTest
     @DisplayName("Password should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
+            "        ", // White
             "A",
             "AA",
             "AAAA",
@@ -52,24 +55,6 @@ class PasswordTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     })
     void passwordShouldRejectInvalidLengths(String password) {
-        // Given
-        License subject = new License();
-
-        // Then
-        assertThatThrownBy(() -> subject.setPassword(password))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("Password should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " ",
-            "        " // White
-    })
-    void passwordShouldRejectNullEmptyAndBlankValues(String password) {
         // Given
         License subject = new License();
 

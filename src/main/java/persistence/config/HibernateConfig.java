@@ -12,15 +12,19 @@ import java.util.Properties;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class HibernateConfig {
+    private static final String POSTGRES = "postgres";
     private static EntityManagerFactory entityManagerFactory;
 
     private static EntityManagerFactory buildEntityFactoryConfig() {
         try {
             Configuration configuration = new Configuration();
             Properties props = new Properties();
-            props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/astralis?currentSchema=public");
-            props.put("hibernate.connection.username", "postgres");
-            props.put("hibernate.connection.password", "postgres");
+            props.put("hibernate.connection.url", getEnvOrDefault(
+                    "DB_URL",
+                    "jdbc:postgresql://localhost:5432/astralis?currentSchema=public"
+            ));
+            props.put("hibernate.connection.username", getEnvOrDefault("DB_USERNAME", POSTGRES));
+            props.put("hibernate.connection.password", getEnvOrDefault("DB_PASSWORD", POSTGRES));
             props.put("hibernate.show_sql", "true");
             props.put("hibernate.format_sql", "true");
             props.put("hibernate.use_sql_comments", "true");
@@ -36,6 +40,11 @@ public class HibernateConfig {
         }
     }
 
+    private static String getEnvOrDefault(String key, String defaultValue) {
+        String value = System.getenv(key);
+        return value == null || value.isBlank() ? defaultValue : value;
+    }
+
     private static EntityManagerFactory setupHibernateConfigurationForTesting() {
         try {
             Configuration configuration = new Configuration();
@@ -43,8 +52,8 @@ public class HibernateConfig {
             props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
             props.put("hibernate.connection.driver_class", "org.testcontainers.jdbc.ContainerDatabaseDriver");
             props.put("hibernate.connection.url", "jdbc:tc:postgresql:15.3-alpine3.18:///test-db");
-            props.put("hibernate.connection.username", "postgres");
-            props.put("hibernate.connection.password", "postgres");
+            props.put("hibernate.connection.username", POSTGRES);
+            props.put("hibernate.connection.password", POSTGRES);
             props.put("hibernate.archive.autodetection", "class");
             props.put("hibernate.show_sql", "true");
             props.put("hibernate.hbm2ddl.auto", "create-drop");

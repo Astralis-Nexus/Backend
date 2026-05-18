@@ -70,24 +70,20 @@ public class TodoController implements IController {
                     .account(createdTodo.getAccount())
                     .build();
 
-            ctx.json(responseDTO);
+            ctx.status(201).json(responseDTO);
         };
     }
 
     @Override
     public Handler getAll() {
         return ctx -> {
-            if (!dao.getAll().isEmpty()) {
-                List<Todo> todos = dao.getAll();
-                List<TodoDTO> todoDTOS = new ArrayList<>();
-                for (Todo t : todos) {
-                    TodoDTO todoDTO = converter(t);
-                    todoDTOS.add(todoDTO);
-                }
-                ctx.json(todoDTOS);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+            List<Todo> todos = dao.getAll();
+            List<TodoDTO> todoDTOS = new ArrayList<>();
+            for (Todo t : todos) {
+                TodoDTO todoDTO = converter(t);
+                todoDTOS.add(todoDTO);
             }
+            ctx.status(200).json(todoDTOS);
         };
     }
 
@@ -98,7 +94,7 @@ public class TodoController implements IController {
             Todo todo = dao.getById(id);
             if (todo != null) {
                 TodoDTO todoDTO = converter(todo);
-                ctx.json(todoDTO);
+                ctx.status(200).json(todoDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -132,7 +128,7 @@ public class TodoController implements IController {
 
             if (updated != null) {
                 TodoDTO dto = converter(updated);
-                ctx.json(dto);
+                ctx.status(200).json(dto);
             } else {
                 throw new ApiException(404, "No data found.", timestamp);
             }
@@ -146,7 +142,7 @@ public class TodoController implements IController {
             Todo todoDeleted = dao.delete(id);
             if (todoDeleted != null) {
                 TodoDTO todoDTO = converter(todoDeleted);
-                ctx.json(todoDTO);
+                ctx.status(200).json(todoDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
