@@ -75,7 +75,7 @@ public class AccountController implements IController {
             Account account = new Account();
             account.setUsername(incoming.getUsername());
             account.setPassword(rawPassword);
-            account.setRole(incoming.getRole());
+            account.setRole(incoming.getRole() != null ? incoming.getRole() : new Role(Role.RoleName.REGULAR));
     
             Account createdAccount = dao.create(account);
             ctx.status(201).json(converter(createdAccount));

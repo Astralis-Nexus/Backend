@@ -33,7 +33,8 @@ public abstract class DAO<T> implements IDAO<T> {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             if (entity instanceof Account account) {
-                Role role = getRoleByName(account.getRole().getName());
+                Role.RoleName roleName = account.getRole() != null ? account.getRole().getName() : Role.RoleName.REGULAR;
+                Role role = getRoleByName(roleName);
                 account.setRole(role);
             } else if (entity instanceof Footer footer) {
                 Role role = getRoleByName(footer.getRole().getName());
