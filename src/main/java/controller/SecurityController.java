@@ -25,7 +25,8 @@ import java.util.List;
 
 public class SecurityController {
 
-    private static final byte[] SECRET_KEY = resolveSecretKey();
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final byte[] SECRET_KEY = resolveSecretKey(System.getenv("JWT_SECRET"));
     private static final String timestamp = DateUtil.getTimestamp();
     private final AccountDAO accountDAO;
 
@@ -126,14 +127,13 @@ public class SecurityController {
         }
     }
 
-    private static byte[] resolveSecretKey() {
-        String configuredSecret = System.getenv("JWT_SECRET");
+    static byte[] resolveSecretKey(String configuredSecret) {
         if (configuredSecret != null && configuredSecret.getBytes(StandardCharsets.UTF_8).length >= 32) {
             return configuredSecret.getBytes(StandardCharsets.UTF_8);
         }
 
         byte[] generatedSecret = new byte[32];
-        new SecureRandom().nextBytes(generatedSecret);
+        SECURE_RANDOM.nextBytes(generatedSecret);
         return generatedSecret;
     }
 }
