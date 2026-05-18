@@ -1,7 +1,6 @@
 package application;
 
 import application.config.ApplicationConfig;
-import data.SqlSeedRunner;
 import jakarta.persistence.EntityManagerFactory;
 import persistence.config.HibernateConfig;
 import route.Route;
@@ -11,7 +10,6 @@ public class Application {
     public static void main(String[] args) {
         EntityManagerFactory emf = HibernateConfig.getEntityManagerFactoryConfig(false);
 
-        SqlSeedRunner.run(emf);
         Route route = new Route(emf);
         ApplicationConfig app = ApplicationConfig.getInstance();
         app.initiateServer()

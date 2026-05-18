@@ -32,7 +32,10 @@ public class HibernateConfig {
             props.put("hibernate.connection.driver_class", "org.postgresql.Driver");
             props.put("hibernate.archive.autodetection", "class");
             props.put("hibernate.current_session_context_class", "thread");
-            props.put("hibernate.hbm2ddl.auto", "update");
+            props.put("hibernate.hbm2ddl.auto", getEnvOrDefault("HIBERNATE_HBM2DDL_AUTO", "create"));
+            props.put("hibernate.hbm2ddl.import_files", "seed.sql");
+            props.put("hibernate.hbm2ddl.import_files_sql_extractor",
+                    "org.hibernate.tool.schema.internal.script.MultiLineSqlScriptExtractor");
             return getEntityManagerFactory(configuration, props);
         } catch (Throwable ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
