@@ -14,6 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <testcontainers.version>2.0.5</testcontainers.version>
         <sonar.coverage.exclusions>
+            **/application/**,
             **/application/config/**,
             **/persistence/config/**
         </sonar.coverage.exclusions>

@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import persistence.model.Account;
+import persistence.model.Role;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -60,6 +61,20 @@ class UsernameTest extends BaseIntegrationTest {
         // Then
         assertThatThrownBy(() -> account.setUsername(username))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("AccountDAO should use regular role when account role is missing.")
+    void createShouldUseRegularRoleWhenRoleIsMissing() {
+        // Given
+        Account account = new Account("DefaultRolePlayer", "P@ssw0rd2026");
+
+        // When
+        Account created = accountDAO.create(account);
+
+        // Then
+        assertThat(created.getId()).isNotNull();
+        assertThat(created.getRole().getName()).isEqualTo(Role.RoleName.REGULAR);
     }
 
     @Test
