@@ -17,13 +17,15 @@ import persistence.model.Account;
 import persistence.model.Role;
 import utility.DateUtil;
 
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
 public class SecurityController {
 
-    private static final String SECRET_KEY = "YOUR_SECRET_KEY_HERE_MAKE_IT_LONG_AND_SECURE_32_BYTES";
+    private static final byte[] SECRET_KEY = resolveSecretKey();
     private static final String timestamp = DateUtil.getTimestamp();
     private final AccountDAO accountDAO;
 
@@ -34,7 +36,6 @@ public class SecurityController {
     public Handler login() {
         return ctx -> {
             AccountDTO input = ctx.bodyAsClass(AccountDTO.class);
-            System.out.println(input);
             Account verified = accountDAO.verifyLogin(input.getUsername(), input.getPassword());
             if (verified == null) {
                 throw new ApiException(401, "Wrong login info.", timestamp);
@@ -123,5 +124,16 @@ public class SecurityController {
         } catch (ParseException e) {
             throw new ApiException(403, "Failed to decode token", timestamp);
         }
+    }
+
+    private static byte[] resolveSecretKey() {
+        String configuredSecret = System.getenv("JWT_SECRET");
+        if (configuredSecret != null && configuredSecret.getBytes(StandardCharsets.UTF_8).length >= 32) {
+            return configuredSecret.getBytes(StandardCharsets.UTF_8);
+        }
+
+        byte[] generatedSecret = new byte[32];
+        new SecureRandom().nextBytes(generatedSecret);
+        return generatedSecret;
     }
 }

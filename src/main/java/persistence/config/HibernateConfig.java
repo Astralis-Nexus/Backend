@@ -37,7 +37,7 @@ public class HibernateConfig {
             props.put("hibernate.hbm2ddl.import_files_sql_extractor",
                     "org.hibernate.tool.schema.internal.script.MultiLineSqlScriptExtractor");
             return getEntityManagerFactory(configuration, props);
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
@@ -61,7 +61,7 @@ public class HibernateConfig {
             props.put("hibernate.show_sql", "true");
             props.put("hibernate.hbm2ddl.auto", "create-drop");
             return getEntityManagerFactory(configuration, props);
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }

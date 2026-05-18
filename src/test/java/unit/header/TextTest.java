@@ -33,7 +33,7 @@ class TextTest {
         assertThat(subject.getText()).isEqualTo(text).isNotBlank().hasSizeBetween(1, 80);
         assertThat(subject.getText() != null
                 && !subject.getText().isBlank()
-                && subject.getText().length() >= 1
+                && !subject.getText().isEmpty()
                 && subject.getText().length() <= 80).isTrue();
     }
 

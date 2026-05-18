@@ -34,7 +34,7 @@ class QuestionTest {
         assertThat(subject.getQuestion()).isEqualTo(question).isNotBlank().hasSizeBetween(1, 255);
         assertThat(subject.getQuestion() != null
                 && !subject.getQuestion().isBlank()
-                && subject.getQuestion().length() >= 1
+                && !subject.getQuestion().isEmpty()
                 && subject.getQuestion().length() <= 255).isTrue();
     }
 

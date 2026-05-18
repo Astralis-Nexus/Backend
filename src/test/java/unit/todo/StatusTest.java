@@ -25,7 +25,7 @@ class StatusTest {
 
         // Then
         assertThat(subject.getStatus()).isNotNull().isEqualTo(status);
-        assertThat(java.util.Arrays.asList(Status.values()).contains(status)).isTrue();
+        assertThat(Status.values()).contains(status);
     }
 
     // ------------------------------ Negative values ------------------------------

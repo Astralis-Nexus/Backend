@@ -33,7 +33,7 @@ class AnswerTest {
         assertThat(subject.getAnswer()).isEqualTo(answer).isNotBlank().hasSizeBetween(1, 1000);
         assertThat(subject.getAnswer() != null
                 && !subject.getAnswer().isBlank()
-                && subject.getAnswer().length() >= 1
+                && !subject.getAnswer().isEmpty()
                 && subject.getAnswer().length() <= 1000).isTrue();
     }
 
