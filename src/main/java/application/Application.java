@@ -5,9 +5,9 @@ import jakarta.persistence.EntityManagerFactory;
 import persistence.config.HibernateConfig;
 import route.Route;
 
+@lombok.Generated
 public class Application {
     
-    @lombok.Generated
     public static void main(String[] args) {
         EntityManagerFactory emf = HibernateConfig.getEntityManagerFactoryConfig(false);
 

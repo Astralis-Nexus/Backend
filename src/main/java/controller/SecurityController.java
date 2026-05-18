@@ -52,6 +52,7 @@ public class SecurityController {
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(username)
                 .claim("role", role.getName().toString())
+                .claim("roles", List.of(role.getName().toString()))
                 .claim("username", username)
                 .issueTime(new Date())
                 .expirationTime(new Date(System.currentTimeMillis() + 7200000)) // 2 hours
