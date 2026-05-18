@@ -5,11 +5,19 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import dao.AccountDAO;
+import dto.AccountDTO;
 import exception.ApiException;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import persistence.model.Account;
+import persistence.model.Role;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
@@ -19,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SecurityControllerTest {
@@ -261,5 +270,93 @@ class SecurityControllerTest {
         byte[] differentSecretKey = getSecretKey().clone();
         differentSecretKey[0] = (byte) (differentSecretKey[0] ^ 1);
         return differentSecretKey;
+    }
+
+    @Test
+    @DisplayName("Login handler should throw 401 when account verification fails.")
+    void loginShouldThrow401WhenVerificationFails() throws Exception {
+        setAccountDaoEmf(makeEmfProxy(null));
+        SecurityController controller = new SecurityController(null);
+
+        assertThatThrownBy(() -> controller.login().handle(makeBodyContext(new AccountDTO("unknown", "P@ssw0rd2026"))))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining("Wrong login info");
+    }
+
+    @Test
+    @DisplayName("Login handler should succeed and not throw for valid credentials.")
+    void loginShouldSucceedForValidCredentials() throws Exception {
+        Role role = new Role(Role.RoleName.REGULAR);
+        Account account = new Account();
+        account.setUsername("unit-user");
+        account.setPassword("P@ssw0rd2026");
+        account.setRole(role);
+        account.setId(99);
+
+        setAccountDaoEmf(makeEmfProxy(account));
+        SecurityController controller = new SecurityController(null);
+
+        assertThatCode(() -> controller.login().handle(makeBodyContext(new AccountDTO("unit-user", "P@ssw0rd2026"))))
+                .doesNotThrowAnyException();
+    }
+
+    private static void setAccountDaoEmf(EntityManagerFactory proxyEmf) throws Exception {
+        Field emfField = AccountDAO.class.getDeclaredField("emf");
+        emfField.setAccessible(true);
+        emfField.set(null, proxyEmf);
+    }
+
+    private static EntityManagerFactory makeEmfProxy(Account verifyResult) {
+        return (EntityManagerFactory) Proxy.newProxyInstance(
+                EntityManagerFactory.class.getClassLoader(),
+                new Class[]{EntityManagerFactory.class},
+                (proxy, method, args) -> {
+                    if ("createEntityManager".equals(method.getName())) {
+                        return makeEntityManagerProxy(verifyResult);
+                    }
+                    if (method.getReturnType() == boolean.class) return false;
+                    return null;
+                });
+    }
+
+    private static EntityManager makeEntityManagerProxy(Account verifyResult) {
+        return (EntityManager) Proxy.newProxyInstance(
+                EntityManager.class.getClassLoader(),
+                new Class[]{EntityManager.class},
+                (proxy, method, args) -> {
+                    if ("createQuery".equals(method.getName())) {
+                        return makeTypedQueryProxy(verifyResult);
+                    }
+                    if (method.getReturnType() == boolean.class) return false;
+                    return null;
+                });
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static TypedQuery makeTypedQueryProxy(Account verifyResult) {
+        return (TypedQuery) Proxy.newProxyInstance(
+                TypedQuery.class.getClassLoader(),
+                new Class[]{TypedQuery.class},
+                (proxy, method, args) -> {
+                    if ("setParameter".equals(method.getName())) return proxy;
+                    if ("getSingleResult".equals(method.getName())) {
+                        if (verifyResult == null) throw new NoResultException("not found");
+                        return verifyResult;
+                    }
+                    if (method.getReturnType() == boolean.class) return false;
+                    return null;
+                });
+    }
+
+    private static Context makeBodyContext(AccountDTO body) {
+        return (Context) Proxy.newProxyInstance(
+                Context.class.getClassLoader(),
+                new Class[]{Context.class},
+                (proxy, method, args) -> {
+                    if ("bodyAsClass".equals(method.getName())) return body;
+                    if (method.getReturnType().equals(Context.class)) return proxy;
+                    if (method.getReturnType() == boolean.class) return false;
+                    return null;
+                });
     }
 }
