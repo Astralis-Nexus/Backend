@@ -43,7 +43,7 @@ jobs:
       - name: Run api tests
         run: mvn --batch-mode --no-transfer-progress "-Dtest=api.**.*Test" test
 
-      # Generate a single JaCoCo report combining unit and integration coverage.
+      # Generate a single JaCoCo report combining unit, integration and api coverage.
       - name: Generate JaCoCo report
         run: mvn --batch-mode --no-transfer-progress jacoco:report
 
