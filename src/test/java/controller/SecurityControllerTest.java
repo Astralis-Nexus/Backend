@@ -94,6 +94,15 @@ class SecurityControllerTest {
     }
 
     @Test
+    @DisplayName("Token validation should accept tokens without expiration.")
+    void tokenIsValidShouldAcceptTokensWithoutExpiration() throws Exception {
+        SecurityController controller = new SecurityController(null);
+        String token = createSignedToken(getSecretKey(), null);
+
+        assertThat(controller.tokenIsValid(token)).isTrue();
+    }
+
+    @Test
     @DisplayName("Role check should return true when token contains the required role.")
     void hasRoleShouldReturnTrueWhenTokenContainsRequiredRole() throws Exception {
         SecurityController controller = new SecurityController(null);
@@ -169,6 +178,17 @@ class SecurityControllerTest {
 
         assertThatThrownBy(() -> controller.requireRole("ADMIN", ctx -> {
         }).handle(contextWithAuthorization(null)))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining("Authorization header missing or invalid");
+    }
+
+    @Test
+    @DisplayName("Require role should reject invalid authorization header.")
+    void requireRoleShouldRejectInvalidAuthorizationHeader() {
+        SecurityController controller = new SecurityController(null);
+
+        assertThatThrownBy(() -> controller.requireRole("ADMIN", ctx -> {
+        }).handle(contextWithAuthorization("Token abc")))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining("Authorization header missing or invalid");
     }

@@ -89,9 +89,7 @@ public class SecurityController {
     public boolean hasRole(String token, String requiredRole) {
         try {
             SignedJWT jwt = SignedJWT.parse(token);
-            if (!tokenIsValid(token)) {
-                return false;
-            }
+            tokenIsValid(token);
 
             List<String> roles = jwt.getJWTClaimsSet().getStringListClaim("roles");
             return roles != null && roles.contains(requiredRole);
@@ -119,10 +117,8 @@ public class SecurityController {
     public JWTClaimsSet decodeToken(String token) {
         try {
             SignedJWT jwt = SignedJWT.parse(token);
-            if (tokenIsValid(token)) {
-                return jwt.getJWTClaimsSet();
-            }
-            throw new ApiException(403, "Invalid token", timestamp);
+            tokenIsValid(token);
+            return jwt.getJWTClaimsSet();
         } catch (ParseException e) {
             throw new ApiException(403, "Failed to decode token", timestamp);
         }
