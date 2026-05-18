@@ -32,17 +32,13 @@ public class QAController implements IController {
     @Override
     public Handler getAll() {
         return ctx -> {
-            if (!dao.getAll().isEmpty()) {
-                List<QA> qas = dao.getAll();
-                List<QADTO> qaDTOS = new ArrayList<>();
-                for (QA q : qas) {
-                    QADTO qadto = converter(q);
-                    qaDTOS.add(qadto);
-                }
-                ctx.json(qaDTOS);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+            List<QA> qas = dao.getAll();
+            List<QADTO> qaDTOS = new ArrayList<>();
+            for (QA q : qas) {
+                QADTO qadto = converter(q);
+                qaDTOS.add(qadto);
             }
+            ctx.status(200).json(qaDTOS);
         };
     }
 
@@ -53,7 +49,7 @@ public class QAController implements IController {
             QA qa = dao.getById(id);
             if (qa != null) {
                 QADTO qadto = converter(qa);
-                ctx.json(qadto);
+                ctx.status(200).json(qadto);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -88,7 +84,7 @@ public class QAController implements IController {
                     created.getAnswer(),
                     created.getAccount().getId());
 
-            ctx.json(dto);
+            ctx.status(201).json(dto);
         };
     }
 
@@ -96,6 +92,7 @@ public class QAController implements IController {
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
+            dao.getById(id);
             QA qaToUpdate = ctx.bodyAsClass(QA.class);
             qaToUpdate.setId(id);
 
@@ -107,7 +104,7 @@ public class QAController implements IController {
             QA updated = dao.update(qaToUpdate);
             if (updated != null) {
                 QADTO dto = converter(updated);
-                ctx.json(dto);
+                ctx.status(200).json(dto);
             } else {
                 throw new ApiException(404, "No data found.", timestamp);
             }
@@ -121,7 +118,7 @@ public class QAController implements IController {
             QA qaDeleted = dao.delete(id);
             if (qaDeleted != null) {
                 QADTO qadto = converter(qaDeleted);
-                ctx.json(qadto);
+                ctx.status(200).json(qadto);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }

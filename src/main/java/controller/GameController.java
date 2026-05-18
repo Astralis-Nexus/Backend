@@ -33,17 +33,13 @@ public class GameController implements IController {
     @Override
     public Handler getAll() {
         return ctx -> {
-            if (!dao.getAll().isEmpty()) {
-                List<Game> games = dao.getAll();
-                List<GameDTO> gameDTOS = new ArrayList<>();
-                for (Game g : games) {
-                    GameDTO gameDTO = converter(g);
-                    gameDTOS.add(gameDTO);
-                }
-                ctx.json(gameDTOS);
-            } else {
-                throw new ApiException(404, "No data found. ", timestamp);
+            List<Game> games = dao.getAll();
+            List<GameDTO> gameDTOS = new ArrayList<>();
+            for (Game g : games) {
+                GameDTO gameDTO = converter(g);
+                gameDTOS.add(gameDTO);
             }
+            ctx.status(200).json(gameDTOS);
         };
     }
 
@@ -54,7 +50,7 @@ public class GameController implements IController {
             Game game = dao.getById(id);
             GameDTO gameDTO = converter(game);
             if (gameDTO != null) {
-                ctx.json(gameDTO);
+                ctx.status(200).json(gameDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }
@@ -89,13 +85,14 @@ public class GameController implements IController {
             Game createdGame = dao.create(game);
             GameDTO gameDTO = converter(createdGame);
 
-            ctx.status(200).json(gameDTO);
+            ctx.status(201).json(gameDTO);
         };
     }
 
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
+            dao.getById(id);
             Game gameToUpdate = ctx.bodyAsClass(Game.class);
 
             if (gameToUpdate.getAccount() == null || gameToUpdate.getAccount().getId() == null) {
@@ -114,7 +111,7 @@ public class GameController implements IController {
 
             GameDTO gameDTO = converter(gameUpdated);
             if (gameDTO != null) {
-                ctx.json(gameDTO);
+                ctx.status(200).json(gameDTO);
             } else {
                 throw new ApiException(404, "No data found.", timestamp);
             }
@@ -126,9 +123,9 @@ public class GameController implements IController {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             Game gameDeleted = dao.delete(id);
-            GameDTO gameDTO = converter(gameDeleted);
-            if (gameDTO != null) {
-                ctx.json(gameDTO);
+            if (gameDeleted != null) {
+                GameDTO gameDTO = converter(gameDeleted);
+                ctx.status(200).json(gameDTO);
             } else {
                 throw new ApiException(404, "No data found. ", timestamp);
             }

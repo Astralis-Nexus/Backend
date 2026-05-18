@@ -33,7 +33,7 @@ class DescriptionTest {
         assertThat(subject.getDescription()).isEqualTo(description).isNotBlank().hasSizeBetween(1, 255);
         assertThat(subject.getDescription() != null
                 && !subject.getDescription().isBlank()
-                && subject.getDescription().length() >= 1
+                && !subject.getDescription().isEmpty()
                 && subject.getDescription().length() <= 255).isTrue();
     }
 
@@ -41,8 +41,10 @@ class DescriptionTest {
 
     @ParameterizedTest
     @DisplayName("Description should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -55,22 +57,4 @@ class DescriptionTest {
         assertThatThrownBy(() -> subject.setDescription(description))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
-    // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("Description should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " "
-    })
-    void descriptionShouldRejectNullEmptyAndBlankValues(String description) {
-        // Given
-        Todo subject = new Todo();
-
-        // Then
-        assertThatThrownBy(() -> subject.setDescription(description))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
 }

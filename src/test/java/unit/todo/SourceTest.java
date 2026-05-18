@@ -1,7 +1,6 @@
 package unit.todo;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -26,7 +25,7 @@ class SourceTest {
 
         // Then
         assertThat(subject.getSource()).isNotNull().isEqualTo(source);
-        assertThat(java.util.Arrays.asList(Source.values()).contains(source)).isTrue();
+        assertThat(Source.values()).contains(source);
     }
 
     // ------------------------------ Negative values ------------------------------
@@ -66,16 +65,5 @@ class SourceTest {
                 && java.util.Arrays.stream(Source.values())
                 .map(Enum::name)
                 .anyMatch(source::equals)).isFalse();
-    }
-
-    @Test
-    @DisplayName("Source setter should reject null.")
-    void sourceSetterShouldRejectNull() {
-        // Given
-        Todo subject = new Todo();
-
-        // Then
-        assertThatThrownBy(() -> subject.setSource(null))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }

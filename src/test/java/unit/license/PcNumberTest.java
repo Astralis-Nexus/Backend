@@ -77,7 +77,9 @@ class PcNumberTest {
         License subject = new License();
 
         // Then
+        assertThat(pcNumber).isNull();
         assertThatThrownBy(() -> subject.setPcNumber(pcNumber))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("PcNumber must not be null.");
     }
 }

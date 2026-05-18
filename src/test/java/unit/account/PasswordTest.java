@@ -41,8 +41,11 @@ class PasswordTest {
 
     @ParameterizedTest
     @DisplayName("Password should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
+            "   ",
             "A",
             "AA",
             "AAAA",
@@ -61,24 +64,6 @@ class PasswordTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("Password should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " ",
-            "   "
-    })
-    void passwordShouldRejectNullEmptyAndBlankValues(String password) {
-        // Given
-        Account subject = new Account();
-
-        // Then
-        assertThatThrownBy(() -> subject.setPassword(password))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     // <------------------------------ Positive ------------------------------>
 
     @Test
@@ -89,7 +74,7 @@ class PasswordTest {
         subject.setPassword("P@ssw0rd2026");
 
         // Then
-        assertThat(subject.verifyPassword("P@ssw0rd2026")).isTrue();
+        assertThat(subject.verifyPassword("P@ssw0rd2026")).isTrue(); // White box value
     }
 
     // <------------------------------ Negative ------------------------------>
@@ -102,7 +87,7 @@ class PasswordTest {
         subject.setPassword("P@ssw0rd2026");
 
         // Then
-        assertThat(subject.verifyPassword("WrongPassword")).isFalse();
+        assertThat(subject.verifyPassword("WrongPassword")).isFalse(); // White box value
     }
 
     @Test
@@ -112,7 +97,7 @@ class PasswordTest {
         Account subject = new Account();
 
         // Then
-        assertThat(subject.verifyPassword("P@ssw0rd2026")).isFalse();
+        assertThat(subject.verifyPassword("P@ssw0rd2026")).isFalse(); // White box value
     }
 
 }

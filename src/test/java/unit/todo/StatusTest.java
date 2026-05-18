@@ -1,7 +1,6 @@
 package unit.todo;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -26,7 +25,7 @@ class StatusTest {
 
         // Then
         assertThat(subject.getStatus()).isNotNull().isEqualTo(status);
-        assertThat(java.util.Arrays.asList(Status.values()).contains(status)).isTrue();
+        assertThat(Status.values()).contains(status);
     }
 
     // ------------------------------ Negative values ------------------------------
@@ -66,16 +65,5 @@ class StatusTest {
                 && java.util.Arrays.stream(Status.values())
                 .map(Enum::name)
                 .anyMatch(status::equals)).isFalse();
-    }
-
-    @Test
-    @DisplayName("Status setter should reject null.")
-    void statusSetterShouldRejectNull() {
-        // Given
-        Todo subject = new Todo();
-
-        // Then
-        assertThatThrownBy(() -> subject.setStatus(null))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }

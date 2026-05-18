@@ -46,8 +46,10 @@ class EmailTest {
 
     @ParameterizedTest
     @DisplayName("Email should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
             "A",
             "AA",
             "AAA",
@@ -56,11 +58,11 @@ class EmailTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "player.example.com",
+            "player.example.com", // White box value: missing @ branch.
             "player@",
-            "player@example", // White
-            "@example.com",
-            "player.example@" // White
+            "player@example", // White box value: missing dot branch.
+            "@example.com", // White box value: starts with @ branch.
+            "player.example@" // White box value: ends with @ branch.
     })
     void emailShouldRejectInvalidLengths(String email) {
         // Given
@@ -72,21 +74,6 @@ class EmailTest {
     }
 
     // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("Email should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " "
-    })
-    void emailShouldRejectNullEmptyAndBlankValues(String email) {
-        // Given
-        License subject = new License();
-
-        // Then
-        assertThatThrownBy(() -> subject.setEmail(email))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 
     @Test
     @DisplayName("Email duplicate edge case should be detected.")

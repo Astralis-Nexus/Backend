@@ -34,7 +34,7 @@ class UsernameTest {
         assertThat(subject.getUsername()).isEqualTo(username).isNotBlank().hasSizeBetween(1, 30);
         assertThat(subject.getUsername() != null
                 && !subject.getUsername().isBlank()
-                && subject.getUsername().length() >= 1
+                && !subject.getUsername().isEmpty()
                 && subject.getUsername().length() <= 30).isTrue();
     }
 
@@ -42,8 +42,10 @@ class UsernameTest {
 
     @ParameterizedTest
     @DisplayName("Username should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -58,21 +60,6 @@ class UsernameTest {
     }
 
     // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("Username should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " "
-    })
-    void usernameShouldRejectNullEmptyAndBlankValues(String username) {
-        // Given
-        Account subject = new Account();
-
-        // Then
-        assertThatThrownBy(() -> subject.setUsername(username))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 
     @Test
     @DisplayName("Username duplicate edge case should be detected.")

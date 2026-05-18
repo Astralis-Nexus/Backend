@@ -33,7 +33,7 @@ class NameTest {
         assertThat(subject.getName()).isEqualTo(name).isNotBlank().hasSizeBetween(1, 100);
         assertThat(subject.getName() != null
                 && !subject.getName().isBlank()
-                && subject.getName().length() >= 1
+                && !subject.getName().isEmpty()
                 && subject.getName().length() <= 100).isTrue();
     }
 
@@ -41,8 +41,10 @@ class NameTest {
 
     @ParameterizedTest
     @DisplayName("Name should reject invalid lengths.")
+    @NullAndEmptySource
     @ValueSource(strings = {
             "",
+            " ",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -57,21 +59,6 @@ class NameTest {
     }
 
     // ------------------------------ Edge cases ------------------------------
-
-    @ParameterizedTest
-    @DisplayName("Name should reject null, empty, and blank values.")
-    @NullAndEmptySource
-    @ValueSource(strings = {
-            " "
-    })
-    void nameShouldRejectNullEmptyAndBlankValues(String name) {
-        // Given
-        Game subject = new Game();
-
-        // Then
-        assertThatThrownBy(() -> subject.setName(name))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 
     @Test
     @DisplayName("Name duplicate edge case should be detected.")
