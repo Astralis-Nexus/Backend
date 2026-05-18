@@ -1,6 +1,9 @@
 package dao;
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import persistence.model.*;
 import utility.DateUtil;
 
@@ -21,7 +24,11 @@ public abstract class DAO<T> implements IDAO<T> {
     @Override
     public List<T> getAll() {
         try (EntityManager em = emf.createEntityManager()) {
-            TypedQuery<T> query = em.createQuery("SELECT a FROM " + entityClass.getSimpleName() + " a", entityClass);
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+            Root<T> root = criteriaQuery.from(entityClass);
+            criteriaQuery.select(root);
+            TypedQuery<T> query = em.createQuery(criteriaQuery);
             return query.getResultList();
         } catch (NoResultException e) {
             throw new EntityNotFoundException(timestamp + ": No " + entityClass.getSimpleName() + " entities found.");
@@ -116,11 +123,11 @@ public abstract class DAO<T> implements IDAO<T> {
     @Override
     public T getById(int id) {
         try (EntityManager em = emf.createEntityManager()) {
-            TypedQuery<T> query = em.createQuery("SELECT a FROM " + entityClass.getSimpleName() + " a WHERE a.id = :id", entityClass);
-            query.setParameter("id", id);
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            throw new EntityNotFoundException(timestamp + ": No " + entityClass.getSimpleName() + " found with id: " + id);
+            T entity = em.find(entityClass, id);
+            if (entity == null) {
+                throw new EntityNotFoundException(timestamp + ": No " + entityClass.getSimpleName() + " found with id: " + id);
+            }
+            return entity;
         }
     }
 
