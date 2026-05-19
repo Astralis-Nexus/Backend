@@ -184,6 +184,9 @@ select { cursor: pointer; }
 }
 .btn-ghost:hover { color: var(--text); border-color: rgba(124,108,248,.4); }
 
+.btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+.btn-danger:hover { background: #e63d5c; border-color: #e63d5c; }
+
 .btn-full { width: 100%; }
 .btn-sm { padding: 5px 10px; font-size: 12px; }
 

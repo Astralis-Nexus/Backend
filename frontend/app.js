@@ -174,10 +174,32 @@ async function setTodoStatus(id, status) {
   } catch (ex) { alert(ex.message); }
 }
 
-async function deleteTodo(id) {
-  if (!confirm('Delete this todo?')) return;
-  try { await api('DELETE', `/todos/${id}`); loadPage('todos'); }
-  catch (ex) { alert(ex.message); }
+function deleteTodo(id) {
+  const el = document.createElement('div');
+  el.className = 'modal-backdrop';
+  el.id = 'modal-backdrop';
+  el.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h3>Delete Todo</h3>
+        <button class="icon-btn" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin:0 0 20px;color:var(--muted)">Are you sure you want to delete this todo? This action cannot be undone.</p>
+        <div class="form-actions">
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-danger" id="confirm-delete-todo">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  el.addEventListener('click', e => { if (e.target === el) closeModal(); });
+  document.body.appendChild(el);
+  document.getElementById('confirm-delete-todo').addEventListener('click', async () => {
+    closeModal();
+    try { await api('DELETE', `/todos/${id}`); loadPage('todos'); }
+    catch (ex) { alert(ex.message); }
+  });
+  document.getElementById('confirm-delete-todo').focus();
 }
 
 function filterTodos(filter) {
