@@ -1,5 +1,6 @@
 package persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.validation.constraints.NotBlank;
@@ -39,6 +40,7 @@ public class Todo {
     @Column(nullable = false)
     private Source source;
 
+    @JsonProperty("done_by")
     @NotBlank
     @Size(min = 1, max = 30)
     @Column(name = "done_by", nullable = false, updatable = false)
@@ -134,6 +136,9 @@ public class Todo {
     @PrePersist
     protected void onCreate() {
         this.date = java.time.LocalDate.now();
+        if (this.doneBy == null || this.doneBy.isBlank()) {
+            this.doneBy = getCurrentUser();
+        }
     }
     public enum Source {
         GAMEHUB,
