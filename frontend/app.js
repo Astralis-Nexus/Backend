@@ -1,6 +1,6 @@
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-const API = 'http://localhost:7008/api';
+const API = 'http://localhost:7007/api';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -140,10 +140,11 @@ async function submitGame(e) {
   } catch (ex) { err.textContent = ex.message; }
 }
 
-async function deleteGame(id) {
-  if (!confirm('Delete this game?')) return;
-  try { await api('DELETE', `/games/${id}`); loadPage('games'); }
-  catch (ex) { alert(ex.message); }
+function deleteGame(id) {
+  showDeleteModal('Delete Game', 'Are you sure you want to delete this game? This action cannot be undone.', async () => {
+    try { await api('DELETE', `/games/${id}`); loadPage('games'); }
+    catch (ex) { alert(ex.message); }
+  });
 }
 
 // ─── Todos ────────────────────────────────────────────────────────────────────
@@ -175,31 +176,10 @@ async function setTodoStatus(id, status) {
 }
 
 function deleteTodo(id) {
-  const el = document.createElement('div');
-  el.className = 'modal-backdrop';
-  el.id = 'modal-backdrop';
-  el.innerHTML = `
-    <div class="modal" role="dialog" aria-modal="true">
-      <div class="modal-header">
-        <h3>Delete Todo</h3>
-        <button class="icon-btn" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        <p style="margin:0 0 20px;color:var(--muted)">Are you sure you want to delete this todo? This action cannot be undone.</p>
-        <div class="form-actions">
-          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-          <button class="btn btn-danger" id="confirm-delete-todo">Delete</button>
-        </div>
-      </div>
-    </div>`;
-  el.addEventListener('click', e => { if (e.target === el) closeModal(); });
-  document.body.appendChild(el);
-  document.getElementById('confirm-delete-todo').addEventListener('click', async () => {
-    closeModal();
+  showDeleteModal('Delete Todo', 'Are you sure you want to delete this todo? This action cannot be undone.', async () => {
     try { await api('DELETE', `/todos/${id}`); loadPage('todos'); }
     catch (ex) { alert(ex.message); }
   });
-  document.getElementById('confirm-delete-todo').focus();
 }
 
 function filterTodos(filter) {
@@ -228,10 +208,11 @@ async function submitQA(e) {
   } catch (ex) { err.textContent = ex.message; }
 }
 
-async function deleteQA(id) {
-  if (!confirm('Delete this Q&A?')) return;
-  try { await api('DELETE', `/qas/${id}`); loadPage('qa'); }
-  catch (ex) { alert(ex.message); }
+function deleteQA(id) {
+  showDeleteModal('Delete Q&amp;A', 'Are you sure you want to delete this Q&amp;A entry? This action cannot be undone.', async () => {
+    try { await api('DELETE', `/qas/${id}`); loadPage('qa'); }
+    catch (ex) { alert(ex.message); }
+  });
 }
 
 function toggleQA(id) {
@@ -239,6 +220,33 @@ function toggleQA(id) {
   const icon = document.getElementById(`qa-icon-${id}`);
   const open = body.classList.toggle('open');
   if (icon) icon.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+// ─── Delete confirmation modal ────────────────────────────────────────────────
+
+function showDeleteModal(title, message, onConfirm) {
+  const el = document.createElement('div');
+  el.className = 'modal-backdrop';
+  el.id = 'modal-backdrop';
+  el.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h3>${title}</h3>
+        <button class="icon-btn" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin:0 0 20px;color:var(--muted)">${message}</p>
+        <div class="form-actions">
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  el.addEventListener('click', e => { if (e.target === el) closeModal(); });
+  document.body.appendChild(el);
+  const btn = document.getElementById('confirm-delete-btn');
+  btn.addEventListener('click', () => { closeModal(); onConfirm(); });
+  btn.focus();
 }
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
