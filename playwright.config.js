@@ -4,6 +4,9 @@ module.exports = defineConfig({
   testDir: "./src/test/java/e2e",
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
+  reporter: process.env.CI
+    ? [["list"], ["html", { outputFolder: "playwright-report", open: "never" }]]
+    : "list",
   use: {
     baseURL: "http://127.0.0.1:5501/frontend/",
     locale: "en-US",

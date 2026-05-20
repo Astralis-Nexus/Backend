@@ -68,6 +68,26 @@ class QAApiTest extends BaseApiTest {
                 .then().statusCode(400);
 
         RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("question", "Missing account?", "answer", "Answer"))
+                .when().post("/qas")
+                .then().statusCode(400);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("question", "Unknown account?", "answer", "Answer", "account", Map.of("id", 999)))
+                .when().post("/qas")
+                .then().statusCode(404);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("question", "Updated question?", "answer", "Updated answer"))
+                .when().put("/qas/1")
+                .then().statusCode(400);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("question", "Updated question?", "answer", "Updated answer", "account", Map.of("id", 999)))
+                .when().put("/qas/1")
+                .then().statusCode(404);
+
+        RestAssured.given().contentType(ContentType.JSON)
                 .body(Map.of("question", "Updated question?", "answer", "Updated answer", "account", Map.of("id", 1)))
                 .when().put("/qas/999")
                 .then().statusCode(404);
