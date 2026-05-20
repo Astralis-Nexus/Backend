@@ -64,7 +64,7 @@ public abstract class DAO<T> implements IDAO<T> {
                 Account account = attachAccountWithRole(em, qa.getAccount());
                 qa.setAccount(account);
             } else if (entity instanceof Todo todo) {
-                Account account = attachAccountWithRole(em, todo.getAccount());
+                Account account = em.find(Account.class, todo.getAccount().getId());
                 todo.setAccount(account);
             }
             em.persist(entity);

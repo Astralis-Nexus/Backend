@@ -68,6 +68,26 @@ class GameApiTest extends BaseApiTest {
                 .then().statusCode(400);
 
         RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("name", "MissingAccount"))
+                .when().post("/games")
+                .then().statusCode(400);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("name", "UnknownAccountGame", "account", Map.of("id", 999)))
+                .when().post("/games")
+                .then().statusCode(404);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("name", "UpdatedGame"))
+                .when().put("/games/1")
+                .then().statusCode(400);
+
+        RestAssured.given().contentType(ContentType.JSON)
+                .body(Map.of("name", "UpdatedGame", "account", Map.of("id", 999)))
+                .when().put("/games/1")
+                .then().statusCode(404);
+
+        RestAssured.given().contentType(ContentType.JSON)
                 .body(Map.of("name", "UpdatedGame", "account", Map.of("id", 1)))
                 .when().put("/games/999")
                 .then().statusCode(404);

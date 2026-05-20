@@ -14,7 +14,7 @@ public class Application {
         Route route = new Route(emf);
         ApplicationConfig app = ApplicationConfig.getInstance();
         app.initiateServer()
-                .startServer(7008)
+                .startServer(7007)
                 .setRoute(route.addRoutes());
     }
 }

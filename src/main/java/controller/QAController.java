@@ -59,24 +59,22 @@ public class QAController implements IController {
     @Override
     public Handler create() {
         return ctx -> {
-            QA incoming = ctx.bodyAsClass(QA.class);
+            QADTO incoming = ctx.bodyAsClass(QADTO.class);
 
             if (incoming == null ||
                     incoming.getQuestion() == null ||
                     incoming.getAnswer() == null ||
-                    incoming.getAccount() == null ||
-                    incoming.getAccount().getId() == null) {
+                    incoming.getAccountId() == null) {
                 throw new ApiException(400, "Missing required fields", timestamp);
             }
 
-            Account account = dao.getAccountById(incoming.getAccount().getId());
+            Account account = dao.getAccountById(incoming.getAccountId());
             if (account == null) {
-                throw new ApiException(404, "Account not found with ID: " + incoming.getAccount().getId(), timestamp);
+                throw new ApiException(404, "Account not found with ID: " + incoming.getAccountId(), timestamp);
             }
 
-            incoming.setAccount(account);
-
-            QA created = dao.create(incoming);
+            QA qa = new QA(incoming.getQuestion(), incoming.getAnswer(), account);
+            QA created = dao.create(qa);
 
             QADTO dto = new QADTO(
                     created.getId(),
@@ -93,12 +91,18 @@ public class QAController implements IController {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             dao.getById(id);
-            QA qaToUpdate = ctx.bodyAsClass(QA.class);
-            qaToUpdate.setId(id);
+            QADTO incoming = ctx.bodyAsClass(QADTO.class);
 
-            Account account = dao.getAccountById(qaToUpdate.getAccount().getId());
+            if (incoming.getAccountId() == null) {
+                throw new ApiException(400, "Missing account information", timestamp);
+            }
+
+            Account account = dao.getAccountById(incoming.getAccountId());
             if (account == null)
                 throw new ApiException(404, "Account not found", timestamp);
+
+            QA qaToUpdate = new QA(incoming.getQuestion(), incoming.getAnswer(), account);
+            qaToUpdate.setId(id);
             qaToUpdate.setAccount(account);
 
             QA updated = dao.update(qaToUpdate);
