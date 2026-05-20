@@ -20,6 +20,12 @@ public class GameDTO {
     private Account account;
 
     public Integer getAccountId() {
-        return accountId != null ? accountId : account == null ? null : account.getId();
+        if (accountId != null) {
+            return accountId;
+        }
+        if (account == null) {
+            return null;
+        }
+        return account.getId();
     }
 }
