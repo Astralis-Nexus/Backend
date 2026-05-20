@@ -7,184 +7,10 @@ on:
     branches: [ main ]
 
 jobs:
-  # Kører de hurtige unit-tests først.
-  unit-tests:
-    name: Unit tests
+  # Kører backend-tests og samlet coverage.
+  backend:
+    name: Backend
     runs-on: ubuntu-latest
-
-    steps:
-      # Henter koden, så Maven kan bygge projektet.
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # Installerer Java og cacher Maven dependencies.
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      # Kører kun tests under src/test/java/unit.
-      - name: Run unit tests
-        run: mvn --batch-mode --no-transfer-progress "-Dtest=unit.**.*Test" test
-
-      # Gemmer coverage fra unit-tests til samlet JaCoCo rapport.
-      - name: Upload unit coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-unit
-          path: target/jacoco.exec
-          if-no-files-found: error
-
-  # Kører integrationstests, når unit-tests er grønne.
-  integration-tests:
-    name: Integration tests
-    runs-on: ubuntu-latest
-    needs: unit-tests
-
-    steps:
-      # Henter koden, så Maven kan bygge projektet.
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      # Installerer Java og cacher Maven dependencies.
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      # Kører kun tests under src/test/java/integration.
-      - name: Run integration tests
-        run: mvn --batch-mode --no-transfer-progress "-Dtest=integration.**.*Test" test
-
-      # Gemmer coverage fra integrationstests til samlet JaCoCo rapport.
-      - name: Upload integration coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-integration
-          path: target/jacoco.exec
-          if-no-files-found: error
-
-  # Kører API-tests, når integrationstests er grønne.
-  api-tests:
-    name: API tests
-    runs-on: ubuntu-latest
-    needs: integration-tests
-
-    steps:
-      # Henter koden, så Maven kan bygge projektet.
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # Installerer Java og cacher Maven dependencies.
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      # Kører kun tests under src/test/java/api.
-      - name: Run api tests
-        run: mvn --batch-mode --no-transfer-progress "-Dtest=api.**.*Test" test
-
-      # Gemmer coverage fra API-tests til samlet JaCoCo rapport.
-      - name: Upload api coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-api
-          path: target/jacoco.exec
-          if-no-files-found: error
-
-  # Kører browserbaseret E2E-test efter API-tests.
-  e2e-tests:
-    name: E2E tests
-    runs-on: ubuntu-latest
-    needs: api-tests
-
-    steps:
-      # Henter koden til backend, frontend og tests.
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      # Installerer Java til backend-build.
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      # Installerer Node til Playwright og frontend-server.
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: npm
-
-      # Installerer npm dependencies fra package-lock.json.
-      - name: Install frontend test dependencies
-        run: npm ci
-
-      # Installerer Chromium og nødvendige systempakker.
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
-
-      # Starter PostgreSQL til backend.
-      - name: Start PostgreSQL
-        run: docker compose up -d postgres
-
-      # Bygger backend jar uden at køre tests igen.
-      - name: Build backend
-        run: mvn --batch-mode --no-transfer-progress -DskipTests package
-
-      # Starter backend og venter til API'et svarer.
-      - name: Start backend
-        run: |
-          nohup java -jar target/app.jar > backend.log 2>&1 &
-          for i in {1..30}; do
-            if curl --silent --fail http://localhost:7007/api/games > /dev/null; then
-              exit 0
-            fi
-            sleep 2
-          done
-          cat backend.log
-          exit 1
-
-      # Kører Playwright E2E-testene.
-      - name: Run E2E tests
-        run: npx playwright test
-
-      # Gemmer Playwright rapporten, også hvis testen fejler.
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          if-no-files-found: ignore
-
-      # Gemmer backend-loggen til fejlsøgning.
-      - name: Upload backend log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-backend-log
-          path: backend.log
-          if-no-files-found: ignore
-
-  # Samler coverage fra unit, integration og API.
-  coverage:
-    name: Coverage and SonarQube
-    runs-on: ubuntu-latest
-    needs: api-tests
 
     env:
       SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
@@ -193,7 +19,7 @@ jobs:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     steps:
-      # Henter koden, så JaCoCo kan lave rapport på compiled classes.
+      # Henter koden, så Maven kan bygge projektet.
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -207,15 +33,22 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # Henter coverage-filer fra de tre test-jobs.
-      - name: Download coverage artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: jacoco-*
-          path: target/jacoco-exec
+      # Kører unit-tests og gemmer coverage separat.
+      - name: Run unit tests
+        run: |
+          mkdir -p target/jacoco-exec
+          mvn --batch-mode --no-transfer-progress -Djacoco.destFile=target/jacoco-exec/unit.exec "-Dtest=unit.**.*Test" test
 
-      # Merger JaCoCo exec-filer og genererer XML/HTML rapport.
-      - name: Merge JaCoCo coverage and generate report
+      # Kører integrationstests og gemmer coverage separat.
+      - name: Run integration tests
+        run: mvn --batch-mode --no-transfer-progress -Djacoco.destFile=target/jacoco-exec/integration.exec "-Dtest=integration.**.*Test" test
+
+      # Kører API-tests og gemmer coverage separat.
+      - name: Run API tests
+        run: mvn --batch-mode --no-transfer-progress -Djacoco.destFile=target/jacoco-exec/api.exec "-Dtest=api.**.*Test" test
+
+      # Samler unit, integration og API coverage.
+      - name: Generate JaCoCo report
         run: mvn --batch-mode --no-transfer-progress test-compile jacoco:merge@merge-jacoco-exec jacoco:report
 
       # Sender samlet coverage til SonarQube, hvis secrets/vars findes.
@@ -231,9 +64,80 @@ jobs:
           -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
           -Dsonar.token=${{ env.SONAR_TOKEN }}
           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-          -Dsonar.coverage.exclusions=
-          src/main/java/persistence/config/HibernateConfig.java,
-          src/main/java/application/Application.java,
-          src/main/java/controller/SecurityController.java,
-          src/main/java/dto/GameDTO.java,
-          src/main/java/dto/QADTO.java
+          -Dsonar.coverage.exclusions=src/main/java/persistence/config/HibernateConfig.java,src/main/java/application/Application.java,src/main/java/controller/SecurityController.java,src/main/java/dto/GameDTO.java,src/main/java/dto/QADTO.java
+
+  # Kører frontend/E2E i en separat worker.
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      # Henter backend, frontend og E2E-tests.
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Installerer Java til backend-build.
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # Installerer Node til Playwright.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      # Installerer npm dependencies fra lockfilen.
+      - name: Install frontend dependencies
+        run: npm ci
+
+      # Installerer Chromium og systempakker.
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      # Starter PostgreSQL til E2E-backend.
+      - name: Start PostgreSQL
+        run: docker compose up -d postgres
+
+      # Bygger backend uden tests.
+      - name: Build backend
+        run: mvn --batch-mode --no-transfer-progress -DskipTests package
+
+      # Starter backend og venter på API'et.
+      - name: Start backend
+        run: |
+          nohup java -jar target/app.jar > backend.log 2>&1 &
+          for i in {1..30}; do
+            if curl --silent --fail http://localhost:7007/api/games > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat backend.log
+          exit 1
+
+      # Kører Playwright E2E-tests.
+      - name: Run E2E tests
+        run: npx playwright test
+
+      # Gemmer Playwright rapporten ved fejl.
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+
+      # Gemmer backend-loggen ved fejl.
+      - name: Upload backend log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-backend-log
+          path: backend.log
+          if-no-files-found: ignore
