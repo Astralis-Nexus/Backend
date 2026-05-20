@@ -199,6 +199,23 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>merge-jacoco-exec</id>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.build.directory}/jacoco-exec</directory>
+                                    <includes>
+                                        <include>**/*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                            <destFile>${project.build.directory}/jacoco.exec</destFile>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

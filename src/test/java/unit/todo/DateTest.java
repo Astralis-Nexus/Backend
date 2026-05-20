@@ -82,4 +82,21 @@ class DateTest {
         // Then
         assertThat(subject.getDate()).isEqualTo(LocalDate.now());
     }
+
+    @Test
+    @DisplayName("OnCreate should keep existing done by.")
+    void onCreateShouldKeepExistingDoneBy() throws Exception {
+        // Given
+        Todo subject = new Todo();
+        subject.setDoneBy("ExistingUser");
+        Method onCreate = Todo.class.getDeclaredMethod("onCreate");
+        onCreate.setAccessible(true);
+
+        // When
+        onCreate.invoke(subject);
+
+        // Then
+        assertThat(subject.getDate()).isEqualTo(LocalDate.now());
+        assertThat(subject.getDoneBy()).isEqualTo("ExistingUser");
+    }
 }

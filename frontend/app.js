@@ -1,6 +1,6 @@
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-const API = 'http://localhost:7008/api';
+const API = 'http://localhost:7007/api';
 const QUOTE_API = 'https://zenquotes.io/api/today';
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -14,6 +14,7 @@ const state = {
   todos: [],
   qas: [],
   todoFilter: 'ALL',
+  loadRequestId: 0,
   dailyQuote: getCachedDailyQuote(),
   quoteLoading: false,
 };
@@ -179,6 +180,7 @@ function todayKey() {
 // ─── Data loading ─────────────────────────────────────────────────────────────
 
 async function loadPage(page) {
+  const requestId = ++state.loadRequestId;
   const content = document.getElementById('content');
   if (!content) return;
   content.innerHTML = '<div class="loading">Loading…</div>';
@@ -186,18 +188,22 @@ async function loadPage(page) {
     switch (page) {
       case 'games':
         state.games = await api('GET', '/games/');
+        if (requestId !== state.loadRequestId) return;
         content.innerHTML = renderGames();
         break;
       case 'todos':
         state.todos = await api('GET', '/todos/');
+        if (requestId !== state.loadRequestId) return;
         content.innerHTML = renderTodos();
         break;
       case 'qa':
         state.qas = await api('GET', '/qas/');
+        if (requestId !== state.loadRequestId) return;
         content.innerHTML = renderQA();
         break;
     }
   } catch (ex) {
+    if (requestId !== state.loadRequestId) return;
     content.innerHTML = `<div class="error-msg" style="padding:40px">Failed to load: ${esc(ex.message)}</div>`;
   }
 }
@@ -215,10 +221,11 @@ async function submitGame(e) {
   } catch (ex) { err.textContent = ex.message; }
 }
 
-async function deleteGame(id) {
-  if (!confirm('Delete this game?')) return;
-  try { await api('DELETE', `/games/${id}`); loadPage('games'); }
-  catch (ex) { alert(ex.message); }
+function deleteGame(id) {
+  showDeleteModal('Delete Game', 'Are you sure you want to delete this game? This action cannot be undone.', async () => {
+    try { await api('DELETE', `/games/${id}`); loadPage('games'); }
+    catch (ex) { alert(ex.message); }
+  });
 }
 
 // ─── Todos ────────────────────────────────────────────────────────────────────
@@ -249,10 +256,11 @@ async function setTodoStatus(id, status) {
   } catch (ex) { alert(ex.message); }
 }
 
-async function deleteTodo(id) {
-  if (!confirm('Delete this todo?')) return;
-  try { await api('DELETE', `/todos/${id}`); loadPage('todos'); }
-  catch (ex) { alert(ex.message); }
+function deleteTodo(id) {
+  showDeleteModal('Delete Todo', 'Are you sure you want to delete this todo? This action cannot be undone.', async () => {
+    try { await api('DELETE', `/todos/${id}`); loadPage('todos'); }
+    catch (ex) { alert(ex.message); }
+  });
 }
 
 function filterTodos(filter) {
@@ -281,10 +289,11 @@ async function submitQA(e) {
   } catch (ex) { err.textContent = ex.message; }
 }
 
-async function deleteQA(id) {
-  if (!confirm('Delete this Q&A?')) return;
-  try { await api('DELETE', `/qas/${id}`); loadPage('qa'); }
-  catch (ex) { alert(ex.message); }
+function deleteQA(id) {
+  showDeleteModal('Delete Q&amp;A', 'Are you sure you want to delete this Q&amp;A entry? This action cannot be undone.', async () => {
+    try { await api('DELETE', `/qas/${id}`); loadPage('qa'); }
+    catch (ex) { alert(ex.message); }
+  });
 }
 
 function toggleQA(id) {
@@ -292,6 +301,33 @@ function toggleQA(id) {
   const icon = document.getElementById(`qa-icon-${id}`);
   const open = body.classList.toggle('open');
   if (icon) icon.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+// ─── Delete confirmation modal ────────────────────────────────────────────────
+
+function showDeleteModal(title, message, onConfirm) {
+  const el = document.createElement('div');
+  el.className = 'modal-backdrop';
+  el.id = 'modal-backdrop';
+  el.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h3>${title}</h3>
+        <button class="icon-btn" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin:0 0 20px;color:var(--muted)">${message}</p>
+        <div class="form-actions">
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  el.addEventListener('click', e => { if (e.target === el) closeModal(); });
+  document.body.appendChild(el);
+  const btn = document.getElementById('confirm-delete-btn');
+  btn.addEventListener('click', () => { closeModal(); onConfirm(); });
+  btn.focus();
 }
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
