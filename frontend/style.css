@@ -75,6 +75,51 @@ body {
   margin-top: 4px;
 }
 
+.daily-quote {
+  background: linear-gradient(135deg, rgba(124,108,248,.16), rgba(56,207,245,.08));
+  border: 1px solid rgba(124,108,248,.28);
+  border-radius: var(--r);
+  padding: 16px 18px;
+}
+
+.quote-label {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.daily-quote blockquote {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.quote-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.quote-footer a {
+  color: var(--info);
+  text-decoration: none;
+}
+
+.quote-footer a:hover { text-decoration: underline; }
+
+.quote-loading {
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
 .auth-tabs {
   display: flex;
   background: var(--surface-2);

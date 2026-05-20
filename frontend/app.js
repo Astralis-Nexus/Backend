@@ -1,6 +1,7 @@
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const API = 'http://localhost:7007/api';
+const QUOTE_API = 'https://zenquotes.io/api/today';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -14,6 +15,8 @@ const state = {
   qas: [],
   todoFilter: 'ALL',
   loadRequestId: 0,
+  dailyQuote: getCachedDailyQuote(),
+  quoteLoading: false,
 };
 
 // ─── API helper ───────────────────────────────────────────────────────────────
@@ -100,6 +103,78 @@ function switchAuthTab(tab) {
   state.authTab = tab;
   document.getElementById('root').innerHTML = renderAuth();
   attachAuthListeners();
+  loadQuoteOfDay();
+}
+
+// ─── Quote of the day ────────────────────────────────────────────────────────
+
+async function loadQuoteOfDay() {
+  const quoteEl = document.getElementById('daily-quote');
+  if (!quoteEl || state.dailyQuote || state.quoteLoading) return;
+
+  state.quoteLoading = true;
+  quoteEl.innerHTML = renderDailyQuote();
+
+  try {
+    const data = await fetchQuoteJson(QUOTE_API);
+    const quote = normalizeQuote(data);
+    if (!quote?.text) throw new Error('No quote returned');
+
+    state.dailyQuote = quote;
+    localStorage.setItem('astralis_daily_quote', JSON.stringify({
+      date: todayKey(),
+      quote,
+    }));
+  } catch {
+    state.dailyQuote = {
+      text: 'Small steps every day become something worth logging in for.',
+      author: 'Astralis',
+      fallback: true,
+    };
+  } finally {
+    state.quoteLoading = false;
+    const quoteEl = document.getElementById('daily-quote');
+    if (quoteEl) quoteEl.innerHTML = renderDailyQuote();
+  }
+}
+
+async function fetchQuoteJson(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Quote API returned ${res.status}`);
+    return res.json();
+  } catch {
+    const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxy);
+    if (!res.ok) throw new Error(`Quote proxy returned ${res.status}`);
+    return res.json();
+  }
+}
+
+function normalizeQuote(data) {
+  const item = Array.isArray(data) ? data[0] : data;
+  return {
+    text: item?.q || item?.quote || item?.content || '',
+    author: item?.a || item?.author || 'Unknown',
+  };
+}
+
+function getCachedDailyQuote() {
+  try {
+    const cached = JSON.parse(localStorage.getItem('astralis_daily_quote'));
+    return cached?.date === todayKey() ? cached.quote : null;
+  } catch {
+    return null;
+  }
+}
+
+function todayKey() {
+  const d = new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, '0'),
+    String(d.getDate()).padStart(2, '0'),
+  ].join('-');
 }
 
 // ─── Data loading ─────────────────────────────────────────────────────────────
@@ -355,6 +430,7 @@ function render() {
   if (!state.token) {
     root.innerHTML = renderAuth();
     attachAuthListeners();
+    loadQuoteOfDay();
   } else {
     root.innerHTML = renderShell();
     loadPage(state.page);
@@ -370,6 +446,9 @@ function renderAuth() {
         <span class="brand-icon">✦</span>
         <h1>Astralis</h1>
         <p>Quality Assurance Platform</p>
+      </div>
+      <div class="daily-quote" id="daily-quote">
+        ${renderDailyQuote()}
       </div>
       <div class="auth-tabs">
         <button class="auth-tab ${isLogin ? 'active' : ''}" onclick="switchAuthTab('login')">Sign in</button>
@@ -401,6 +480,25 @@ function renderAuth() {
       <p class="error-msg" id="auth-error"></p>
     </div>
   </div>`;
+}
+
+function renderDailyQuote() {
+  if (state.quoteLoading && !state.dailyQuote) {
+    return '<p class="quote-loading">Henter dagens besked...</p>';
+  }
+
+  const quote = state.dailyQuote;
+  if (!quote) {
+    return '<p class="quote-loading">Dagens besked er på vej...</p>';
+  }
+
+  return `
+    <p class="quote-label">Dagens besked</p>
+    <blockquote>${esc(quote.text)}</blockquote>
+    <div class="quote-footer">
+      <span>${esc(quote.author)}</span>
+      ${quote.fallback ? '' : '<a href="https://zenquotes.io/" target="_blank" rel="noopener">ZenQuotes</a>'}
+    </div>`;
 }
 
 function attachAuthListeners() {
