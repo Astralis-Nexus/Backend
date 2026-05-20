@@ -6,12 +6,24 @@ module.exports = defineConfig({
   retries: process.env.CI ? 2 : 0,
   use: {
     baseURL: "http://127.0.0.1:5501/frontend/",
+    locale: "en-US",
+    extraHTTPHeaders: {
+      "Accept-Language": "en-US,en;q=0.9"
+    },
     trace: "on-first-retry"
   },
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] }
+      use: {
+        ...devices["Desktop Chrome"],
+        launchOptions: {
+          args: [
+            "--disable-features=Translate,TranslateUI",
+            "--disable-translate"
+          ]
+        }
+      }
     }
   ],
   webServer: {

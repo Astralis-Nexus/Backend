@@ -84,6 +84,11 @@ public abstract class BaseApiTest {
 
             Information information = new Information("Seed information text", account, Information.ImportanceLevel.HIGH);
             QA qa = new QA("Seed question?", "Seed answer", account);
+            QA e2eQa = new QA(
+                    "Hvordan lukker jeg en gammel licens?",
+                    "Skift licensens status til INACTIVE og opret en opgave, hvis der skal foelges op.",
+                    account
+            );
             Todo todo = new Todo(
                     LocalDate.now(),
                     "Seed todo",
@@ -91,10 +96,19 @@ public abstract class BaseApiTest {
                     Todo.Source.GAMEHUB,
                     account
             );
+            Todo e2eTodo = new Todo(
+                    LocalDate.now().minusDays(1),
+                    "Afslut inaktive Rocket League",
+                    Todo.Status.COMPLETED,
+                    Todo.Source.GAMEHUB,
+                    account
+            );
             Game game = new Game("SeedGame", account);
             em.persist(information);
             em.persist(qa);
+            em.persist(e2eQa);
             em.persist(todo);
+            em.persist(e2eTodo);
             em.persist(game);
 
             License license = new License(

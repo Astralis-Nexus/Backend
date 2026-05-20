@@ -111,7 +111,7 @@ FROM (
     VALUES
         (CURRENT_DATE, 'Kontroller aktive CS2-licenser mod teamlisten', 'IN_PROGRESS', 'GAMEHUB', 'mikkel', 'mikkel'),
         (CURRENT_DATE + 1, 'Opret licens til ny Valorant-spiller', 'PENDING', 'STORE', 'support', 'support'),
-        (CURRENT_DATE - 1, 'Afslut inaktive Rocket League-adgange', 'COMPLETED', 'GAMEHUB', 'mikkel', 'mikkel'),
+        (CURRENT_DATE - 1, 'Afslut inaktive Rocket League', 'COMPLETED', 'GAMEHUB', 'mikkel', 'mikkel'),
         (CURRENT_DATE + 3, 'Gennemgaa FAQ-svar for licensprocessen', 'PENDING', 'STORE', 'sarah', 'sarah')
 ) AS seed(date_value, description, status, source, done_by, username)
 JOIN account ON account.username = seed.username

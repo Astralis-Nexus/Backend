@@ -1,75 +1,129 @@
 import { test, expect } from '@playwright/test';
 
-test('test', async ({ page }) => {
+const API = 'http://localhost:7007/api';
+const TEST_PASSWORD = 'testtest';
+const ROCKET_LEAGUE_TODO = 'Afslut inaktive Rocket League';
+const OLD_LICENSE_QUESTION = 'Hvordan lukker jeg en gammel licens?';
+const OLD_LICENSE_ANSWER = 'Skift licensens status til INACTIVE og opret en opgave, hvis der skal foelges op.';
 
-  // Go to baseURL
-  await page.goto('');
+test('happy path: user can manage games, todos and Q&A', async ({ page, request }) => {
+  const id = Date.now();
+  const username = `player${id}`;
+  const gameName = `Fifa 14 ${id}`;
+  const todoDescription = `Add Milk ${id}`;
+  const qaQuestion = `Milk ${id}`;
+  const qaAnswer = `Milk answer ${id}`;
 
-  // Register a new user
-  await page.getByRole('button', { name: 'Register' }).click();
-  await page.getByRole('textbox', { name: 'Choose a username' }).click();
-  await page.getByRole('textbox', { name: 'Choose a username' }).dblclick();
-  await page.getByRole('textbox', { name: 'Choose a username' }).fill('player');
-  await page.getByRole('textbox', { name: 'Choose a password' }).dblclick();
-  await page.getByRole('textbox', { name: 'Choose a password' }).fill('testtest');
-  await page.getByRole('button', { name: 'Create account' }).click();
+  await test.step('Given a new user is registered and required test data exists', async () => {
+    await page.goto('');
+    await page.getByRole('button', { name: 'Register' }).click();
+    await page.getByRole('textbox', { name: 'Choose a username' }).fill(username);
+    await page.getByRole('textbox', { name: 'Choose a password' }).fill(TEST_PASSWORD);
+    await page.getByRole('button', { name: 'Create account' }).click();
 
-  // Assert user is logged in
-  await expect(page.getByText('player')).toBeVisible(); // username bottom left
-  await expect(page.getByRole('button', { name: 'Sign out' })).toBeVisible();
+    await expect(page.getByText(username)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign out' })).toBeVisible();
 
-  // Game page
-  await page.getByRole('button', { name: '+ Add Game' }).click();
-  await page.getByRole('textbox', { name: 'e.g. Cyberpunk' }).fill('Fifa 14');
-  await page.getByRole('button', { name: 'Create' }).click(); // create new game
+    const userId = await page.evaluate(() => JSON.parse(localStorage.getItem('astralis_user')).id);
 
-  // Assert game is visible
-  await expect(page.getByRole('heading', { name: 'Fifa 14' })).toBeVisible();
+    const todosResponse = await request.get(`${API}/todos/`);
+    const todos = todosResponse.ok() ? await todosResponse.json() : [];
+    if (!todos.some(todo => todo.description === ROCKET_LEAGUE_TODO)) {
+      await request.post(`${API}/todos/`, {
+        data: {
+          description: ROCKET_LEAGUE_TODO,
+          status: 'COMPLETED',
+          source: 'GAMEHUB',
+          account: { id: userId },
+        },
+      });
+    }
 
-  await page.getByRole('button', { name: '✕' }).nth(4).click();
-  await page.getByRole('button', { name: 'Delete' }).click(); // delete game
-  //delay 1 second to allow for deletion to complete before assertion
-  await page.waitForTimeout(1000);
-  // Assert game is deleted
-  await expect(page.getByRole('heading', { name: 'Fifa 14' })).not.toBeVisible();
+    const qasResponse = await request.get(`${API}/qas/`);
+    const qas = qasResponse.ok() ? await qasResponse.json() : [];
+    if (!qas.some(qa => qa.question === OLD_LICENSE_QUESTION)) {
+      await request.post(`${API}/qas/`, {
+        data: {
+          question: OLD_LICENSE_QUESTION,
+          answer: OLD_LICENSE_ANSWER,
+          accountId: userId,
+        },
+      });
+    }
+  });
 
+  await test.step('When the user creates and deletes a game', async () => {
+    await page.getByRole('button', { name: '+ Add Game' }).click();
+    await page.getByRole('textbox', { name: 'e.g. Cyberpunk' }).fill(gameName);
+    await page.getByRole('button', { name: 'Create' }).click();
 
-  // Todo page
-  await page.getByRole('button', { name: '✓ Todos' }).click();
-  await page.waitForLoadState('networkidle'); // wait for todos to load
-  await page.getByRole('button', { name: 'Pending' }).click();
-  await page.getByRole('button', { name: 'All' }).click();
-  await page.getByRole('row', { name: 'Afslut inaktive Rocket League' }).getByRole('combobox').selectOption('IN_PROGRESS'); // Change status of todo
-  
-  // Assert status changed
-  await expect(page.getByRole('row', { name: 'Afslut inaktive Rocket League' }).getByRole('combobox')).toHaveValue('IN_PROGRESS');
+    const gameCard = page.locator('.game-card')
+      .filter({ has: page.getByRole('heading', { name: gameName }) });
+    await expect(gameCard).toBeVisible();
+    await expect(gameCard.getByText(/^ID:/)).toBeVisible();
 
-  await page.getByRole('button', { name: '✕' }).nth(1).click();
-  await page.getByRole('button', { name: 'Delete' }).click();
+    await gameCard.getByRole('button', { name: '✕' }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.getByRole('button', { name: 'Delete' }).click();
 
-  // Assert todo was deleted
-  await expect(page.getByRole('row', { name: 'Afslut inaktive Rocket League' })).not.toBeVisible();
+    await expect(gameCard).not.toBeVisible();
+  });
 
-  await page.getByRole('button', { name: '+ Add Todo' }).click();
-  await page.getByRole('textbox', { name: 'Describe the task…' }).fill('Add Milk');
-  await page.getByRole('button', { name: 'Create' }).click();
+  await test.step('When the user updates, creates and deletes todos', async () => {
+    await page.getByRole('button', { name: '✓ Todos' }).click();
+    await expect(page.getByRole('heading', { name: 'Todos' })).toBeVisible();
 
-  // Assert new todo was added
-  await expect(page.getByRole('row', { name: 'Add Milk' }).first()).toBeVisible();
+    await page.getByRole('button', { name: 'Pending' }).click();
+    await expect(page.getByRole('button', { name: 'Pending' })).toHaveClass(/active/);
+    await page.getByRole('button', { name: 'All' }).click();
+    await expect(page.getByRole('button', { name: 'All' })).toHaveClass(/active/);
 
-  // Q&A page
-  await page.getByRole('button', { name: '? Q&A' }).click();
-  await page.getByText('Hvordan lukker jeg en gammel').click();
-  await page.getByText('Hvordan lukker jeg en gammel licens? ✕ ▾').click();
-  await page.getByRole('button', { name: '+ Add Q&A' }).click();
-  await page.getByRole('textbox', { name: 'Enter your question…' }).fill('Milk');
-  await page.getByRole('textbox', { name: 'Enter your question…' }).press('Tab');
-  await page.getByRole('textbox', { name: 'Enter the answer…' }).fill('Milk');
-  await page.getByRole('button', { name: 'Add', exact: true }).click();
+    const rocketLeagueRow = page.getByRole('row', { name: ROCKET_LEAGUE_TODO }).first();
+    await expect(rocketLeagueRow).toBeVisible();
+    await expect(rocketLeagueRow.getByText('GAMEHUB')).toBeVisible();
 
-  // Assert Q&A was added
-  await expect(page.locator('span.qa-q-text', { hasText: 'Milk' })).toBeVisible(); // check question
-  
-  // Sign out
-  await page.getByRole('button', { name: 'Sign out' }).click();
+    await rocketLeagueRow.getByRole('combobox').selectOption('IN_PROGRESS');
+
+    await expect(rocketLeagueRow.getByRole('combobox')).toHaveValue('IN_PROGRESS');
+    await expect(rocketLeagueRow.locator('.badge.status-in-progress')).toHaveText('In Progress');
+
+    await page.getByRole('button', { name: '+ Add Todo' }).click();
+    await page.getByRole('textbox', { name: 'Describe the task…' }).fill(todoDescription);
+    await page.getByRole('button', { name: 'Create' }).click();
+
+    const todoRow = page.getByRole('row', { name: todoDescription });
+    await expect(todoRow).toBeVisible();
+    await expect(todoRow.getByRole('combobox')).toHaveValue('PENDING');
+
+    await todoRow.getByRole('button', { name: '✕' }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.getByRole('button', { name: 'Delete' }).click();
+
+    await expect(todoRow).not.toBeVisible();
+  });
+
+  await test.step('When the user opens existing Q&A and adds a new entry', async () => {
+    await page.getByRole('button', { name: '? Q&A' }).click();
+    await expect(page.getByRole('heading', { name: 'Q&A' })).toBeVisible();
+
+    const oldLicenseQuestion = page.locator('span.qa-q-text', { hasText: OLD_LICENSE_QUESTION }).first();
+    await expect(oldLicenseQuestion).toBeVisible();
+    await oldLicenseQuestion.click();
+
+    await expect(page.getByText(OLD_LICENSE_ANSWER)).toBeVisible();
+
+    await page.getByRole('button', { name: '+ Add Q&A' }).click();
+    await page.getByRole('textbox', { name: 'Enter your question…' }).fill(qaQuestion);
+    await page.getByRole('textbox', { name: 'Enter the answer…' }).fill(qaAnswer);
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+
+    await expect(page.locator('span.qa-q-text', { hasText: qaQuestion })).toBeVisible();
+  });
+
+  await test.step('Then the user can sign out', async () => {
+    await page.getByRole('button', { name: 'Sign out' }).click();
+
+    await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Register' })).toBeVisible();
+  });
 });

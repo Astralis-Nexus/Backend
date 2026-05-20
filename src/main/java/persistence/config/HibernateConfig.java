@@ -13,7 +13,9 @@ import java.util.Properties;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class HibernateConfig {
     private static final String POSTGRES = "postgres";
-    private static EntityManagerFactory entityManagerFactory;
+    private static final String SEED_FILE = "seed.sql";
+    private static EntityManagerFactory developmentEntityManagerFactory;
+    private static EntityManagerFactory testEntityManagerFactory;
 
     private static EntityManagerFactory buildEntityFactoryConfig() {
         try {
@@ -33,9 +35,7 @@ public class HibernateConfig {
             props.put("hibernate.archive.autodetection", "class");
             props.put("hibernate.current_session_context_class", "thread");
             props.put("hibernate.hbm2ddl.auto", getEnvOrDefault("HIBERNATE_HBM2DDL_AUTO", "create"));
-            props.put("hibernate.hbm2ddl.import_files", "seed.sql");
-            props.put("hibernate.hbm2ddl.import_files_sql_extractor",
-                    "org.hibernate.tool.schema.internal.script.MultiLineSqlScriptExtractor");
+            addSeedImportProperties(props);
             return getEntityManagerFactory(configuration, props);
         } catch (Exception ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
@@ -60,6 +60,7 @@ public class HibernateConfig {
             props.put("hibernate.archive.autodetection", "class");
             props.put("hibernate.show_sql", "true");
             props.put("hibernate.hbm2ddl.auto", "create-drop");
+            addSeedImportProperties(props);
             return getEntityManagerFactory(configuration, props);
         } catch (Exception ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
@@ -89,16 +90,23 @@ public class HibernateConfig {
     }
 
     private static EntityManagerFactory getEntityManagerFactoryConfigDevelopment() {
-        if (entityManagerFactory == null) entityManagerFactory = buildEntityFactoryConfig();
-        return entityManagerFactory;
+        if (developmentEntityManagerFactory == null) developmentEntityManagerFactory = buildEntityFactoryConfig();
+        return developmentEntityManagerFactory;
     }
 
-    private static void getEntityManagerFactoryConfigTest() {
-        if (entityManagerFactory == null) entityManagerFactory = setupHibernateConfigurationForTesting();
+    private static EntityManagerFactory getEntityManagerFactoryConfigTest() {
+        if (testEntityManagerFactory == null) testEntityManagerFactory = setupHibernateConfigurationForTesting();
+        return testEntityManagerFactory;
     }
 
     public static EntityManagerFactory getEntityManagerFactoryConfig(boolean isTest) {
-        if (isTest) getEntityManagerFactoryConfigTest();
+        if (isTest) return getEntityManagerFactoryConfigTest();
         return getEntityManagerFactoryConfigDevelopment();
+    }
+
+    private static void addSeedImportProperties(Properties props) {
+        props.put("hibernate.hbm2ddl.import_files", SEED_FILE);
+        props.put("hibernate.hbm2ddl.import_files_sql_extractor",
+                "org.hibernate.tool.schema.internal.script.MultiLineSqlScriptExtractor");
     }
 }

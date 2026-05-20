@@ -49,6 +49,7 @@ public abstract class BaseIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        clearDatabase();
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             regularRole = new Role(Role.RoleName.REGULAR);
@@ -59,6 +60,10 @@ public abstract class BaseIntegrationTest {
 
     @AfterEach
     void tearDown() {
+        clearDatabase();
+    }
+
+    protected void clearDatabase() {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             em.createNativeQuery("TRUNCATE TABLE license RESTART IDENTITY CASCADE").executeUpdate();

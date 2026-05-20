@@ -112,7 +112,7 @@ Playwright starter automatisk en lokal HTTP-server på port `5501` og serverer f
 Før testen køres, skal følgende være opfyldt:
 
 1. **Docker-backend kører** – start PostgreSQL og backend som beskrevet i Backend-afsnittet ovenfor.
-2. **Testdata eksisterer i databasen** – testen forventer at der allerede er en todo med titlen *"Afslut inaktive Rocket League"* og et Q&A-spørgsmål *"Hvordan lukker jeg en gammel licens?"* i databasen. Sørg for at disse poster er til stede, f.eks. via pgAdmin eller en seed-script.
+2. **Seed-data indlæses automatisk** – Hibernate indlæser `src/main/resources/seed.sql` ved schema-oprettelse. Den fil indeholder bl.a. todoen *"Afslut inaktive Rocket League"* og Q&A-spørgsmålet *"Hvordan lukker jeg en gammel licens?"*. Testcontainers bruger samme seed-fil.
 
 ## Kør E2E-testen
 

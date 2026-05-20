@@ -13,6 +13,7 @@ const state = {
   todos: [],
   qas: [],
   todoFilter: 'ALL',
+  loadRequestId: 0,
 };
 
 // ─── API helper ───────────────────────────────────────────────────────────────
@@ -104,6 +105,7 @@ function switchAuthTab(tab) {
 // ─── Data loading ─────────────────────────────────────────────────────────────
 
 async function loadPage(page) {
+  const requestId = ++state.loadRequestId;
   const content = document.getElementById('content');
   if (!content) return;
   content.innerHTML = '<div class="loading">Loading…</div>';
@@ -111,18 +113,22 @@ async function loadPage(page) {
     switch (page) {
       case 'games':
         state.games = await api('GET', '/games/');
+        if (requestId !== state.loadRequestId) return;
         content.innerHTML = renderGames();
         break;
       case 'todos':
         state.todos = await api('GET', '/todos/');
+        if (requestId !== state.loadRequestId) return;
         content.innerHTML = renderTodos();
         break;
       case 'qa':
         state.qas = await api('GET', '/qas/');
+        if (requestId !== state.loadRequestId) return;
         content.innerHTML = renderQA();
         break;
     }
   } catch (ex) {
+    if (requestId !== state.loadRequestId) return;
     content.innerHTML = `<div class="error-msg" style="padding:40px">Failed to load: ${esc(ex.message)}</div>`;
   }
 }
