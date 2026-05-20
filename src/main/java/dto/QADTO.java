@@ -1,6 +1,8 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import persistence.model.Account;
 
 @Builder
 @Getter
@@ -12,4 +14,17 @@ public class QADTO {
     private String question;
     private String answer;
     private Integer accountId;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Account account;
+
+    public QADTO(Integer id, String question, String answer, Integer accountId) {
+        this.id = id;
+        this.question = question;
+        this.answer = answer;
+        this.accountId = accountId;
+    }
+
+    public Integer getAccountId() {
+        return accountId != null ? accountId : account == null ? null : account.getId();
+    }
 }

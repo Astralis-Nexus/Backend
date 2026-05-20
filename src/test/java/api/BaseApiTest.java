@@ -22,25 +22,28 @@ import route.Route;
 import java.time.LocalDate;
 
 public abstract class BaseApiTest {
+    private static final int API_TEST_PORT = 7008;
+    private static final String API_TEST_BASE_URI = "http://localhost:" + API_TEST_PORT + "/api";
     protected static EntityManagerFactory emf;
     private static ApplicationConfig app;
 
     @BeforeAll
     static void setUpBeforeAll() {
-        RestAssured.baseURI = "http://localhost:7007/api";
+        RestAssured.baseURI = API_TEST_BASE_URI;
         emf = HibernateConfig.getEntityManagerFactoryConfig(true);
         Route route = new Route(emf);
 
         if (app == null) {
             app = ApplicationConfig.getInstance();
             app.initiateServer()
-                    .startServer(7007)
+                    .startServer(API_TEST_PORT)
                     .setRoute(route.addRoutes());
         }
     }
 
     @BeforeEach
     void setUp() {
+        RestAssured.baseURI = API_TEST_BASE_URI;
         clearDatabase();
         seedDatabase();
     }

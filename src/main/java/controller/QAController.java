@@ -91,12 +91,18 @@ public class QAController implements IController {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             dao.getById(id);
-            QA qaToUpdate = ctx.bodyAsClass(QA.class);
-            qaToUpdate.setId(id);
+            QADTO incoming = ctx.bodyAsClass(QADTO.class);
 
-            Account account = dao.getAccountById(qaToUpdate.getAccount().getId());
+            if (incoming.getAccountId() == null) {
+                throw new ApiException(400, "Missing account information", timestamp);
+            }
+
+            Account account = dao.getAccountById(incoming.getAccountId());
             if (account == null)
                 throw new ApiException(404, "Account not found", timestamp);
+
+            QA qaToUpdate = new QA(incoming.getQuestion(), incoming.getAnswer(), account);
+            qaToUpdate.setId(id);
             qaToUpdate.setAccount(account);
 
             QA updated = dao.update(qaToUpdate);
