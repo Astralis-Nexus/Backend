@@ -130,7 +130,7 @@ public class Todo {
     }
 
     private String getCurrentUser() {
-        return account.getUsername();
+        return account == null ? doneBy : account.getUsername();
     }
 
     @PrePersist
