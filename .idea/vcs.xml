@@ -2,5 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/assignment-folder/5. Unit testing and integration testing/Source code of the application" vcs="Git" />
   </component>
 </project>

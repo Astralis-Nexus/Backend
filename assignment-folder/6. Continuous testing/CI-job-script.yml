@@ -65,7 +65,6 @@ jobs:
           -Dsonar.token=${{ env.SONAR_TOKEN }}
           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
           -Dsonar.coverage.exclusions=src/main/java/persistence/config/HibernateConfig.java,src/main/java/application/Application.java,src/main/java/controller/SecurityController.java,src/main/java/dto/GameDTO.java,src/main/java/dto/QADTO.java
-          -Dsonar.exclusions=assignment-folder/**
 
   # Kører frontend/E2E i en separat worker.
   frontend:
