@@ -1,0 +1,14 @@
+### Create game 
+POST http://localhost:7007/api/games
+Content-Type: application/json
+
+{
+  "name": "call of duty",
+  "account": {
+    "id": 4
+  }
+}
+
+###Get all games
+
+GET http://localhost:7007/api/games

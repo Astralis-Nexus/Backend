@@ -1,0 +1,76 @@
+package unit.account;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+import persistence.model.Account;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+class UsernameTest {
+
+    // ------------------------------ Positive values ------------------------------
+
+    @ParameterizedTest
+    @DisplayName("Username should accept valid lengths.")
+    @ValueSource(strings = {
+            "A",
+            "AA",
+            "AAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            " PlayerOne",
+            "PlayerOne "
+    })
+    void usernameShouldAcceptValidLengths(String username) {
+        // When
+        Account subject = new Account();
+        subject.setUsername(username);
+
+        // Then
+        assertThat(subject.getUsername()).isEqualTo(username).isNotBlank().hasSizeBetween(1, 30);
+        assertThat(subject.getUsername() != null
+                && !subject.getUsername().isBlank()
+                && !subject.getUsername().isEmpty()
+                && subject.getUsername().length() <= 30).isTrue();
+    }
+
+    // ------------------------------ Negative values ------------------------------
+
+    @ParameterizedTest
+    @DisplayName("Username should reject invalid lengths.")
+    @NullAndEmptySource
+    @ValueSource(strings = {
+            "",
+            " ",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    })
+    void usernameShouldRejectInvalidLengths(String username) {
+        // Given
+        Account subject = new Account();
+
+        // Then
+        assertThatThrownBy(() -> subject.setUsername(username))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    // ------------------------------ Edge cases ------------------------------
+
+    @Test
+    @DisplayName("Username duplicate edge case should be detected.")
+    void duplicateUsernameShouldBeDetected() {
+        // When
+        Account existing = new Account();
+        existing.setUsername("PlayerOne2026DK");
+        Account duplicate = new Account();
+        duplicate.setUsername("PlayerOne2026DK");
+
+        // Then
+        assertThat(duplicate.getUsername()).isEqualTo(existing.getUsername());
+    }
+}
