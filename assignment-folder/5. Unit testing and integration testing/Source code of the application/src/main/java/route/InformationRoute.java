@@ -1,0 +1,25 @@
+package route;
+
+import controller.InformationController;
+import io.javalin.apibuilder.EndpointGroup;
+import jakarta.persistence.EntityManagerFactory;
+
+import static io.javalin.apibuilder.ApiBuilder.*;
+
+public class InformationRoute {
+    private static InformationController controller;
+
+    public InformationRoute(EntityManagerFactory emf) {
+        controller = new InformationController(emf);
+    }
+
+    public EndpointGroup itemRoutes() {
+        return () -> path("/informations", () -> {
+            get("/", controller.getAll());
+            get("/{id}", controller.getById());
+            post("/", controller.create());
+            put("/{id}", controller.update());
+            delete("/{id}", controller.delete());
+        });
+    }
+}

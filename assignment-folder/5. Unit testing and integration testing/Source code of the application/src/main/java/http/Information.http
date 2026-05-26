@@ -1,0 +1,38 @@
+
+
+
+
+
+
+
+
+
+### get information 
+GET http://localhost:7007/api/informations
+
+
+### create information
+POST http://localhost:7007/api/informations
+Content-Type: application/json
+
+{
+  "description": "Important dasystem update!",
+  "importanceLevel": "HIGH",
+  "account": {
+    "id": 2
+  }
+}
+
+
+
+### update information
+PUT http://localhost:7007/api/informations/1
+Content-Type: application/json
+
+{
+  "description": " update the systemz !",
+  "importanceLevel": "LOW",
+  "account": {
+    "id": 2
+  }
+}

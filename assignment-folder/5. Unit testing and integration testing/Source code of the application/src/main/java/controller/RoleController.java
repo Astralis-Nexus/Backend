@@ -1,0 +1,96 @@
+package controller;
+
+import dao.RoleDAO;
+import dto.RoleDTO;
+import exception.ApiException;
+import io.javalin.http.Handler;
+import jakarta.persistence.EntityManagerFactory;
+import persistence.model.Role;
+import utility.DateUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class RoleController implements IController {
+    private static final String timestamp = DateUtil.getTimestamp();
+    private final RoleDAO dao;
+
+    public RoleController(EntityManagerFactory emf) {
+        this.dao = RoleDAO.getInstance(emf);
+    }
+
+    public RoleDTO converter(Role role) {
+        return RoleDTO.builder()
+                .id(role.getId())
+                .name(role.getName().name())
+                .headers(role.getHeaders())
+                .footers(role.getFooters())
+                .build();
+    }
+
+    @Override
+    public Handler getAll() {
+        return ctx -> {
+            List<Role> roles = dao.getAll();
+            List<RoleDTO> roleDTOS = new ArrayList<>();
+            for (Role r : roles) {
+                RoleDTO roleDTO = converter(r);
+                roleDTOS.add(roleDTO);
+            }
+            ctx.status(200).json(roleDTOS);
+        };
+    }
+
+    @Override
+    public Handler getById() {
+        return ctx -> {
+            int id = Integer.parseInt(ctx.pathParam("id"));
+            Role role = dao.getById(id);
+            RoleDTO roleDTO = converter(role);
+            ctx.status(200).json(roleDTO);
+        };
+    }
+
+    @Override
+    public Handler create() {
+        return ctx -> {
+            Role roleCreated = ctx.bodyAsClass(Role.class);
+            if (roleCreated != null && roleCreated.getName() != null) {
+                Role role = dao.create(roleCreated);
+                RoleDTO roleDTO = converter(role);
+                ctx.status(201).json(roleDTO);
+            } else {
+                throw new ApiException(400, "Role name is required.", timestamp);
+            }
+        };
+    }
+
+    @Override
+    public Handler update() {
+        return ctx -> {
+            int id = Integer.parseInt(ctx.pathParam("id"));
+            dao.getById(id);
+
+            Role roleToUpdate = ctx.bodyAsClass(Role.class);
+            roleToUpdate.setId(id);
+
+            Role roleUpdated = dao.update(roleToUpdate);
+            RoleDTO roleDTO = converter(roleUpdated);
+            ctx.status(200).json(roleDTO);
+        };
+    }
+
+    @Override
+    public Handler delete() {
+        return ctx -> {
+            int id = Integer.parseInt(ctx.pathParam("id"));
+            Role roleDeleted = dao.delete(id);
+            if (roleDeleted != null) {
+                RoleDTO roleDTO = converter(roleDeleted);
+                ctx.status(200).json(roleDTO);
+            } else {
+                throw new ApiException(404, "No data found. ", timestamp);
+            }
+        };
+    }
+}
