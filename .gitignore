@@ -37,3 +37,5 @@ build/
 ### Mac OS ###
 .DS_Store
 jmeter.log
+test-results/
+playwright-report/
