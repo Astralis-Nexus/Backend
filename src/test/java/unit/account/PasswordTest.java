@@ -17,7 +17,7 @@ class PasswordTest {
     @ParameterizedTest
     @DisplayName("Password should accept valid lengths.")
     @ValueSource(strings = {
-            "AAAAAAA",
+            "AAAAAAAA",
             "AAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
