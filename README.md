@@ -47,6 +47,22 @@ Email: admin@admin.com
 Password: admin
 ```
 
+## Start backend i normal mode eller test mode
+
+I `src/main/java/application/Application.java` bestemmer denne linje om backend starter i normal mode eller test mode:
+
+```java
+boolean isTest = false;
+```
+
+Brug `false` for normal mode med PostgreSQL fra Docker Compose.
+Brug `true` for test mode med Testcontainers og en midlertidig PostgreSQL-container. Docker Desktop skal vaere startet i test mode.
+
+```powershell
+mvn package
+java -jar target\app.jar
+```
+
 ## Kør tests og generer JaCoCo rapport
 
 ```powershell
