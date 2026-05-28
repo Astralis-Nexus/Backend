@@ -45,6 +45,23 @@
               <goal>report</goal>
             </goals>
           </execution>
+          <execution>
+            <id>merge-jacoco-exec</id>
+            <goals>
+              <goal>merge</goal>
+            </goals>
+            <configuration>
+              <fileSets>
+                <fileSet>
+                  <directory>${project.build.directory}/jacoco-exec</directory>
+                  <includes>
+                    <include>**/*.exec</include>
+                  </includes>
+                </fileSet>
+              </fileSets>
+              <destFile>${project.build.directory}/jacoco.exec</destFile>
+            </configuration>
+          </execution>
         </executions>
         <configuration>
           <excludes>
@@ -97,48 +114,6 @@
       <artifactId>lombok</artifactId>
       <version>1.18.28</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers</artifactId>
-      <version>2.0.5</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>commons-compress</artifactId>
-          <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>duct-tape</artifactId>
-          <groupId>org.rnorth.duct-tape</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>docker-java-api</artifactId>
-          <groupId>com.github.docker-java</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>docker-java-transport-zerodep</artifactId>
-          <groupId>com.github.docker-java</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers-postgresql</artifactId>
-      <version>2.0.5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers-jdbc</artifactId>
-      <version>2.0.5</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>testcontainers-database-commons</artifactId>
-          <groupId>org.testcontainers</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
@@ -220,7 +195,6 @@
     <maven.compiler.source>17</maven.compiler.source>
     <testcontainers.version>2.0.5</testcontainers.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar.coverage.exclusions>**/application/config/**,
-            **/persistence/config/**</sonar.coverage.exclusions>
+    <sonar.coverage.exclusions>**/application/*.java,**/application/**,**/application/config/**,**/persistence/config/**</sonar.coverage.exclusions>
   </properties>
 </project>

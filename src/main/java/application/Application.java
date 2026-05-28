@@ -7,14 +7,14 @@ import route.Route;
 
 @lombok.Generated
 public class Application {
-    
-    public static void main(String[] args) {
-        EntityManagerFactory emf = HibernateConfig.getEntityManagerFactoryConfig(false);
 
-        Route route = new Route(emf);
-        ApplicationConfig app = ApplicationConfig.getInstance();
-        app.initiateServer()
+    public static void main(String[] args) {
+        boolean isTest = true;
+        EntityManagerFactory emf = HibernateConfig.getEntityManagerFactoryConfig(isTest);
+
+        ApplicationConfig.getInstance()
+                .initiateServer()
                 .startServer(7007)
-                .setRoute(route.addRoutes());
+                .setRoute(new Route(emf).addRoutes());
     }
 }
