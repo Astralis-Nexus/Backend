@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 class AccountApiTest extends BaseApiTest {
 
-    // ------------------------------ Positive branches ------------------------------
+    // ------------------------------ Positive branches -------------------------------
 
     @Test
     @DisplayName("Account API should handle positive CRUD branches.")

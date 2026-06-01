@@ -34,6 +34,7 @@ class ImportanceLevelTest extends BaseIntegrationTest {
         assertThat(created.getImportanceLevel()).isEqualTo(importanceLevel);
     }
 
+
     // ------------------------------ Negative values ------------------------------
     @ParameterizedTest
     @DisplayName("ImportanceLevel should reject invalid enum values.")

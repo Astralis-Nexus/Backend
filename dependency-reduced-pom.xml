@@ -191,10 +191,10 @@
     </dependency>
   </dependencies>
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>17</maven.compiler.target>
     <maven.compiler.source>17</maven.compiler.source>
     <testcontainers.version>2.0.5</testcontainers.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.coverage.exclusions>**/application/*.java,**/application/**,**/application/config/**,**/persistence/config/**</sonar.coverage.exclusions>
   </properties>
 </project>
